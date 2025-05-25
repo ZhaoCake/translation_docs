@@ -1,0 +1,67 @@
+site_name: ZhaoCake's文档翻译
+site_description: 文档翻译中文翻译
+# site_author: Chisel Community
+repo_url: https://github.com/ZhaoCake/translation_docs
+repo_name: ZhaoCake/translation_docs
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.code.copy
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 切换到深色模式
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 切换到浅色模式
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+nav:
+  - 首页: index.md
+  - Chisel Cookbooks:
+    - 手册概述: cookbooks/index.md
+    - 通用技巧(cookbook): cookbooks/cookbook.md
+    - 命名(naming): cookbooks/naming.md
+    - 层次结构(hierarchy): cookbooks/hierarchy.md
+    - DataView: cookbooks/dataview.md
+    - 序列化(serialization): cookbooks/serialization.md
+    - 对象模型(objectmodel): cookbooks/objectmodel.md
+    - 测试(testing): cookbooks/testing.md
+    - 故障排除(troubleshooting): cookbooks/troubleshooting.md

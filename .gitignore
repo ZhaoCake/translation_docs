@@ -1,0 +1,28 @@
+# MkDocs生成的站点目录
+site/
+
+# Python虚拟环境
+venv/
+env/
+.env/
+
+# Python缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 操作系统生成的文件
+.DS_Store
+Thumbs.db
+
+# 编辑器和IDE相关文件
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 构建工具和依赖管理
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
