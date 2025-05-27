@@ -1,0 +1,114 @@
+body {
+    font-family: "LXGW WenKai", sans-serif;
+    /* Lite version */
+    /* font-family: "LXGW WenKai Lite", sans-serif; */
+    /* TC version */
+    /* font-family: "LXGW WenKai TC", sans-serif; */
+    /* Screen version */
+    /* font-family: "LXGW WenKai Screen", sans-serif; */
+}
+
+/* 添加暗化和模糊的背景图片 */
+.md-main {
+    position: relative;
+}
+
+/* 创建一个伪元素来放置和处理背景图片 */
+.md-main::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('../assets/background.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    /* 添加暗化和模糊效果 */
+    /* filter: brightness(0.75) blur(3px); */
+}
+
+/* 重置之前的样式，移除多余的背景和边框 */
+.md-content {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 20px;
+    margin: 0;
+}
+
+.md-sidebar {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+}
+
+.md-sidebar__scrollwrap {
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+}
+
+/* 为了确保内容可读性，添加一个半透明的页面整体背景，并居中内容 */
+.md-main__inner {
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    margin: 20px auto; /* 修改为auto以实现水平居中 */
+    padding: 20px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 1200px; /* 设置最大宽度 */
+}
+
+/* 确保内容区域在移动设备上也能适当显示 */
+@media only screen and (max-width: 1220px) {
+    .md-main__inner {
+        margin: 20px;
+        width: auto;
+    }
+}
+
+/* 调整主内容区域的布局，使其居中 */
+.md-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 暗色模式下的调整 */
+[data-md-color-scheme="slate"] .md-main__inner {
+    background-color: rgba(32, 33, 36, 0.7);
+}
+
+/* 保持导航链接可读性 */
+.md-nav__link {
+    color: inherit !important;
+}
+
+/* 调整顶部导航栏 - 移除透明效果 */
+.md-header {
+    background-color: var(--md-primary-fg-color); /* 使用默认主题颜色，取消透明度 */
+}
+
+/* 顶部导航栏内容居中 */
+.md-header__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 调整表格可读性 */
+table {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+[data-md-color-scheme="slate"] table {
+    background-color: rgba(50, 50, 50, 0.5);
+}
+
+/* 增强代码块的可读性 */
+.md-typeset pre {
+    background-color: rgba(245, 245, 245, 0.9);
+}
+
+[data-md-color-scheme="slate"] .md-typeset pre {
+    background-color: rgba(40, 40, 40, 0.9);
+}

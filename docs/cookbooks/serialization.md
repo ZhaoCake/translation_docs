@@ -8,13 +8,13 @@ Chisel提供了非常灵活的硬件设计体验。但是，在设计相对大�
 因此，提供了`SerializableModuleGenerator`、`SerializableModule[T <: SerializableModuleParameter]`和`SerializableModuleParameter`来解决这些问题。
 对于任何`SerializableModuleGenerator`，Chisel可以通过添加这些约束来自动序列化和反序列化它：
 1. `SerializableModule`不应该是内部类，因为外部类是它的一个参数；
-1. `SerializableModule`有且只有一个参数，其类型为`SerializableModuleParameter`。
-1. 模块既不依赖于全局变量，也不使用不可重现的函数（随机、时间等），这应该由用户保证，因为Scala无法检测它。
+2. `SerializableModule`有且只有一个参数，其类型为`SerializableModuleParameter`。
+3. 模块既不依赖于全局变量，也不使用不可重现的函数（随机、时间等），这应该由用户保证，因为Scala无法检测它。
 
 它可以提供这些好处：
 1. 用户可以使用`SerializableModuleGenerator(module: class[SerializableModule], parameter: SerializableModuleParameter)`来自动序列化模块及其参数。
-1. 用户可以在其他可序列化参数中嵌套`SerializableModuleGenerator`以表示相对较大的参数。
-1. 用户可以将任何`SerializableModuleGenerator`详细说明为单个模块进行测试。
+2. 用户可以在其他可序列化参数中嵌套`SerializableModuleGenerator`以表示相对较大的参数。
+3. 用户可以将任何`SerializableModuleGenerator`详细说明为单个模块进行测试。
 
 
 ## 如何使用`SerializableModuleGenerator`序列化模块
@@ -65,8 +65,11 @@ class GCDSerializableModule(val parameter: GCDSerializableModuleParameter)
   io.z := z
 }
 ```
+
 使用`upickle`中的`write`函数，它应该返回一个json字符串：
-```scala mdoc
+
+```scala
+// 原始代码块中的标记: mdoc
 val j = upickle.default.write(
   SerializableModuleGenerator(
     classOf[GCDSerializableModule],
@@ -76,9 +79,12 @@ val j = upickle.default.write(
 ```
 
 然后，您可以从json字符串读取并详细说明模块：
-```scala mdoc:compile-only
+
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 circt.stage.ChiselStage.emitSystemVerilog(
   upickle.default.read[SerializableModuleGenerator[GCDSerializableModule, GCDSerializableModuleParameter]](
     ujson.read(j)
   ).module()
 )
+```

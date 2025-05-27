@@ -17,7 +17,9 @@ class TestBlock extends Module {
 	})
 }
 ```
+
 *产生*
+
 ```bash
 type mismatch;
 [error]  found   : Int(3)
@@ -43,7 +45,8 @@ class TestBlock extends Module {
 ```
 可以通过应用`U`或`S`方法从`Int`创建`UInt`/`SInt`字面量。
 
-```scala mdoc:fail
+```scala
+// 原始代码块中的标记: mdoc:fail
 UInt(42)
 ```
 

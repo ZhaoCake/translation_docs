@@ -99,7 +99,8 @@ import chisel3.util.Queue
 import chisel3.docs.emitSystemVerilog
 ```
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class MyModule[T <: Data](gen: T) extends Module {
   override def desiredName = s"MyModule_${gen.typeName}"
 }
@@ -107,14 +108,16 @@ class MyModule[T <: Data](gen: T) extends Module {
 
 您的`MyModule`的任何实例现在都将具有包含类型参数的Verilog模块名称。
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val foo = Module(new MyModule(UInt(4.W))) // MyModule_UInt4
 val bar = Module(new MyModule(Vec(3, UInt(4.W)))) // MyModule_Vec3_UInt4
 ```
 
 请注意，所有基本的Chisel工具模块，如`Queue`，都已经像这样实现了`desiredName`：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val fooQueue = Module(new Queue(UInt(8.W), 4)) // Verilog模块将被命名为'Queue4_UInt8'
 val barQueue = Module(new Queue(SInt(12.W), 3)) // ...以及'Queue3_SInt12'
 val bazQueue = Module(new Queue(Bool(), 16)) // ...以及'Queue16_Bool'
@@ -139,7 +142,8 @@ class MyBundle[T <: Data](gen: T, intParam: Int) extends Bundle {
 
 现在，如果您在诸如`Queue`这样的模块中使用您的`MyBundle`：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val fooQueue = Module(new Queue(new MyBundle(UInt(4.W), 3), 16)) // Queue16_MyBundle3_UInt4
 ```
 
@@ -164,7 +168,8 @@ class MyBundle[T <: Data](gen: T, intParam: Int) extends Bundle {
 }
 ```
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 new MyBundle(UInt(8.W), 3).typeName
 ```
 
@@ -184,7 +189,8 @@ class MyBundle[T <: Data](gen: T, intParam: Int) extends Bundle with HasAutoType
 }
 ```
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 new MyBundle(UInt(8.W), 3).typeName
 ```
 
@@ -219,7 +225,8 @@ class AliasedBundle extends Bundle with HasTypeAlias {
 // 原始代码块中的标记: mdoc:invisible
 import circt.stage.ChiselStage.{emitCHIRRTL => emitFIRRTL}
 ```
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 emitFIRRTL(new Module {
   val wire = Wire(new AliasedBundle)
 })
@@ -238,7 +245,8 @@ class Parent extends Bundle with HasTypeAlias {
   val child = new Child
 }
 ```
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 emitFIRRTL(new Module {
   val wire = Wire(new Parent)
 })
@@ -257,7 +265,8 @@ class StrippedBundle extends Bundle with HasTypeAlias {
 }
 ```
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 emitFIRRTL(new Module {
   val in = IO(Input(new StrippedBundle))
 })
@@ -276,7 +285,8 @@ class CustomStrippedBundle extends Bundle with HasTypeAlias {
 }
 ```
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 emitFIRRTL(new Module {
   val in = IO(Input(new CustomStrippedBundle))
 })
@@ -296,7 +306,8 @@ emitFIRRTL(new Module {
 
 您可以使用`noPrefix { ... }`来从该作用域中生成的所有信号中剥离前缀。
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import chisel3.experimental.noPrefix
 
 class ExampleNoPrefix extends Module {
@@ -322,7 +333,8 @@ emitSystemVerilog(new ExampleNoPrefix)
 
 在FIRRTL转换重命名信号/实例的情况下，您可以使用`forcename` API：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import chisel3.util.experimental.{forceName, InlineInstance}
 
 class WrapperExample extends Module {

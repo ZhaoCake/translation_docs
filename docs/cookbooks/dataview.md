@@ -1,4 +1,3 @@
-
 # DataView技巧手册
 
 [TOC]
@@ -142,7 +141,8 @@ class Bar(val bitwidth: Int) extends Super {
 `Foo`和`Bar`不能直接连接，但可以通过将它们都视为其共同超类型`Super`的实例来连接。
 直接的方法可能会遇到以下问题：
 
-```scala mdoc:fail
+```scala
+// 原始代码块中的标记: mdoc:fail
 class MyModule extends Module {
   val foo = IO(Input(new Foo(8)))
   val bar = IO(Output(new Bar(8)))
@@ -166,22 +166,21 @@ class MyModule extends Module {
   bar.viewAsSupertype(tpe) := foo.viewAsSupertype(tpe)
 }
 ```
-By adding curly braces after the name of the trait, we're telling Scala to create a new concrete
-subclass of the trait, and create an instance of it.
-As indicated in the comment, abstract methods must still be implemented.
-This is the same that happens when one writes `new Bundle {}`,
-the curly braces create a new concrete subclass; however, because `Bundle` has no abstract methods,
-the contents of the body can be empty.
+通过在trait名称后添加花括号，我们告诉Scala创建一个新的具体
+trait子类，并创建它的实例。
+正如注释中所指出的，抽象方法仍然必须被实现。
+这与编写`new Bundle {}`时发生的情况相同，
+花括号创建了一个新的具体子类；然而，由于`Bundle`没有抽象方法，
+主体内容可以为空。
 
-### How can I use `.viewAs` instead of `.viewAsSupertype(type)`?
+### 如何使用`.viewAs`而不是`.viewAsSupertype(type)`？
 
-While `viewAsSupertype` is helpful for one-off casts, the need to provide a type template object
-each time can be onerous.
-Because of the subtyping relationship, you can use `PartialDataView.supertype` to create a
-`DataView` from a Bundle type to a parent type by just providing the function to construct an
-instance of the parent type from an instance of the child type.
-The mapping of corresponding fields is automatically determined by Chisel to be the fields defined
-in the supertype.
+虽然`viewAsSupertype`对一次性转换很有帮助，但每次都需要提供类型模板对象
+可能会很麻烦。
+由于子类型关系，你可以使用`PartialDataView.supertype`来创建一个
+从Bundle类型到父类型的`DataView`，只需提供从子类型实例构造
+父类型实例的函数。
+相应字段的映射由Chisel自动确定为在父类型中定义的字段。
 
 ```scala
 // 原始代码块中的标记: mdoc:silent:reset
@@ -194,14 +193,14 @@ class Foo(x: Int) extends Bundle {
 class Bar(val x: Int) extends Foo(x) {
   val bar = UInt(x.W)
 }
-// Define a DataView without having to specify the mapping!
+// 定义一个DataView，无需指定映射！
 implicit val view: DataView[Bar, Foo] = PartialDataView.supertype[Bar, Foo](b => new Foo(b.x))
 
 class MyModule extends Module {
   val foo = IO(Input(new Foo(8)))
   val bar = IO(Output(new Bar(8)))
   bar.viewAs[Foo] := foo // bar.foo := foo.foo
-  bar.bar := 123.U       // all fields need to be connected
+  bar.bar := 123.U       // 所有字段都需要连接
 }
 ```
 ```scala

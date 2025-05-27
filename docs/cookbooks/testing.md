@@ -1,5 +1,6 @@
 # 测试手册
 
+[TOC]
 
 ## 如何更改默认测试目录？
 
@@ -7,7 +8,8 @@
 
 下面的例子将测试目录更改为`test/`：
 
-``` scala mdoc:reset:silent
+``` scala 
+// mdoc:reset:silent
 import chisel3._
 import chisel3.simulator.scalatest.ChiselSim
 import java.nio.file.Paths

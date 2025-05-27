@@ -303,7 +303,8 @@ class Top[T <: Data](gen: T) extends Module {
 
 在创建Bundle时遵循`gen`模式可能会导致一些难以理解的错误消息：
 
-```scala mdoc
+```scala 
+// mdoc
 class AliasedBundle[T <: Data](gen: T) extends Bundle {
   val foo = gen
   val bar = gen
@@ -320,7 +321,8 @@ getVerilogString(new Top(new AliasedBundle(UInt(8.W))))
 
 注意，以下示例看起来不同，但会给你带来完全相同的问题：
 
-```scala mdoc
+```scala 
+// mdoc
 class AlsoAliasedBundle[T <: Data](val gen: T) extends Bundle {
                                 // ^ 这个val使`gen`成为一个字段，就像`foo`
   val foo = gen
@@ -340,7 +342,8 @@ getVerilogString(new Top(new AlsoAliasedBundle(UInt(8.W))))
 
 与其将对象作为参数传递，你可以传递一个0-arity函数（无参数的函数）：
 
-```scala mdoc
+```scala 
+// mdoc
 class UsingAFunctionBundle[T <: Data](gen: () => T) extends Bundle {
   val foo = gen()
   val bar = gen()
@@ -381,7 +384,8 @@ getVerilogString(new MisusedFunctionArguments)
 
 功能上与(1)相同，但语法更加微妙，你可以使用[Scala按名称函数参数](https://docs.scala-lang.org/tour/by-name-parameters.html)：
 
-```scala mdoc
+```scala 
+// mdoc
 class UsingByNameParameters[T <: Data](gen: => T) extends Bundle {
   val foo = gen
   val bar = gen
@@ -402,7 +406,8 @@ chisel3.docs.emitSystemVerilog(new Top(new UsingByNameParameters(UInt(8.W))))
 你也可以用`Output(...)`包装字段，这会创建传递参数的新实例。
 Chisel将`Output`视为"默认方向"，所以如果所有字段都是输出，该`Bundle`在功能上等同于没有方向字段的`Bundle`。
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class DirectionedBundle[T <: Data](gen: T) extends Bundle {
   val foo = Output(gen)
   val bar = Output(gen)
@@ -421,7 +426,8 @@ chisel3.docs.emitSystemVerilog(new Top(new DirectionedBundle(UInt(8.W))))
 你也可以直接在你的`gen`参数上调用`.cloneType`。
 虽然我们试图对用户隐藏这个实现细节，但`.cloneType`是Chisel创建`Data`对象新实例的机制：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class UsingCloneTypeBundle[T <: Data](gen: T) extends Bundle {
   val foo = gen.cloneType
   val bar = gen.cloneType
@@ -475,7 +481,8 @@ getVerilogString(new NewModule)
 你可以使用`chiselTypeClone`来克隆元素，如下所示：
 
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import chisel3.reflect.DataMirror
 import chisel3.experimental.requireIsChiselType
 
@@ -848,7 +855,8 @@ def compile(gen: => chisel3.RawModule): Unit = {
 
 当索引没有足够的位来寻址被提取者中的所有条目或位时，你可以使用`.pad`增加索引的宽度。
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class TooNarrow extends RawModule {
   val extractee = Wire(UInt(7.W))
   val index = Wire(UInt(2.W))
@@ -859,7 +867,8 @@ compile(new TooNarrow)
 
 这可以用`pad`修复：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class TooNarrowFixed extends RawModule {
   val extractee = Wire(UInt(7.W))
   val index = Wire(UInt(2.W))
@@ -870,7 +879,8 @@ compile(new TooNarrowFixed)
 
 #### 当索引太宽时使用位提取
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class TooWide extends RawModule {
   val extractee = Wire(Vec(8, UInt(32.W)))
   val index = Wire(UInt(4.W))
@@ -881,7 +891,8 @@ compile(new TooWide)
 
 这可以通过位提取修复：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class TooWideFixed extends RawModule {
   val extractee = Wire(Vec(8, UInt(32.W)))
   val index = Wire(UInt(4.W))
@@ -892,7 +903,8 @@ compile(new TooWideFixed)
 
 注意，大小为1的`Vecs`和`UInts`应该由零宽度的`UInt`索引：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class SizeOneVec extends RawModule {
   val extractee = Wire(Vec(1, UInt(32.W)))
   val index = Wire(UInt(0.W))
@@ -904,7 +916,8 @@ compile(new SizeOneVec)
 因为`pad`只在所需宽度小于参数当前宽度时才进行填充，
 你可以在宽度可能在不同情况下太宽或太窄时将`pad`与位提取结合使用
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import chisel3.util.log2Ceil
 class TooWideOrNarrow(extracteeSize: Int, indexWidth: Int) extends Module {
   val extractee = Wire(Vec(extracteeSize, UInt(8.W)))
@@ -918,7 +931,8 @@ compile(new TooWideOrNarrow(8, 4))
 
 对于`UInts`的动态位选择（但不是`Vec`的动态索引），另一种选择是对被提取者进行动态
 右移，然后只选择单个位：
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class TooWideOrNarrowUInt(extracteeSize: Int, indexWidth: Int) extends Module {
   val extractee = Wire(UInt(extracteeSize.W))
   val index = Wire(UInt(indexWidth.W))

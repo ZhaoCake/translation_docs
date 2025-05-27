@@ -161,7 +161,8 @@ class Top extends Module {
   println(s"Width is ${inst.x.width}")
 }
 ```
-```scala mdoc:passthrough
+```scala
+// 原始代码块中的标记: mdoc:passthrough
 println("```")
 // 运行详细说明，以便上面的println显示出来
 circt.stage.ChiselStage.elaborate(new Top)
@@ -190,7 +191,8 @@ case class UserDefinedType(name: String, data: UInt, inst: Instance[MyModule])
 
 默认情况下，`UserDefinedType`的实例将无法从实例中访问：
 
-```scala mdoc:fail
+```scala
+// 原始代码块中的标记: mdoc:fail
 @instantiable
 class HasUserDefinedType extends Module {
   val inst = Module(new MyModule)
@@ -208,7 +210,8 @@ class HasUserDefinedType extends Module {
 
 有关类型类的更多信息，请参阅[DataView部分关于类型类](https://www.chisel-lang.org/chisel3/docs/explanations/dataview#type-classes)。
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import chisel3.experimental.hierarchy.Lookupable
 object UserDefinedType {
   // 使用Lookupable.Simple类型别名作为返回类型。
@@ -225,7 +228,8 @@ object UserDefinedType {
 
 现在，我们可以从实例中访问`UserDefinedType`的实例：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 @instantiable
 class HasUserDefinedType extends Module {
   val inst = Module(new MyModule)
@@ -253,7 +257,8 @@ case class ParameterizedUserDefinedType[A, T <: Data](value: A, data: T)
 与`HasUserDefinedType`类似，我们需要定义一个隐式提供`Lookupable`类型类。
 然而，与上面的简单示例不同，我们使用`implicit def`来处理类型参数：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import chisel3.experimental.hierarchy.Lookupable
 object ParameterizedUserDefinedType {
   // 类型类实例化是递归的，所以A和T都必须有Lookupable实例。
@@ -269,7 +274,8 @@ object ParameterizedUserDefinedType {
 
 现在，我们可以从实例中访问`ParameterizedUserDefinedType`的实例：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class ChildModule extends Module {
   @public val wire = Wire(UInt(8.W))
 }
@@ -291,7 +297,8 @@ class Top extends Module {
 Lookupable提供了从`product1`到`product5`的工厂。
 如果您的类有超过5个字段，您可以在映射中使用嵌套元组作为"伪字段"。
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 case class LotsOfFields(a: Data, b: Data, c: Data, d: Data, e: Data, f: Data)
 object LotsOfFields {
   implicit val lookupable: Lookupable.Simple[LotsOfFields] =
@@ -424,7 +431,8 @@ class Top extends Module {
   }
 }
 ```
-```scala mdoc:passthrough
+```scala
+// 原始代码块中的标记: mdoc:passthrough
 println("```")
 val x = circt.stage.ChiselStage.emitCHIRRTL(new Top)
 println("```")
@@ -432,7 +440,8 @@ println("```")
 
 您还可以在`Definition`或`Instance`上使用`Select.ios`来适当地注解I/O：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 @instantiable
 class InOutModule extends Module {
   @public val in = IO(Input(Bool()))
@@ -473,7 +482,8 @@ class InOutTop extends Module {
   }
 }
 ```
-```scala mdoc:passthrough
+```scala
+// 原始代码块中的标记: mdoc:passthrough
 println("```")
 val y = circt.stage.ChiselStage.emitCHIRRTL(new InOutTop)
 println("```")
