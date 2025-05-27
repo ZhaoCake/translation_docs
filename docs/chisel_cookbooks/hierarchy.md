@@ -208,7 +208,7 @@ class HasUserDefinedType extends Module {
 
 **如果任何字段是`BaseModules`，您必须将它们更改为`Instance[_]`才能定义`Lookupable`类型类。**
 
-有关类型类的更多信息，请参阅[DataView部分关于类型类](https://www.chisel-lang.org/chisel3/docs/explanations/dataview#type-classes)。
+有关类型类的更多信息，请参阅[DataView部分关于类型类](https://www.chisel-lang.org/chisel3/docs/chisel_explanations/dataview#type-classes)。
 
 ```scala
 // 原始代码块中的标记: mdoc

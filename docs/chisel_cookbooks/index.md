@@ -10,14 +10,14 @@ Chisel（Constructing Hardware In a Scala Embedded Language）是一种开源的
 
 Chisel提供了一系列cookbooks，帮助您理解和使用各种功能：
 
-- [通用技巧手册](cookbooks/cookbook.md) - 提供常用类型转换和其他实用技巧
-- [命名手册](cookbooks/naming.md) - 解释如何为模块和信号命名
-- [层次结构手册](cookbooks/hierarchy.md) - 描述模块层次结构和实例化
-- [DataView手册](cookbooks/dataview.md) - 介绍DataView功能的使用
-- [序列化手册](cookbooks/serialization.md) - 讲解模块序列化方法
-- [对象模型手册](cookbooks/objectmodel.md) - 解释对象模型的使用
-- [测试手册](cookbooks/testing.md) - 介绍Chisel测试方法
-- [故障排除](cookbooks/troubleshooting.md) - 常见问题解决方案
+- [通用技巧手册](cookbook.md) - 提供常用类型转换和其他实用技巧
+- [命名手册](naming.md) - 解释如何为模块和信号命名
+- [层次结构手册](hierarchy.md) - 描述模块层次结构和实例化
+- [DataView手册](dataview.md) - 介绍DataView功能的使用
+- [序列化手册](serialization.md) - 讲解模块序列化方法
+- [对象模型手册](objectmodel.md) - 解释对象模型的使用
+- [测试手册](testing.md) - 介绍Chisel测试方法
+- [故障排除](troubleshooting.md) - 常见问题解决方案
 
 ## 获取帮助
 

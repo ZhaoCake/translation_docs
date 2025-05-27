@@ -755,7 +755,7 @@ chisel3.docs.emitSystemVerilog(new MyModule)
 ## 如何在Module内覆盖隐式时钟或复位信号？
 
 要更改代码区域的时钟或复位信号，请使用`withClock`、`withReset`或`withClockAndReset`。
-有关示例和详细信息，请参阅[多时钟域](../explanations/multi-clock)。
+有关示例和详细信息，请参阅[多时钟域](../chisel_explanations/multi-clock)。
 
 要覆盖`Module`整个作用域的时钟或复位信号，你可以混入`ImplicitClock`和`ImplicitReset`特质。
 

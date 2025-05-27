@@ -10,22 +10,25 @@
 
 ## 当前文档
 
-目前本站包含以下文档的中文翻译：
+当前本站包含以下文档的中文翻译
 
-### [Chisel Cookbook](cookbooks/index.md)
+### [Chisel Cookbook](chisel_cookbooks/index.md)
+
+源文档：[https://www.chisel-lang.org/docs/cookbooks](https://www.chisel-lang.org/docs/cookbooks)
+
 
 Chisel是一种用Scala编写的开源硬件描述语言(HDL)，通过提供更高级的抽象和类型安全功能，使硬件设计更加高效和可靠。
 
 Chisel Cookbook包含了各种常见问题的解决方案和最佳实践，涵盖了以下主题：
 
-- [通用技巧](cookbooks/cookbook.md) - 基本操作和常见模式
-- [命名](cookbooks/naming.md) - 如何处理信号命名问题
-- [层次结构](cookbooks/hierarchy.md) - 模块实例化和层次化设计
-- [DataView](cookbooks/dataview.md) - 数据视图和类型转换
-- [序列化](cookbooks/serialization.md) - 模块序列化技术
-- [对象模型](cookbooks/objectmodel.md) - Chisel对象模型的使用
-- [测试](cookbooks/testing.md) - 硬件测试方法
-- [故障排除](cookbooks/troubleshooting.md) - 常见问题解决方案
+- [通用技巧](chisel_cookbooks/cookbook.md) - 基本操作和常见模式
+- [命名](chisel_cookbooks/naming.md) - 如何处理信号命名问题
+- [层次结构](chisel_cookbooks/hierarchy.md) - 模块实例化和层次化设计
+- [DataView](chisel_cookbooks/dataview.md) - 数据视图和类型转换
+- [序列化](chisel_cookbooks/serialization.md) - 模块序列化技术
+- [对象模型](chisel_cookbooks/objectmodel.md) - Chisel对象模型的使用
+- [测试](chisel_cookbooks/testing.md) - 硬件测试方法
+- [故障排除](chisel_cookbooks/troubleshooting.md) - 常见问题解决方案
 
 ## 即将添加
 

@@ -88,15 +88,15 @@ plugins:
 nav:
   - 首页: index.md
   - Chisel Cookbooks:
-    - 手册概述: cookbooks/index.md
-    - 通用技巧(cookbook): cookbooks/cookbook.md
-    - 命名(naming): cookbooks/naming.md
-    - 层次结构(hierarchy): cookbooks/hierarchy.md
-    - DataView: cookbooks/dataview.md
-    - 序列化(serialization): cookbooks/serialization.md
-    - 对象模型(objectmodel): cookbooks/objectmodel.md
-    - 测试(testing): cookbooks/testing.md
-    - 故障排除(troubleshooting): cookbooks/troubleshooting.md
+    - 手册概述: chisel_cookbooks/index.md
+    - 通用技巧(cookbook): chisel_cookbooks/cookbook.md
+    - 命名(naming): chisel_cookbooks/naming.md
+    - 层次结构(hierarchy): chisel_cookbooks/hierarchy.md
+    - DataView: chisel_cookbooks/dataview.md
+    - 序列化(serialization): chisel_cookbooks/serialization.md
+    - 对象模型(objectmodel): chisel_cookbooks/objectmodel.md
+    - 测试(testing): chisel_cookbooks/testing.md
+    - 故障排除(troubleshooting): chisel_cookbooks/troubleshooting.md
 
 extra:
   social:
