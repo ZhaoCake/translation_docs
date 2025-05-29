@@ -1,67 +1,67 @@
 ---
 layout: docs
-title:  "Warnings"
+title:  "警告"
 section: "chisel3"
 ---
 
-# Warnings
+# 警告
 
-Warnings in Chisel are used for deprecating old APIs or semantics for later removal.
-As a matter of good software practice, Chisel users are encouraged to treat warnings as errors with `--warnings-as-errors`;
-however, the coarse-grained nature of this option can be problematic when bumping Chisel which may introduce many warnings.
-See [Warning Configuration](#warning-configuration) below for techniques to help deal with large numbers of warnings.
+Chisel 中的警告用于标记旧 API 或语义的弃用，以便后续移除。
+作为良好的软件实践，建议 Chisel 用户使用 `--warnings-as-errors` 将警告视为错误；
+但是，当升级 Chisel 版本时，这个粗粒度的选项可能会引入大量警告，从而产生问题。
+请参阅下面的[警告配置](#警告配置)了解处理大量警告的技巧。
 
-## Warning Configuration
+## 警告配置
 
-Inspired by `-Wconf` [in Scala](https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html),
-Chisel supports fine-grain control of warning behavior via the CLI options `--warn-conf` and `--warn-conf-file`.
+受 Scala 中 `-Wconf` [的启发](https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html)，
+Chisel 通过命令行选项 `--warn-conf` 和 `--warn-conf-file` 支持对警告行为进行细粒度控制。
 
-### Basic Operation
+### 基本操作
 
-`--warn-conf` accepts a comma-separated sequence of `<filter>:<action>` pairs.
-When a warning is hit in Chisel, the sequence of pairs are checked from left-to-right to see if the `filter` matches the warning.
-The `action` associated with the first matching `filter` is the one used for the specific warning.
-If no `filters` match, then the default behavior is to issue the warning.
+`--warn-conf` 接受一个由逗号分隔的 `<过滤器>:<动作>` 对序列。
+当 Chisel 遇到警告时，会从左到右检查这个序列中的每个对，看看 `过滤器` 是否匹配该警告。
+第一个匹配的 `过滤器` 对应的 `动作` 将用于该特定警告。
+如果没有 `过滤器` 匹配，则使用默认行为发出警告。
 
-`--warn-conf` can be specified any number of times.
-Earlier uses of `--warn-conf` take priority over later ones in the same left-to-right decreasing priority as the `filters` are checked within a single `--warn-conf`.
-As a mental model, the user can pretend that all `--warn-conf` arguments concatenated together (separated by `,`) into a single argument.
+`--warn-conf` 可以指定任意次数。
+较早使用的 `--warn-conf` 优先级高于较晚使用的，这与在单个 `--warn-conf` 中检查 `过滤器` 时从左到右递减的优先级相同。
+作为一个思维模型，用户可以假装所有的 `--warn-conf` 参数都连接在一起（用逗号分隔）形成一个单独的参数。
 
-### Warning Configuration Files
+### 警告配置文件
 
-`--warn-conf-file` accepts a file which contains the same format of `<filter>:<action>` pairs, separated by newlines.
-Lines starting with `#` will be treated as comments and ignored.
-`filters` are checked in decreasing priority from top-to-bottom of the file.
+`--warn-conf-file` 接受一个包含相同格式的 `<过滤器>:<动作>` 对的文件，这些对用换行符分隔。
+以 `#` 开头的行将被视为注释并忽略。
+`过滤器` 的检查优先级从文件的上到下递减。
 
-A single command-line can contain any number of `--warn-conf-file` and any number of `--warn-conf` arguments.
-The filters from all `--warn-conf*` arguments will be applied in the same left-to-right decreasing priority order.
+一个命令行可以包含任意数量的 `--warn-conf-file` 和任意数量的 `--warn-conf` 参数。
+所有 `--warn-conf*` 参数中的过滤器将按照相同的从左到右递减优先级顺序应用。
 
-### Filters
+### 过滤器
 
-The supported filters are:
+支持的过滤器有：
 
-* `any` - matches all warnings
-* `id=<integer>` - matches warnings with the integer id
-* `src=<glob>` - matches warnings when `<glob>` matches the source locator filename where the warning occurs
+* `any` - 匹配所有警告
+* `id=<整数>` - 匹配具有该整数 id 的警告
+* `src=<通配符>` - 当 `<通配符>` 匹配警告发生位置的源定位器文件名时匹配警告
 
-`id` and `src` filters can be combined with `&`.
-Any filter can have at most one `id` and at most one `src` listed.
-`any` cannot be combined with any other filters.
+`id` 和 `src` 过滤器可以用 `&` 组合。
+任何过滤器最多可以包含一个 `id` 和一个 `src`。
+`any` 不能与任何其他过滤器组合。
 
-### Actions
+### 动作
 
-The supported actions are:
+支持的动作有：
 
-* `:s` - suppress matching warnings
-* `:w` - report matching warnings as warnings (default behavior)
-* `:e` - error on matching warnings
+* `:s` - 抑制匹配的警告
+* `:w` - 将匹配的警告作为警告报告（默认行为）
+* `:e` - 将匹配的警告作为错误报告
 
-### Examples
+### 示例
 
-The following example issues a warning when elaborated normally
+以下示例在正常编译时会发出警告
 
 ```scala mdoc:invisible:reset
-// Helper to throw away return value so it doesn't show up in mdoc
+// 帮助函数，抛弃返回值使其不在 mdoc 中显示
 def compile(gen: => chisel3.RawModule, args: Array[String] = Array()): Unit = {
   circt.stage.ChiselStage.emitCHIRRTL(gen, args = args)
 }
@@ -71,97 +71,94 @@ def compile(gen: => chisel3.RawModule, args: Array[String] = Array()): Unit = {
 import chisel3._
 class TooWideIndexModule extends RawModule {
   val in = IO(Input(Vec(4, UInt(8.W))))
-  val idx = IO(Input(UInt(8.W))) // This index is wider than necessary
+  val idx = IO(Input(UInt(3.W)))
   val out = IO(Output(UInt(8.W)))
-
   out := in(idx)
 }
 compile(new TooWideIndexModule)
 ```
 
-As shown in the warning, this warning is `W004` (which can be fixed [as described below](#w004-dynamic-index-too-wide)), we can suppress it with an `id` filter which will suppress all instances of this warning in the elaboration run.
+如警告所示，这是警告 `W004`（可以按照[下文所述](#w004-动态索引太宽)修复），我们可以使用 `id` 过滤器来抑制它，这将抑制此编译运行中该警告的所有实例。
 
 ```scala mdoc
 compile(new TooWideIndexModule, args = Array("--warn-conf", "id=4:s"))
 ```
 
-It is generally advisable to make warning suppressions as precise as possible, so we could combine this `id` filter with a `src` glob filter for just this file:
+通常建议使警告抑制尽可能精确，因此我们可以将这个 `id` 过滤器与一个 `src` 通配符过滤器组合，只针对这个文件：
 
 ```scala mdoc
 compile(new TooWideIndexModule, args = Array("--warn-conf", "id=4&src=**warnings.md:s"))
 ```
 
-Finally, users are encouraged to treat warnings as errors to the extend possible,
-so they should always end any warning configuration with `any:e` to elevate all unmatched warnings to errors:
+最后，我们鼓励用户尽可能将警告视为错误，
+所以他们应该始终在任何警告配置的末尾添加 `any:e` 以将所有未匹配的警告提升为错误：
 
 ```scala mdoc
 compile(new TooWideIndexModule, args = Array("--warn-conf", "id=4&src=**warnings.md:s,any:e"))
-// Or
+// 或
 compile(new TooWideIndexModule, args = Array("--warn-conf", "id=4&src=**warnings.md:s", "--warn-conf", "any:e"))
-// Or
+// 或
 compile(new TooWideIndexModule, args = Array("--warn-conf", "id=4&src=**warnings.md:s", "--warnings-as-errors"))
 ```
 
-## Warning Glossary
+## 警告词汇表
 
-Chisel warnings have a unique identifier number to make them easier to lookup as well as so they can be configured as described above.
+Chisel 警告都有一个唯一的标识符号，这使它们更容易查找，而且可以按上述方式配置。
 
-### [W001] Unsafe UInt cast to ChiselEnum
+### [W001] 不安全的 UInt 到 ChiselEnum 的转换
 
-This warning occurs when casting a `UInt` to a `ChiselEnum` when there are values the `UInt` could take that are not legal states in the enumeration.
-See the [ChiselEnum explanation](chisel-enum#casting) for more information and how to fix this warning.
+当将 `UInt` 转换为 `ChiselEnum` 时，如果 `UInt` 可能取到的某些值不是枚举中的合法状态，就会发生此警告。
+参见 [ChiselEnum 说明](chisel-enum#casting)获取更多信息和如何修复此警告。
 
-**Note:** This is the only warning that is not currently scheduled for become an error.
+**注意：**这是目前唯一一个没有计划变成错误的警告。
 
-### [W002] Dynamic bit select too wide
+### [W002] 动态位选择太宽
 
-This warning occurs when dynamically indexing a `UInt` or an `SInt` with an index that is wider than necessary to address all bits in the indexee.
-It indicates that some of the high-bits of the index are ignored by the indexing operation.
-It can be fixed as described in the [Cookbook](../cookbooks/cookbook#how-do-i-resolve-dynamic-index--is-too-widenarrow-for-extractee-).
+当使用比寻址索引对象的所有位所需宽度更宽的索引动态索引 `UInt` 或 `SInt` 时，会发生此警告。
+它表明索引的高位被索引操作忽略了。
+可以按照 [Cookbook](../cookbooks/cookbook#how-do-i-resolve-dynamic-index--is-too-widenarrow-for-extractee-) 中的描述修复。
 
-### [W003] Dynamic bit select too narrow
+### [W003] 动态位选择太窄
 
-This warning occurs when dynamically indexing a `UInt` or an `SInt` with an index that is to small to address all bits in the indexee.
-It indicates that some bits of the indexee cannot be reached by the indexing operation.
-It can be fixed as described in the [Cookbook](../cookbooks/cookbook#how-do-i-resolve-dynamic-index--is-too-widenarrow-for-extractee-).
+当使用太窄而无法寻址索引对象的所有位的索引动态索引 `UInt` 或 `SInt` 时，会发生此警告。
+它表明索引对象的某些位无法通过索引操作访问。
+可以按照 [Cookbook](../cookbooks/cookbook#how-do-i-resolve-dynamic-index--is-too-widenarrow-for-extractee-) 中的描述修复。
 
-### [W004] Dynamic index too wide
+### [W004] 动态索引太宽
 
-This warning occurs when dynamically indexing a `Vec` with an index that is wider than necessary to address all elements of the `Vec`.
-It indicates that some of the high-bits of the index are ignored by the indexing operation.
-It can be fixed as described in the [Cookbook](../cookbooks/cookbook#how-do-i-resolve-dynamic-index--is-too-widenarrow-for-extractee-).
+当使用比寻址 `Vec` 的所有元素所需宽度更宽的索引动态索引 `Vec` 时，会发生此警告。
+它表明索引的高位被索引操作忽略了。
+可以按照 [Cookbook](../cookbooks/cookbook#how-do-i-resolve-dynamic-index--is-too-widenarrow-for-extractee-) 中的描述修复。
 
-### [W005] Dynamic index too narrow
+### [W005] 动态索引太窄
 
-This warning occurs when dynamically indexing a `Vec` with an index that is to small to address all elements in the `Vec`.
-It indicates that some elements of the `Vec` cannot be reached by the indexing operation.
-It can be fixed as described in the [Cookbook](../cookbooks/cookbook#how-do-i-resolve-dynamic-index--is-too-widenarrow-for-extractee-).
+当使用太小而无法寻址 `Vec` 中所有元素的索引动态索引 `Vec` 时，会发生此警告。
+它表明 `Vec` 的某些元素无法通过索引操作访问。
+可以按照 [Cookbook](../cookbooks/cookbook#how-do-i-resolve-dynamic-index--is-too-widenarrow-for-extractee-) 中的描述修复。
 
 
-### [W006] Extract from Vec of size 0
+### [W006] 从大小为 0 的 Vec 中提取
 
-This warning occurs when indexing a `Vec` with no elements.
-It can be fixed by removing the indexing operation for the size zero `Vec` (perhaps via guarding with an `if-else` or `Option.when`).
+当索引一个没有元素的 `Vec` 时，会发生此警告。
+通过删除对大小为零的 `Vec` 的索引操作（可能通过使用 `if-else` 或 `Option.when` 进行保护）来修复。
 
-### [W007] Bundle literal value too wide
+### [W007] Bundle 字面量值太宽
 
-This warning occurs when creating a [Bundle Literal](../appendix/experimental-features#bundle-literals) where the literal value for a
-field is wider than the Bundle field's width.
-It can be fixed by reducing the width of the literal (perhaps choosing a different value if it is impossible to encode the value in the
-field's width).
+当创建一个 [Bundle Literal](../appendix/experimental-features#bundle-literals) 时，如果某个字段的字面量值宽度超过了 Bundle 字段的宽度，就会发生此警告。
+通过减小字面量的宽度来修复（如果无法在字段宽度内编码该值，则可以选择其他值）。
 
-### [W008] Return values of asTypeOf will soon be read-only
+### [W008] asTypeOf 的返回值将在不久的将来变为只读
 
 :::warning
 
-As of Chisel 7.0.0, this is now an error
+从 Chisel 7.0.0 开始，这现在是一个错误
 
 :::
 
-This warning indicates that the result of a call to `.asTypeOf(_)` is being used as the destination for a connection.
-It can be fixed by instantiating a wire.
+此警告表示对 `.asTypeOf(_)` 的调用结果被用作连接的目标。
+通过实例化一个线网来修复。
 
-For example, given the following:
+例如，给定以下代码：
 ```scala mdoc:compile-only
 class MyBundle extends Bundle {
   val foo = UInt(8.W)
@@ -171,7 +168,7 @@ val x = 0.U.asTypeOf(new MyBundle)
 x.bar := 123.U
 ```
 
-The warning can be fixed by inserting a wire:
+可以通过插入一个线网来修复警告：
 ```scala mdoc:compile-only
 class MyBundle extends Bundle {
   val foo = UInt(8.W)

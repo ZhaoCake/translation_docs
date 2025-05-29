@@ -1,15 +1,14 @@
 ---
 layout: docs
-title:  "Bundles and Vecs"
+title:  "Bundle和Vec"
 section: "chisel3"
 ---
 
-# Bundles and Vecs
+# Bundle和Vec
 
-`Bundle` and `Vec` are classes that allow the user to expand the set of Chisel datatypes with aggregates of other types.
+`Bundle`和`Vec`是允许用户通过聚合其他类型来扩展Chisel数据类型集合的类。
 
-Bundles group together several named fields of potentially different types into a coherent unit, much like a `struct` in
-C. Users define their own bundles by defining a class as a subclass of `Bundle`.
+Bundle将几个可能具有不同类型的命名字段组合成一个连贯的单元，很像C语言中的`struct`。用户通过定义一个作为`Bundle`子类的类来定义自己的bundle。
 
 ```scala mdoc:silent
 import chisel3._
@@ -25,52 +24,43 @@ class ModuleWithFloatWire extends RawModule {
 }
 ```
 
-You can create literal Bundles using the experimental [Bundle Literals](../appendix/experimental-features#bundle-literals) feature.
+你可以使用实验性的[Bundle字面量](../appendix/experimental-features#bundle-literals)功能创建字面量Bundle。
 
-Scala convention is to name classes using UpperCamelCase, and we suggest you follow that convention in your Chisel code.
+Scala的惯例是使用UpperCamelCase命名类，我们建议你在Chisel代码中遵循这一惯例。
 
-Vecs create an indexable vector of elements, and are constructed as follows:
+Vec创建一个可索引的元素向量，构造方式如下：
 
 ```scala mdoc:silent
 class ModuleWithVec extends RawModule {
-  // Vector of 5 23-bit signed integers.
+  // 5个23位有符号整数的向量。
   val myVec = Wire(Vec(5, SInt(23.W)))
 
-  // Connect to one element of vector.
+  // 连接到向量的一个元素。
   val reg3 = myVec(3)
 }
 ```
 
-(Note that we specify the number followed by the type of the `Vec` elements. We also specifiy the width of the `SInt`)
+（注意我们指定了数量，然后是`Vec`元素的类型。我们还指定了`SInt`的宽度）
 
-The set of primitive classes
-(`SInt`, `UInt`, and `Bool`) plus the aggregate
-classes (`Bundles` and `Vec`s) all inherit from a common
-superclass, `Data`.  Every object that ultimately inherits from
-`Data` can be represented as a bit vector in a hardware design.
+原始类(`SInt`, `UInt`和`Bool`)加上聚合类(`Bundle`和`Vec`)都继承自一个共同的超类`Data`。每个最终继承自`Data`的对象都可以在硬件设计中表示为一个位向量。
 
-Bundles and Vecs can be arbitrarily nested to build complex data
-structures:
+Bundle和Vec可以任意嵌套以构建复杂的数据结构：
 
 ```scala mdoc:silent
 class BigBundle extends Bundle {
- // Vector of 5 23-bit signed integers.
+ // 5个23位有符号整数的向量。
  val myVec = Vec(5, SInt(23.W))
  val flag  = Bool()
- // Previously defined bundle.
+ // 先前定义的bundle。
  val f     = new MyFloat
 }
 ```
 
-Note that the builtin Chisel primitive and aggregate classes do not
-require the `new` when creating an instance, whereas new user
-datatypes will.  A Scala `apply` constructor can be defined so
-that a user datatype also does not require `new`, as described in
-[Function Constructor](../explanations/functional-module-creation).
+注意，内置的Chisel原始和聚合类在创建实例时不需要`new`，而新的用户数据类型则需要。可以定义一个Scala的`apply`构造函数，使得用户数据类型也不需要`new`，这在[函数构造器](../explanations/functional-module-creation)中有描述。
 
-### Flipping Bundles
+### 翻转Bundle
 
-The `Flipped()` function recursively flips all elements in a Bundle/Record. This is very useful for building bidirectional interfaces that connect to each other (e.g. `Decoupled`). See below for an example.
+`Flipped()`函数递归地翻转Bundle/Record中的所有元素。这对于构建相互连接的双向接口非常有用（例如`Decoupled`）。请看下面的例子。
 
 ```scala mdoc:silent
 class ABBundle extends Bundle {
@@ -78,19 +68,19 @@ class ABBundle extends Bundle {
   val b = Output(Bool())
 }
 class MyFlippedModule extends RawModule {
-  // Normal instantiation of the bundle
-  // 'a' is an Input and 'b' is an Output
+  // Bundle的正常实例化
+  // 'a'是输入，'b'是输出
   val normalBundle = IO(new ABBundle)
   normalBundle.b := normalBundle.a
 
-  // Flipped recursively flips the direction of all Bundle fields
-  // Now 'a' is an Output and 'b' is an Input
+  // Flipped递归地翻转所有Bundle字段的方向
+  // 现在'a'是输出，'b'是输入
   val flippedBundle = IO(Flipped(new ABBundle))
   flippedBundle.a := flippedBundle.b
 }
 ```
 
-This generates the following Verilog:
+这会生成以下Verilog：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new MyFlippedModule())
@@ -100,7 +90,7 @@ chisel3.docs.emitSystemVerilog(new MyFlippedModule())
 
 (Chisel 3.2+)
 
-All elements of a `Vec` must have the same parameterization. If we want to create a Vec where the elements have the same type but different parameterizations, we can use a MixedVec:
+`Vec`的所有元素必须具有相同的参数化。如果我们想创建一个Vec，其中元素具有相同的类型但不同的参数化，我们可以使用MixedVec：
 
 ```scala mdoc:silent
 import chisel3.util.MixedVec
@@ -115,7 +105,7 @@ class ModuleMixedVec extends Module {
 }
 ```
 
-We can also programmatically create the types in a MixedVec:
+我们也可以以编程方式创建MixedVec中的类型：
 
 ```scala mdoc:silent
 class ModuleProgrammaticMixedVec(x: Int, y: Int) extends Module {
@@ -123,23 +113,23 @@ class ModuleProgrammaticMixedVec(x: Int, y: Int) extends Module {
     val vec = Input(MixedVec((x to y) map { i => UInt(i.W) }))
     // ...
   })
-  // ...rest of the module goes here...
+  // ...模块的其余部分放在这里...
 }
 ```
 
-### A note on `cloneType` (For Chisel < 3.5)
+### 关于`cloneType`的说明（对于Chisel < 3.5）
 
-NOTE: This section **only applies to Chisel before Chisel 3.5**.
-As of Chisel 3.5, `Bundle`s should **not** `override def cloneType`,
-as this is a compiler error when using the chisel3 compiler plugin for inferring `cloneType`.
+注意：此部分**仅适用于Chisel 3.5之前的版本**。
+从Chisel 3.5开始，`Bundle`**不应该**`override def cloneType`，
+因为当使用chisel3编译器插件推断`cloneType`时，这会导致编译器错误。
 
-Since Chisel is built on top of Scala and the JVM,
-it needs to know how to construct copies of `Bundle`s for various
-purposes (creating wires, IOs, etc).
-If you have a parametrized `Bundle` and Chisel can't automatically figure out how to
-clone it, you will need to create a custom `cloneType` method in your bundle.
-In the vast majority of cases, **this is not required**
-as Chisel can figure out how to clone most `Bundle`s automatically:
+由于Chisel建立在Scala和JVM之上，
+它需要知道如何为各种目的构造`Bundle`的副本
+（创建线网、IO等）。
+如果你有一个参数化的`Bundle`，而Chisel无法自动弄清楚如何
+克隆它，你将需要在你的bundle中创建一个自定义的`cloneType`方法。
+在绝大多数情况下，**这不是必需的**，
+因为Chisel可以自动弄清楚如何克隆大多数`Bundle`：
 
 ```scala mdoc:silent
 class MyCloneTypeBundle(val bitwidth: Int) extends Bundle {
@@ -148,14 +138,14 @@ class MyCloneTypeBundle(val bitwidth: Int) extends Bundle {
 }
 ```
 
-The only caveat is if you are passing something of type `Data` as a "generator" parameter,
-in which case you should make it a `private val`, and define a `cloneType` method with
-`override def cloneType = (new YourBundleHere(...)).asInstanceOf[this.type]`.
+唯一的注意事项是，如果你将类型为`Data`的东西作为"生成器"参数传递，
+在这种情况下，你应该将其设为`private val`，并定义一个`cloneType`方法，
+使用`override def cloneType = (new YourBundleHere(...)).asInstanceOf[this.type]`。
 
-For example, consider the following `Bundle`. Because its `gen` variable is not a `private val`, the user has to
-explicitly define the `cloneType` method:
+例如，考虑以下`Bundle`。因为它的`gen`变量不是`private val`，用户必须
+显式定义`cloneType`方法：
 
-<!-- Cannot compile this because the cloneType is now an error -->
+<!-- 无法编译这个，因为cloneType现在是一个错误 -->
 ```scala
 import chisel3.util.{Decoupled, Irrevocable}
 class RegisterWriteIOExplicitCloneType[T <: Data](gen: T) extends Bundle {
@@ -165,7 +155,7 @@ class RegisterWriteIOExplicitCloneType[T <: Data](gen: T) extends Bundle {
 }
 ```
 
-We can make this this infer cloneType by making `gen` private since it is a "type parameter":
+我们可以通过将`gen`设为private来使其推断cloneType，因为它是一个"类型参数"：
 
 ```scala mdoc:silent
 import chisel3.util.{Decoupled, Irrevocable}

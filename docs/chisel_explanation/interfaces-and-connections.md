@@ -1,20 +1,20 @@
 ---
 layout: docs
-title:  "Interfaces and Connections"
+title:  "接口和连接"
 section: "chisel3"
 ---
 
-# Interfaces & Connections
+# 接口和连接
 
-For more sophisticated modules it is often useful to define and instantiate interface classes while defining the IO for a module. First and foremost, interface classes promote reuse allowing users to capture once and for all common interfaces in a useful form.
+对于更复杂的模块，在定义模块的IO时定义和实例化接口类通常很有用。首先，接口类促进了重用，允许用户一次性捕获常见接口并以有用的形式表示。
 
-Secondly, interfaces allow users to dramatically reduce wiring by supporting bulk connections between producer and consumer modules. Finally, users can make changes in large interfaces in one place reducing the number of updates required when adding or removing pieces of the interface.
+其次，接口允许用户通过支持生产者和消费者模块之间的批量连接来大幅减少布线工作。最后，用户可以在一个地方对大型接口进行更改，减少添加或删除接口部分时所需的更新次数。
 
-Note that Chisel has some built-in standard interface which should be used whenever possible for interoperability (e.g. Decoupled).
+请注意，Chisel有一些内置的标准接口，应尽可能使用它们以实现互操作性（例如Decoupled）。
 
-## Ports: Subclasses & Nesting
+## 端口：子类和嵌套
 
-As we saw earlier, users can define their own interfaces by defining a class that subclasses Bundle. For example, a user could define a simple link for hand-shaking data as follows:
+如我们之前所见，用户可以通过定义继承Bundle的类来定义自己的接口。例如，用户可以定义一个用于数据握手的简单链接，如下所示：
 
 ```scala mdoc:invisible
 import chisel3._
@@ -28,35 +28,35 @@ class SimpleLink extends Bundle {
 }
 ```
 
-We can then extend SimpleLink by adding parity bits using bundle inheritance:
+然后我们可以通过使用bundle继承来添加奇偶校验位来扩展SimpleLink：
 ```scala mdoc:silent
 class PLink extends SimpleLink {
   val parity = Output(UInt(5.W))
 }
 ```
-In general, users can organize their interfaces into hierarchies using inheritance.
+一般来说，用户可以使用继承将接口组织成层次结构。
 
-From there we can define a filter interface by nesting two PLinks into a new FilterIO bundle:
+从那里我们可以通过将两个PLink嵌套到一个新的FilterIO bundle中来定义过滤器接口：
 ```scala mdoc:silent
 class FilterIO extends Bundle {
   val x = Flipped(new PLink)
   val y = new PLink
 }
 ```
-where flip recursively changes the direction of a bundle, changing input to output and output to input.
+其中flip递归地改变bundle的方向，将输入变为输出，将输出变为输入。
 
-We can now define a filter by defining a filter class extending module:
+我们现在可以通过定义扩展Module的filter类来定义过滤器：
 ```scala mdoc:silent
 class Filter extends Module {
   val io = IO(new FilterIO)
   // ...
 }
 ```
-where the io field contains FilterIO.
+其中io字段包含FilterIO。
 
-## Bundle Vectors
+## Bundle向量
 
-Beyond single elements, vectors of elements form richer hierarchical interfaces. For example, in order to create a crossbar with a vector of inputs, producing a vector of outputs, and selected by a UInt input, we utilize the Vec constructor:
+除了单个元素外，元素向量形成了更丰富的层次结构接口。例如，为了创建一个具有输入向量的交叉开关，产生输出向量，并由UInt输入选择，我们使用Vec构造函数：
 ```scala mdoc:silent
 import chisel3.util.log2Ceil
 class CrossbarIo(n: Int) extends Bundle {
@@ -65,40 +65,38 @@ class CrossbarIo(n: Int) extends Bundle {
   val out = Vec(n, new PLink)
 }
 ```
-where Vec takes a size as the first argument and a block returning a port as the second argument.
+其中Vec将大小作为第一个参数，将返回端口的块作为第二个参数。
 
-## Bulk Connections
-Once we have a defined Interface, we can connect to it via a [`MonoConnect`](https://www.chisel-lang.org/api/latest/chisel3/Data.html#:=) operator (`:=`) or [`BiConnect`](https://www.chisel-lang.org/api/latest/chisel3/Data.html#%3C%3E) operator (`<>`).
-
-
-### `MonoConnect` Algorithm
-`MonoConnect.connect`, or `:=`, executes a mono-directional connection element-wise.
-
-Note that this isn't commutative. There is an explicit source and sink
-already determined before this function is called.
-
-The connect operation will recurse down the left Data (with the right Data).
-An exception will be thrown if a movement through the left cannot be matched
-in the right. The right side is allowed to have extra fields.
-Vecs must still be exactly the same size.
-
-Note that the LHS element must be writable so, one of these must hold:
-- Is an internal writable node (`Reg` or `Wire`)
-- Is an output of the current module
-- Is an input of a submodule of the current module
-
-Note that the RHS element must be readable so, one of these must hold:
-- Is an internal readable node (`Reg`, `Wire`, `Op`)
-- Is a literal
-- Is a port of the current module or submodule of the current module
+## 批量连接
+一旦我们定义了接口，我们可以通过[`MonoConnect`](https://www.chisel-lang.org/api/latest/chisel3/Data.html#:=)运算符（`:=`）或[`BiConnect`](https://www.chisel-lang.org/api/latest/chisel3/Data.html#%3C%3E)运算符（`<>`）连接到它。
 
 
-### `BiConnect` Algorithm
-`BiConnect.connect`, or `<>`, executes a bidirectional connection element-wise. Note that the arguments are left and right (not source and sink) so the intent is for the operation to be commutative. The connect operation will recurse down the left `Data` (with the right `Data`). An exception will be thrown if a movement through the left cannot be matched in the right, or if the right side has extra fields.
+### `MonoConnect`算法
+`MonoConnect.connect`，或`:=`，按元素执行单向连接。
 
-> Note: We highly encourage new code to be written with the [`Connectable` Operators](https://www.chisel-lang.org/chisel3/docs/explanations/connectable.html) rather than the `<>` operator.
+请注意，这不是可交换的。在调用此函数之前已经确定了明确的源和接收器。
 
-Using the biconnect `<>` operator, we can now compose two filters into a filter block as follows:
+连接操作将递归地遍历左侧Data（与右侧Data一起）。
+如果在左侧的移动无法在右侧匹配，将抛出异常。右侧允许有额外的字段。
+Vec必须具有完全相同的大小。
+
+请注意，LHS元素必须是可写的，因此必须满足以下条件之一：
+- 是内部可写节点（`Reg`或`Wire`）
+- 是当前模块的输出
+- 是当前模块的子模块的输入
+
+请注意，RHS元素必须是可读的，因此必须满足以下条件之一：
+- 是内部可读节点（`Reg`、`Wire`、`Op`）
+- 是字面值
+- 是当前模块或当前模块的子模块的端口
+
+
+### `BiConnect`算法
+`BiConnect.connect`，或`<>`，按元素执行双向连接。请注意，参数是左右（而不是源和接收器），因此该操作的意图是可交换的。连接操作将递归地遍历左侧`Data`（与右侧`Data`一起）。如果在左侧的移动无法在右侧匹配，或者右侧有额外的字段，将抛出异常。
+
+> 注意：我们强烈鼓励使用[`Connectable`运算符](https://www.chisel-lang.org/chisel3/docs/explanations/connectable.html)而不是`<>`运算符编写新代码。
+
+使用双连接`<>`运算符，我们现在可以将两个过滤器组合成一个过滤器块，如下所示：
 ```scala mdoc:silent
 class Block extends Module {
   val io = IO(new FilterIO)
@@ -110,7 +108,7 @@ class Block extends Module {
 }
 ```
 
-The bidirectional bulk connection operator `<>` connects leaf ports of the same name to each other. The Scala types of the Bundles are not required to match. If one named signal is missing from either side, Chisel will give an error such as in the following example:
+双向批量连接运算符`<>`将同名的叶端口相互连接。Bundle的Scala类型不需要匹配。如果任一侧缺少一个命名信号，Chisel将给出如下例所示的错误：
 
 ```scala mdoc:silent
 
@@ -126,12 +124,12 @@ class Block2 extends Module {
   io1 <> io2
 }
 ```
-Below we can see the resulting error for this example:
+下面我们可以看到这个例子的结果错误：
 ```scala mdoc:crash
 emitSystemVerilog(new Block2)
 ```
-Bidirectional connections should only be used with **directioned elements** (like IOs), e.g. connecting two wires isn't supported since Chisel can't necessarily figure out the directions automatically.
-For example, putting two temporary wires and connecting them here will not work, even though the directions could be known from the endpoints:
+双向连接应该只用于**有方向的元素**（如IO），例如，连接两个线不受支持，因为Chisel不一定能自动确定方向。
+例如，即使可以从端点知道方向，在此处放置两个临时线并连接它们也不会起作用：
 
 ```scala mdoc:silent
 
@@ -149,38 +147,38 @@ class BlockWithTemporaryWires extends Module {
 }
 
 ```
-Below we can see the resulting error for this example:
+下面我们可以看到这个例子的结果错误：
 ```scala mdoc:crash
 emitSystemVerilog(new BlockWithTemporaryWires)
 ```
-For more details and information, see [Deep Dive into Connection Operators](connection-operators)
+有关更多详细信息，请参见[连接运算符深入探讨](connection-operators)
 
-NOTE: When using `Chisel._` (compatibility mode) instead of `chisel3._`, the `:=` operator works in a bidirectional fashion similar to `<>`, but not exactly the same.
+注意：当使用`Chisel._`（兼容模式）而不是`chisel3._`时，`:=`运算符以类似于`<>`的双向方式工作，但不完全相同。
 
-## The standard ready-valid interface (ReadyValidIO / Decoupled)
+## 标准就绪-有效接口（ReadyValidIO / Decoupled）
 
-Chisel provides a standard interface for ready-valid interfaces (for example used in AXI).
-A ready-valid interface consists of a `ready` signal, a `valid` signal, and some data stored in `bits`.
-The `ready` bit indicates that a consumer is *ready* to consume data.
-The `valid` bit indicates that a producer has *valid* data on `bits`.
-When both `ready` and `valid` are asserted, a data transfer from the producer to the consumer takes place.
-A convenience method `fire` is provided that is asserted if both `ready` and `valid` are asserted.
+Chisel为就绪-有效接口提供了标准接口（例如在AXI中使用）。
+就绪-有效接口由`ready`信号、`valid`信号和存储在`bits`中的一些数据组成。
+`ready`位表示消费者*准备好*消费数据。
+`valid`位表示生产者在`bits`上有*有效*数据。
+当`ready`和`valid`都被断言时，数据从生产者传输到消费者。
+提供了一个便利方法`fire`，如果`ready`和`valid`都被断言，则该方法被断言。
 
-Usually, we use the utility function [`Decoupled()`](https://chisel.eecs.berkeley.edu/api/latest/chisel3/util/Decoupled$.html) to turn any type into a ready-valid interface rather than directly using [ReadyValidIO](http://chisel.eecs.berkeley.edu/api/latest/chisel3/util/ReadyValidIO.html).
+通常，我们使用实用函数[`Decoupled()`](https://chisel.eecs.berkeley.edu/api/latest/chisel3/util/Decoupled$.html)将任何类型转换为就绪-有效接口，而不是直接使用[ReadyValidIO](http://chisel.eecs.berkeley.edu/api/latest/chisel3/util/ReadyValidIO.html)。
 
-* `Decoupled(...)` creates a producer / output ready-valid interface (i.e. bits is an output).
-* `Flipped(Decoupled(...))` creates a consumer / input ready-valid interface (i.e. bits is an input).
+* `Decoupled(...)`创建一个生产者/输出就绪-有效接口（即bits是输出）。
+* `Flipped(Decoupled(...))`创建一个消费者/输入就绪-有效接口（即bits是输入）。
 
-Take a look at the following example Chisel code to better understand exactly what is generated:
+查看以下示例Chisel代码，以更好地理解确切生成的内容：
 
 ```scala mdoc:silent:reset
 import chisel3._
 import chisel3.util.Decoupled
 
 /**
-  * Using Decoupled(...) creates a producer interface.
-  * i.e. it has bits as an output.
-  * This produces the following ports:
+  * 使用Decoupled(...)创建一个生产者接口。
+  * 即，它有bits作为输出。
+  * 这会产生以下端口：
   *   input         io_readyValid_ready,
   *   output        io_readyValid_valid,
   *   output [31:0] io_readyValid_bits
@@ -189,15 +187,15 @@ class ProducingData extends Module {
   val io = IO(new Bundle {
     val readyValid = Decoupled(UInt(32.W))
   })
-  // do something with io.readyValid.ready
+  // 对io.readyValid.ready做些什么
   io.readyValid.valid := true.B
   io.readyValid.bits := 5.U
 }
 
 /**
-  * Using Flipped(Decoupled(...)) creates a consumer interface.
-  * i.e. it has bits as an input.
-  * This produces the following ports:
+  * 使用Flipped(Decoupled(...))创建一个消费者接口。
+  * 即，它有bits作为输入。
+  * 这会产生以下端口：
   *   output        io_readyValid_ready,
   *   input         io_readyValid_valid,
   *   input  [31:0] io_readyValid_bits
@@ -207,15 +205,15 @@ class ConsumingData extends Module {
     val readyValid = Flipped(Decoupled(UInt(32.W)))
   })
   io.readyValid.ready := false.B
-  // do something with io.readyValid.valid
-  // do something with io.readyValid.bits
+  // 对io.readyValid.valid做些什么
+  // 对io.readyValid.bits做些什么
 }
 ```
 
-`DecoupledIO` is a ready-valid interface with the *convention* that no guarantees are placed on deasserting `ready` or `valid` or on the stability of `bits`.
-That means `ready` and `valid` can also be deasserted without a data transfer.
+`DecoupledIO`是一个就绪-有效接口，其*约定*是不对取消断言`ready`或`valid`或`bits`的稳定性做任何保证。
+这意味着`ready`和`valid`也可以在没有数据传输的情况下取消断言。
 
-`IrrevocableIO` is a ready-valid interface with the *convention* that the value of `bits` will not change while `valid` is asserted and `ready` is deasserted.
-Also, the consumer shall keep `ready` asserted after a cycle where `ready` was high and `valid` was low.
-Note that the *irrevocable* constraint *is only a convention* and cannot be enforced by the interface.
-Chisel does not automatically generate checkers or assertions to enforce the *irrevocable* convention.
+`IrrevocableIO`是一个就绪-有效接口，其*约定*是在`valid`被断言且`ready`被取消断言时，`bits`的值不会改变。
+此外，消费者在`ready`为高而`valid`为低的周期后应保持`ready`被断言。
+请注意，*不可撤销*约束*仅是一个约定*，无法通过接口强制执行。
+Chisel不会自动生成检查器或断言来强制执行*不可撤销*约定。

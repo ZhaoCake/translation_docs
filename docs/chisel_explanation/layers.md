@@ -1,58 +1,40 @@
 ---
 layout: docs
-title:  "Layers"
+title:  "层"
 section: "chisel3"
 ---
 
-# Layers
+# 层
 
-Layers describe functionality of a Chisel generator that a user would like to
-_optionally_ include at Verilog elaboration time.  Pragmatically, they are a
-feature to access SystemVerilog's `bind` construct and `` `ifdef `` preprocessor
-macros.  The optional functionality of layers, by construction, is not allowed
-to affect logic outside the layer.
+层描述了用户希望在Verilog生成时_可选_包含的Chisel生成器功能。实际上，它们是一种访问SystemVerilog的`bind`构造和`` `ifdef ``预处理器宏的功能。按照设计，层的可选功能不允许影响层外的逻辑。
 
-Layers are typically used to describe design verification code or
-debugging logic that a user would like to be able to later disable (for
-performance, verbosity, or cleanliness reasons) or use internally, but exclude
-from delivery to a customer.
+层通常用于描述设计验证代码或调试逻辑，用户希望能够稍后禁用（出于性能、详细程度或整洁原因）或内部使用，但从交付给客户的版本中排除。
 
-## Overview
+## 概述
 
-A layer consists of two pieces:
+一个层由两部分组成：
 
-1. A layer _declaration_, and
-1. One or more _layer blocks_ inside Chisel modules.
+1. 一个层_声明_，以及
+1. Chisel模块内的一个或多个_层块_。
 
-The declaration indicates that optional functionality can exist.  The layer
-block contains the optional functionality.
+声明表示可以存在可选功能。层块包含可选功能。
 
-There are two kinds of layers.  The layer kind determines the _convention_,
-i.e., how the layer blocks of a layer are represented in Verilog and the
-mechanism to enable a layer.  Available layer kinds are:
+有两种类型的层。层类型决定了_约定_，即层的层块在Verilog中如何表示以及启用层的机制。可用的层类型有：
 
-1. "Extract" Layers: layers whose blocks are lowered to modules that are
-   instantiated using `bind` and can be enabled by including a file during
-   Verilog elaboration, and
-2. "Inline" Layers: layers whose blocks will be guarded with `` `ifdef `` macros
-   and can be enabled by setting a Verilog preprocessor define.
+1. "提取"层：其块被降级为使用`bind`实例化的模块，可以通过在Verilog生成期间包含文件来启用，以及
+2. "内联"层：其块将被`` `ifdef ``宏保护，可以通过设置Verilog预处理器定义来启用。
 
-Extract layers may also specify a directory into which their collateral are
-written.
+提取层还可以指定写入其附属物的目录。
 
 :::info
 
-For more information about these SystemVerilog concepts, the IEEE 1800-2023
-standard discusses `bind` in Section 23.11 and `` `ifdef `` in Section 23.6.
+关于这些SystemVerilog概念的更多信息，IEEE 1800-2023标准在第23.11节讨论了`bind`，在第23.6节讨论了`` `ifdef ``。
 
 :::
 
-To declare a layer, create a singleton `object` in scala that extends the
-abstract class `chisel3.layer.Layer`, passing into the layer constructor either
-an object of class `chisel3.layer.LayerConfig.Extract` for an extract layer, or
-the object `chisel3.layer.LayerConfig.Inline` for an inline layer.
+要声明一个层，在scala中创建一个继承抽象类`chisel3.layer.Layer`的单例`object`，向层构造函数传递`chisel3.layer.LayerConfig.Extract`类的对象（用于提取层），或者对象`chisel3.layer.LayerConfig.Inline`（用于内联层）。
 
-Below, an extract layer and an inline layer are declared:
+下面，声明了一个提取层和一个内联层：
 
 ```scala mdoc:silent
 import chisel3.layer.{Layer, LayerConfig}
@@ -62,13 +44,9 @@ object A extends Layer(LayerConfig.Extract())
 object B extends Layer(LayerConfig.Inline)
 ```
 
-Layers may be nested.  Nesting a child layer under a parent layer means that the
-child layer may access constructs in the parent layer.  Put differently, the
-child layer will only be enabled if the parent layer is already enabled.  To
-declare a nested layer, extend the `chisel3.layer.Layer` abstract class inside
-another declaration.
+层可以嵌套。在父层下嵌套子层意味着子层可以访问父层中的构造。换句话说，只有在父层已启用的情况下，子层才会被启用。要声明嵌套层，请在另一个声明内扩展`chisel3.layer.Layer`抽象类。
 
-The following example defines an extract layer with two nested layers inside it:
+以下示例定义了一个包含两个嵌套层的提取层：
 
 ```scala mdoc:silent
 object C extends Layer(LayerConfig.Extract()) {
@@ -81,36 +59,23 @@ object C extends Layer(LayerConfig.Extract()) {
 
 :::info
 
-SystemVerilog prohibits a `bind` instantiation under another `bind`
-instantiation.  However, Chisel allows nesting of extract layers.  This is
-resolved by the FIRRTL compiler to restructure nested extract layers to be
-sibling modules that communicate via ports.
+SystemVerilog禁止在另一个`bind`实例化下进行`bind`实例化。然而，Chisel允许嵌套提取层。FIRRTL编译器会重构嵌套的提取层，使其成为通过端口通信的兄弟模块。
 
 :::
 
 :::warning
 
-Extract layers may not be nested under inline layers.  However, inline layers
-may be nested under extract layers.
+提取层不能嵌套在内联层下。然而，内联层可以嵌套在提取层下。
 
-Any module which contains layer blocks or transitively contains layer blocks in
-its submodules may not be instantiated under a layer block.
+任何包含层块或传递性地在其子模块中包含层块的模块都不能在层块下实例化。
 
 :::
 
-A _layer block_, associated with a layer, adds optional functionality to a
-module that is enabled if that layer is enabled.  To define a layer block, use
-the `chisel3.layer.block` inside a Chisel module and pass the layer that it
-should be associated with.
+与一个层相关联的_层块_，向模块添加可选功能，如果该层启用，则启用该功能。要定义一个层块，请在Chisel模块内使用`chisel3.layer.block`并传递它应该关联的层。
 
-Inside the layer block, any Chisel or Scala value visible in lexical scope may
-be used.  Layer blocks may not return values.  Any values created inside a layer
-block are not accessible outside the layer block, unless using layer-colored
-probes.
+在层块内部，可以使用词法范围内可见的任何Chisel或Scala值。层块不能返回值。层块内创建的任何值在层块外都不可访问，除非使用层着色探针。
 
-The following example defines layer blocks inside module `Foo`.  Each layer
-block contains a wire that captures a value from its visible lexical scope.
-(For nested layer blocks, this scope includes their parent layer blocks.):
+以下示例在模块`Foo`内定义层块。每个层块包含一个捕获其可见词法范围中的值的线。（对于嵌套层块，此范围包括其父层块。）：
 
 ```scala mdoc:silent
 import chisel3._
@@ -142,9 +107,7 @@ class Foo extends RawModule {
 }
 ```
 
-The layer block API will automatically create parent layer blocks for you if
-possible.  In the following example, it is legal to directly create a layer
-block of `C.D` directly in a module:
+如果可能，层块API会自动为您创建父层块。在以下示例中，直接在模块中创建`C.D`的层块是合法的：
 
 ```scala mdoc:silent
 class Bar extends RawModule {
@@ -152,14 +115,11 @@ class Bar extends RawModule {
 }
 ```
 
-Formally, it is legal to create a layer block associated with a layer as long as
-the current scope is an _ancestor_ of the request layer.
+形式上，只要当前作用域是请求层的_祖先_，就可以创建与层关联的层块。
 
 :::info
 
-The requirement is an _ancestor_ relationship, not a _proper ancestor_
-relationship.  This means that it is legal to nest a layer block under a layer
-block of the same layer like:
+这个要求是一个_祖先_关系，而不是一个_严格祖先_关系。这意味着在同一层的层块下嵌套一个层块是合法的，如：
 
 ```scala mdoc:silent
 class Baz extends RawModule {
@@ -173,26 +133,19 @@ class Baz extends RawModule {
 
 ## Verilog ABI
 
-Layers are compiled to SystemVerilog using the FIRRTL ABI.  This ABI defines
-what happens to layer blocks in a Chisel design and how a layer can be enabled
-after a design is compiled to SystemVerilog.
+层使用FIRRTL ABI编译为SystemVerilog。这个ABI定义了Chisel设计中层块的行为以及如何在设计编译为SystemVerilog后启用层。
 
 :::info
 
-For the exact definition of the FIRRTL ABI for layers, see the [FIRRTL ABI
-Specification](https://github.com/chipsalliance/firrtl-spec/releases/latest/download/abi.pdf).
+有关层的FIRRTL ABI的确切定义，请参阅[FIRRTL ABI规范](https://github.com/chipsalliance/firrtl-spec/releases/latest/download/abi.pdf)。
 
 :::
 
-### Extract Layers
+### 提取层
 
-Extract layers have their layer blocks removed from the design.  To enable a
-layer, a file with a specific name should be included in the design.  This file
-begins with `layers-` and then includes the circuit name and all layer names
-delimited with dashes (`-`).
+提取层的层块从设计中移除。要启用一个层，应该在设计中包含一个特定名称的文件。这个文件以`layers-`开头，然后包括电路名称和所有层名称，用破折号（`-`）分隔。
 
-For example, for module `Foo` declared above, this will produce three files, one
-for each extract layer:
+例如，对于上面声明的模块`Foo`，这将产生三个文件，每个提取层一个：
 
 ```
 layers-Foo-A.sv
@@ -200,20 +153,13 @@ layers-Foo-C.sv
 layers-Foo-C-D.sv
 ```
 
-To enable any of these layers at compilation time, the appropriate file should
-be included in the build.  Any combination of files may be included.  Including
-only a child layer's file will automatically include its parent layer's file.
+要在编译时启用这些层中的任何一个，应该在构建中包含适当的文件。可以包含任意文件组合。只包含子层的文件将自动包含其父层的文件。
 
-### Inline Layers
+### 内联层
 
-Inline layers have their layer blocks guarded with conditional compilation
-directives.  To enable an inline layer, set a preprocessor define when compiling
-your design.  The preprocessor define begins with `layer_` and then includes the
-circuit name and all layer names delimited with dollar signs (`$`).  Parent
-extract layer names appear in the macro.
+内联层的层块用条件编译指令保护。要启用内联层，在编译设计时设置预处理器定义。预处理器定义以`layer_`开头，然后包括电路名称和所有层名称，用美元符号（`$`）分隔。父提取层名称出现在宏中。
 
-For example, for module `Foo` declared above, this will be sensitive to three
-macros, one for each inline layer:
+例如，对于上面声明的模块`Foo`，这将对三个宏敏感，每个内联层一个：
 
 ```
 layer_Foo$B
@@ -221,28 +167,19 @@ layer_Foo$C$E
 layer_Foo$C$E$F
 ```
 
-## User-defined Layers
+## 用户定义的层
 
-A user is free to define as many layers as they want.  All layers shown
-previously are user-defined, e.g., `A` and `C.E` are user-defined layers.
-User-defined layers are only emitted into FIRRTL if they have layer block users.
-To change this behavior and unconditionally emit a user-defined layer, use the
-`chisel3.layer.addLayer` API.
+用户可以自由定义任意数量的层。之前显示的所有层都是用户定义的，例如，`A`和`C.E`是用户定义的层。只有当用户定义的层有层块用户时，它们才会被发送到FIRRTL。要更改此行为并无条件地发出用户定义的层，请使用`chisel3.layer.addLayer` API。
 
 :::tip
 
-Before creating new user-defined layers, consider using the built-in layers
-defined below.  Additionally, if working in a larger project, the project may
-have it's own user-defined layers that you are expected to use.  This is because
-the ABIs affect the build system.  Please consult with a technical lead of the
-project to see if this is the case.
+在创建新的用户定义层之前，请考虑使用下面定义的内置层。此外，如果在一个更大的项目中工作，该项目可能有自己的用户定义层，您应该使用这些层。这是因为ABI会影响构建系统。请咨询项目的技术负责人，看看是否是这种情况。
 
 :::
 
-## Built-in Layers
+## 内置层
 
-Chisel provides several built-in layers.  These are shown below with their full
-Scala paths.  All built-in layers are extract layers:
+Chisel提供了几个内置层。这些层的完整Scala路径如下所示。所有内置层都是提取层：
 
 ```
 chisel3.layers.Verification
@@ -251,32 +188,20 @@ chisel3.layers.Verification
 └── chisel3.layers.Verification.Cover
 ```
 
-These built-in layers are dual purpose.  First, these layers match the common
-use case of sequestering verification code.  The `Verification` layer is for
-common verification collateral.  The `Assert`, `Assume`, and `Cover` layers are
-for, respectively, assertions, assumptions, and cover statements.  Second, the
-Chisel standard library uses them for a number of its APIs.  _Unless otherwise
-wrapped in a different layer block, the following operations are automatically
-placed in layers_:
+这些内置层具有双重目的。首先，这些层与将验证代码隔离的常见用例相匹配。`Verification`层用于常见的验证附属物。`Assert`、`Assume`和`Cover`层分别用于断言、假设和覆盖语句。其次，Chisel标准库在其许多API中使用它们。_除非另外包装在不同的层块中，否则以下操作会自动放置在层中_：
 
-* Prints are placed in the `Verification` layer
-* Assertions are placed in the `Verification.Assert` layer
-* Assumptions are placed in the `Verification.Assume` layer
-* Covers are placed in the `Verification.Cover` layer
+* 打印被放置在`Verification`层中
+* 断言被放置在`Verification.Assert`层中
+* 假设被放置在`Verification.Assume`层中
+* 覆盖被放置在`Verification.Cover`层中
 
-For predictability of output, these layers will always be show up in the FIRRTL
-that Chisel emits.  To change this behavior, use `firtool` command line options
-to _specialize_ these layers (remove their optionality by making them always
-enabled or disabled).  Use `-enable-layers` to enable a layer, `-disable-layers`
-to disable a layer, or `-default-layer-specialization` to set a default
-specialization.
+为了输出的可预测性，这些层将始终出现在Chisel发出的FIRRTL中。要更改此行为，请使用`firtool`命令行选项_专门化_这些层（通过使它们始终启用或禁用来移除它们的可选性）。使用`-enable-layers`启用一个层，`-disable-layers`禁用一个层，或者`-default-layer-specialization`设置默认专门化。
 
 :::tip
 
-Users may extend built-in layers with user-defined layers using an advanced API.
-To do this, the layer parent must be specified as an implicit value.
+用户可以使用高级API用用户定义的层扩展内置层。为此，必须将层父级指定为隐式值。
 
-The following example nests the layer `Debug` to the `Verification` layer:
+以下示例将层`Debug`嵌套到`Verification`层：
 
 ```scala mdoc:silent
 object UserDefined {
@@ -290,39 +215,25 @@ object UserDefined {
 
 :::
 
-## Layer-coloring
+## 层着色
 
-While layers are not allowed to influence the design or their parent layers, it
-is often useful and necessary to allow layer blocks to send information out of
-their containing modules to be read by layer blocks of the same layer or
-children layers. Hardware which has this optional property is said to be
-_layer-colored_.  Both probes and wires can be layer-colored.
+虽然层不允许影响设计或其父层，但通常允许层块将信息从其包含模块发送出去，以便同一层或子层的层块读取是有用且必要的。具有这种可选属性的硬件被称为_层着色_。探针和线都可以进行层着色。
 
-### Layer-colored Probes and Wires
+### 层着色探针和线
 
-A layer-colored probe is a probe that exists if a user enables its corresponding
-layer during Verilog elaboration.  Layer-colored probes are used to describe
-optional verification, debugging, or logging interfaces.
+层着色探针是一种在用户在Verilog生成期间启用其相应层时存在的探针。层着色探针用于描述可选的验证、调试或日志接口。
 
-Layer-colored wires are used as temporary storage of defined probe values.  They
-are used for communication between layer blocks of the same layer in the same
-module or as temporary storage when forwarding a probe to a port.
+层着色线用作已定义探针值的临时存储。它们用于同一模块中同一层的层块之间的通信，或者在将探针转发到端口时作为临时存储。
 
-A layer-colored probe or wire may be the target of a `define` if the `define` is
-enabled when the color of the probe or wire is enabled.  A layer-colored probe
-or wire may be `read` from if the color of the probe or wire is enabled when the
-`read` is enabled.  Put differently, you may write to your layer or a child
-layer and you may read from your layer or a parent layer.
+如果在启用探针或线的颜色时启用了`define`，则层着色探针或线可以是`define`的目标。如果在启用`read`时启用了探针或线的颜色，则可以从层着色探针或线中`read`。换句话说，您可以写入您的层或子层，您可以从您的层或父层读取。
 
 :::info
 
-For more information, see the layer coloring section of the [FIRRTL
-Specification](https://github.com/chipsalliance/firrtl-spec/releases/latest/download/spec.pdf).
+有关更多信息，请参阅[FIRRTL规范](https://github.com/chipsalliance/firrtl-spec/releases/latest/download/spec.pdf)的层着色部分。
 
 :::
 
-The example below shows two layer-colored probe ports and one layer-colored
-probe wire driven in legal ways:
+下面的示例显示了两个层着色探针端口和一个以合法方式驱动的层着色探针线：
 
 ```scala mdoc:reset
 import chisel3._
@@ -352,12 +263,9 @@ class Foo extends RawModule {
 }
 ```
 
-Additionally, as the pattern of driving a layer-colored probe wire from within a
-layer block is common, layer blocks are also capable of directly returning a
-layer-colored wire.  To do this, the return value of a layer block must be a
-subtype of `Data`.
+此外，由于从层块内驱动层着色探针线的模式很常见，层块也能够直接返回层着色线。为此，层块的返回值必须是`Data`的子类型。
 
-Using this feature, the second layer block can be rewritten as follows:
+使用此功能，可以按如下方式重写第二个层块：
 
 ``` scala mdoc:silent
 class Bar extends RawModule {
@@ -374,33 +282,17 @@ class Bar extends RawModule {
 
 :::info
 
-In implementation, a returned value from a layer block will cause a wire to be
-created before the layer block.  I.e., what is shown in module `Bar` is just a
-Chisel shorthand for what is written in `Foo`.  Layer blocks, as described in
-the FIRRTL specification, do not have the ability to return values.
+在实现中，从层块返回的值将导致在层块之前创建一个线。即，模块`Bar`中显示的内容只是`Foo`中编写内容的Chisel简写。如FIRRTL规范中所述，层块没有返回值的能力。
 
 :::
 
-### Enabling Layers
+### 启用层
 
-When working with layer-colored probes, it is often convenient to grant access
-to probes of one or more colors.  E.g., testbenches often want to _enable_ all
-layers in a design-under-test so that they gain access to layer-colored probe
-ports necessary for advanced design verification.  Without an additional
-feature, this use case is poorly supported with just layer coloring.  First, it
-is tedious to enclose all code inside a testbench in a layer block.  Second, a
-testbench may need to read probes with colors that do not have a parent--child
-relationship.  No layer block is capable of both legally reading from different
-probes and combining the results.
+在使用层着色探针时，通常方便地授予对一个或多个颜色的探针的访问权限。例如，测试台通常希望_启用_被测设计中的所有层，以便获得对层着色探针端口的访问权限，这对于高级设计验证是必要的。如果没有额外的功能，这种用例仅使用层着色就得不到很好的支持。首先，在测试台中封装所有代码到层块中是乏味的。其次，测试台可能需要读取没有父子关系的不同颜色的探针。没有层块能够同时合法地从不同的探针读取并组合结果。
 
-To support this use case, Chisel provides the `layer.enable` API.  This API
-grants access to any layer-colored probes of instantiated modules for the
-enabled layer.  The API may be used more than once to enable more than one
-layer.
+为了支持这种用例，Chisel提供了`layer.enable` API。此API授予对实例化模块的已启用层的任何层着色探针的访问权限。可以多次使用此API以启用多个层。
 
-The example below instantiates module `Foo` from the previous section.  After
-enabling layers `A` and `B`, the module can read from probes with colors `A` and
-`B` and use their results in a single operation:
+下面的示例实例化了前一节中的模块`Foo`。在启用层`A`和`B`后，模块可以从颜色为`A`和`B`的探针读取，并在单个操作中使用它们的结果：
 
 ```scala mdoc:silent
 import chisel3.layer.enable
@@ -418,13 +310,11 @@ class Bar extends RawModule {
 }
 ```
 
-## Examples
+## 示例
 
-### Simple Extract Layer
+### 简单提取层
 
-The design below has a single extract layer that, when enabled, will add an
-assert that checks for overflow.  Based on the FIRRTL ABI, we can expect that a
-file called `layers-Foo-A.sv` will be produced when we compile it.
+下面的设计有一个单一的提取层，启用后，将添加一个检查溢出的断言。根据FIRRTL ABI，我们可以预期在编译时将生成一个名为`layers-Foo-A.sv`的文件。
 
 ```scala mdoc:reset:silent
 import chisel3._
@@ -448,8 +338,7 @@ class Foo extends Module {
 }
 ```
 
-After compilation, we get the following SystemVerilog.  Comments that include
-`FILE` indicate the beginning of a new file:
+编译后，我们得到以下SystemVerilog。包含`FILE`的注释表示新文件的开始：
 
 ```scala mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
@@ -467,27 +356,19 @@ circt.stage.ChiselStage.emitSystemVerilog(
 
 :::info
 
-The above example was compiled with the firtool options
-`-enable-layers=Verification`, `-enable-layers=Verification.Assert`,
-`-enable-layers=Verification.Assume`, and `-enable-layers=Verification.Cover` to
-make the output terser.  Normally, bind files would show up for these built-in
-layers.
+上面的示例是使用firtool选项`-enable-layers=Verification`、`-enable-layers=Verification.Assert`、`-enable-layers=Verification.Assume`和`-enable-layers=Verification.Cover`编译的，以使输出更简洁。通常，这些内置层的绑定文件会显示。
 
 :::
 
 :::info
 
-Note: the generated module, `Foo_A`, and its file, `Foo_A.sv`, are _not part of
-the ABI_.  You should not rely on any generated module names or files other than
-the bind file, `layers-Foo-A.sv`.
+注意：生成的模块`Foo_A`及其文件`Foo_A.sv`_不是ABI的一部分_。除了绑定文件`layers-Foo-A.sv`外，您不应依赖任何生成的模块名称或文件。
 
 :::
 
-### Simple Inline Layer
+### 简单内联层
 
-The design below is the same as the previous example, but uses an inline layer.
-Based on the FIRRTL ABI, we can expect that the body of the layer block will be
-guarded by an `` `ifdef `` sensitive to the preprocessor macro `layer_Foo$A`.
+下面的设计与前一个示例相同，但使用内联层。根据FIRRTL ABI，我们可以预期层块的主体将被`` `ifdef ``保护，对预处理器宏`layer_Foo$A`敏感。
 
 ```scala mdoc:reset:silent
 import chisel3._
@@ -511,7 +392,7 @@ class Foo extends Module {
 }
 ```
 
-After compilation, we get the following SystemVerilog.
+编译后，我们得到以下SystemVerilog。
 
 ```scala mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
@@ -524,27 +405,19 @@ circt.stage.ChiselStage.emitSystemVerilog(
 )
 ```
 
-### Design Verification Example
+### 设计验证示例
 
-Consider a use case where a design or design verification engineer would like to
-add some asserts and debug prints to a module.  The logic necessary for the
-asserts and debug prints requires additional computation.  All of this code
-should selectively included at Verilog elaboration time (not at Chisel
-elaboration time).  The engineer can use three layers to do this.
+考虑这样一个用例，设计或设计验证工程师希望向模块添加一些断言和调试打印。断言和调试打印所需的逻辑需要额外的计算。所有这些代码应该可以在Verilog生成时（而不是在Chisel生成时）选择性地包含。工程师可以使用三个层来实现这一点。
 
-There are three layers used in this example:
+本示例中使用了三个层：
 
-1. The built-in `Verification` layer
-1. The built-in `Assert` layer which is nested under the built-in `Verification`
-   layer
-1. A user-defined `Debug` layer which is also nested under the built-in
-   `Verification` layer
+1. 内置的`Verification`层
+1. 内置的`Assert`层，嵌套在内置的`Verification`层下
+1. 用户定义的`Debug`层，也嵌套在内置的`Verification`层下
 
-The `Verification` layer can be used to store common logic used by both the
-`Assert` and `Debug` layers.  The latter two layers allow for separation of,
-respectively, assertions from prints.
+`Verification`层可用于存储`Assert`和`Debug`层共用的常见逻辑。后两个层允许分离断言和打印。
 
-One way to write this in Scala is the following:
+在Scala中编写这个的一种方式如下：
 
 ```scala mdoc:reset:silent
 import chisel3._
@@ -586,66 +459,44 @@ class Foo extends Module {
 
 ```
 
-After compilation, this will produce two layer include files with the
-following filenames.  One file is created for each extract layer:
+编译后，这将生成具有以下文件名的两个层包含文件。为每个提取层创建一个文件：
 
 1. `layers_Foo_Verification.sv`
 1. `layers_Foo_Verification_Assert.sv`
 
-Additionally, the resulting SystemVerilog will be sensitive to the preprocessor
-define `layer_Foo$Verification$Debug` due to the one inline layer we added.
+此外，由于我们添加的一个内联层，生成的SystemVerilog将对预处理器定义`layer_Foo$Verification$Debug`敏感。
 
-A user can then include any combination of these files in their design to
-include the optional functionality described by the `Verification` or
-`Verification.Assert` layers and enable debugging by setting the preprocessor
-macro.  The `Verification.Assert` bind file automatically includes the
-`Verification` bind file for the user.
+用户然后可以在其设计中包含这些文件的任意组合，以包含由`Verification`或`Verification.Assert`层描述的可选功能，并通过设置预处理器宏启用调试。`Verification.Assert`绑定文件自动为用户包含`Verification`绑定文件。
 
-#### Implementation Notes
+#### 实现说明
 
 :::warning
 
-This section describes the implementation of how layers are compiled.  Anything
-that is _not_ a bind file name or a preprocessor macro should not be relied
-upon!  A FIRRTL compiler may implement this differently or may optimize layer
-blocks in any legal way it chooses.  E.g., layer blocks associated with the same
-layer may be merged, layer blocks may be moved up or down the hierarchy, code
-that only fans out to a layer block may be sunk into it, and unused layer blocks
-may be deleted.
+本节描述了层如何编译的实现。除了绑定文件名或预处理器宏之外的任何内容都不应该被依赖！FIRRTL编译器可能会以不同方式实现这一点，或者可能会以任何合法方式优化层块。例如，与同一层关联的层块可能会合并，层块可能会在层次结构中上移或下移，只向层块扇出的代码可能会沉入其中，未使用的层块可能会被删除。
 
-The information below is for user understanding and interest only.
+以下信息仅供用户理解和兴趣。
 
 :::
 
-In implementation, a FIRRTL compiler creates three Verilog modules for the
-circuit above (one for `Foo` and one for each layer block associated with an
-extract layer in module `Foo`):
+在实现中，FIRRTL编译器为上述电路创建三个Verilog模块（一个用于`Foo`，一个用于与模块`Foo`中的提取层关联的每个层块）：
 
 1. `Foo`
 1. `Foo_Verification`
 1. `Foo_Verification_Assert`
 
-These will typically be created in separate files with names that match the
-modules, i.e., `Foo.sv`, `Foo_Verification.sv`, and
-`Foo_Verification_Assert.sv`.
+这些通常会在名称与模块匹配的单独文件中创建，即`Foo.sv`、`Foo_Verification.sv`和`Foo_Verification_Assert.sv`。
 
-The ports of each module created from a layer block will be automatically
-determined based on what that layer block captured from outside the layer block.
-In the example above, the `Verification` layer block captured port `a`.  The
-`Assert` layer block captured captured `a` and `a_d0`.
+从层块创建的每个模块的端口将根据该层块从层块外部捕获的内容自动确定。在上面的示例中，`Verification`层块捕获了端口`a`。`Assert`层块捕获了`a`和`a_d0`。
 
 :::info
 
-Even though there are no layer blocks that use the `Verification.Assume` or
-`Verification.Cover` layers, bind files which have no effect are produced in the
-output.  This is due to the ABI which requires that layers that are defined in
-FIRRTL must produce these files.
+即使没有使用`Verification.Assume`或`Verification.Cover`层的层块，输出中也会生成没有效果的绑定文件。这是由于ABI要求在FIRRTL中定义的层必须生成这些文件。
 
 :::
 
-#### Verilog Output
+#### Verilog输出
 
-The complete Verilog output for this example is reproduced below:
+此示例的完整Verilog输出如下所示：
 
 ```scala mdoc:verilog
 // Use ChiselStage instead of chisel3.docs.emitSystemVerilog because we want layers printed here (obviously)

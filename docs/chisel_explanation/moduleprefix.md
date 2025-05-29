@@ -1,13 +1,13 @@
-# Module Prefixing
+# 模块前缀
 
-Chisel supports a feature called module prefixing.
-Module prefixing allows you to create namespaces in the Verilog output of your design.
-They are especially useful for when you want to name a particular subsystem of your design,
-and you want to make it easy to identify which subsystem a file belongs to by its name.
+Chisel支持一种称为模块前缀的功能。
+模块前缀允许您在设计的Verilog输出中创建命名空间。
+它们特别适用于当您想要命名设计的特定子系统时，
+并且您希望通过文件名轻松识别文件属于哪个子系统。
 
 ## withModulePrefix
 
-We can open a module prefix block using `withModulePrefix`:
+我们可以使用`withModulePrefix`打开一个模块前缀块：
 
 ```scala mdoc:silent
 import chisel3._
@@ -19,10 +19,10 @@ class Top extends Module {
 }
 ```
 
-All modules defined inside of this block, whether an immediate submodule or a descendent, will be given a prefix `Foo`.
-(The prefix is separated by an underscore `_`).
+此块内定义的所有模块，无论是直接子模块还是后代，都将被赋予前缀`Foo`。
+（前缀用下划线`_`分隔）。
 
-For example, suppose we write the following:
+例如，假设我们编写以下内容：
 
 ```scala mdoc:silent:reset
 import chisel3._
@@ -38,12 +38,12 @@ class Sub extends Module {
 }
 ```
 
-The result will be a design with two module definitions: `Top` and `Foo_Sub`.
+结果将是一个包含两个模块定义的设计：`Top`和`Foo_Sub`。
 
-Note that the `val sub =` part must be pulled outside of the `withModulePrefix` block,
-or else the module will not be accessible to the rest of the `Top` module.
+请注意，`val sub =`部分必须放在`withModulePrefix`块之外，
+否则模块将无法被`Top`模块的其余部分访问。
 
-You can omit the prefix separator (`_`) by passing `false` as the second argument:
+您可以通过将第二个参数传递为`false`来省略前缀分隔符（`_`）：
 
 ```scala mdoc:silent:reset
 import chisel3._
@@ -59,12 +59,12 @@ class Sub extends Module {
 }
 ```
 
-This results in two module definitions: `Top` and `FooSub`.
+这将产生两个模块定义：`Top`和`FooSub`。
 
 ## localModulePrefix
 
-We can also set a module prefix on a module by overriding the `localModulePrefix` method.
-This is useful if you want to set a prefix for all instances of a module.
+我们还可以通过重写`localModulePrefix`方法来设置模块的前缀。
+如果您想为模块的所有实例设置前缀，这很有用。
 
 ```scala mdoc:silent:reset
 import chisel3._
@@ -79,9 +79,9 @@ class Sub extends Module {
 }
 ```
 
-This results in two module definitions: `Foo_Top` and `Foo_Sub`.
+这将产生两个模块定义：`Foo_Top`和`Foo_Sub`。
 
-You can also override `localModulePrefixAppliesToSelf` to `false` to only apply the prefix to the children.
+您还可以将`localModulePrefixAppliesToSelf`重写为`false`，使前缀仅应用于子模块。
 
 ```scala mdoc:silent:reset
 import chisel3._
@@ -97,9 +97,9 @@ class Sub extends Module {
 }
 ```
 
-This results in the two module definitions `Top` and `Foo_Sub`.
+这将产生两个模块定义：`Top`和`Foo_Sub`。
 
-You can also override `localModulePrefixUseSeparator` to `false` to omit the separator.
+您还可以将`localModulePrefixUseSeparator`重写为`false`以省略分隔符。
 
 ```scala mdoc:silent:reset
 import chisel3._
@@ -115,13 +115,13 @@ class Sub extends Module {
 }
 ```
 
-This results in the two module definitions `FooTop` and `FooSub`.
+这将产生两个模块定义：`FooTop`和`FooSub`。
 
-## Multiple Prefixes
+## 多个前缀
 
-If a generator is run in multiple prefix blocks, the result is multiple identical copies of the module definition,
-each with its own distinct prefix.
-For example, consider if we create two instances of `Sub` above like this:
+如果在多个前缀块中运行生成器，结果是多个相同的模块定义副本，
+每个都有自己的不同前缀。
+例如，考虑如果我们像这样创建`Sub`的两个实例：
 
 ```scala mdoc:silent:reset
 import chisel3._
@@ -141,12 +141,12 @@ class Sub extends Module {
 }
 ```
 
-Then, the resulting Verilog will have three module definitions: `Top`, `Foo_Sub`, and `Bar_Sub`.
-Both `Foo_Sub` and `Bar_Sub` will be identical to each other.
+那么，生成的Verilog将有三个模块定义：`Top`、`Foo_Sub`和`Bar_Sub`。
+`Foo_Sub`和`Bar_Sub`将彼此完全相同。
 
-## Nested Prefixes
+## 嵌套前缀
 
-Module prefixes can also be nested.
+模块前缀也可以嵌套。
 
 ```scala mdoc:silent:reset
 import chisel3._
@@ -169,11 +169,11 @@ class Sub extends Module {
 }
 ```
 
-This results in three module definitions: `Top`, `Foo_Mid`, and `Foo_Bar_Sub`.
+这将产生三个模块定义：`Top`、`Foo_Mid`和`Foo_Bar_Sub`。
 
 ## Instantiate
 
-The `withModulePrefix` blocks also work with the `Instantiate` API.
+`withModulePrefix`块也适用于`Instantiate` API。
 
 ```scala mdoc:silent:reset
 import chisel3._
@@ -197,16 +197,16 @@ class Top extends Module {
 }
 ```
 
-In this example, we end up with four modules: `Top`, `Foo_Sub`, `Bar_Sub`, and `Sub`.
+在这个例子中，我们最终得到四个模块：`Top`、`Foo_Sub`、`Bar_Sub`和`Sub`。
 
-When using `Definition` and `Instance`, all `Definition` calls will be affected by `withModulePrefix`.
-However, `Instance` will not be effected, since it always creates an instance of the captured definition.
+使用`Definition`和`Instance`时，所有`Definition`调用都将受到`withModulePrefix`的影响。
+然而，`Instance`不会受到影响，因为它总是创建捕获定义的实例。
 
-## External Modules
+## 外部模块
 
-`BlackBox` and `ExtModule` are unaffected by `withModulePrefix`.
-If you wish to have one that is sensitive to the module prefix,
-you can explicitly name the module like this:
+`BlackBox`和`ExtModule`不受`withModulePrefix`的影响。
+如果您希望有一个对模块前缀敏感的模块，
+您可以像这样显式命名模块：
 
 ```scala mdoc:silent:reset
 import chisel3._

@@ -4,8 +4,8 @@ title:  "Supported Hardware"
 section: "chisel3"
 ---
 
-# Supported Hardware
+# 支持的硬件
 
-While Chisel focuses on binary logic, Chisel can support analog and tri-state wires with the `Analog` type - see [Datatypes in Chisel](data-types).
+虽然 Chisel 主要关注二进制逻辑，但它也可以通过 `Analog` 类型支持模拟和三态线 - 参见[Chisel 中的数据类型](data-types)。
 
-We focus on binary logic designs as they constitute the vast majority of designs in practice. Tri-state logic are poorly supported standard industry flows and require special/controlled hard macros in order to be done.
+我们专注于二进制逻辑设计，因为它们在实践中构成了绝大多数的设计。三态逻辑在标准工业流程中支持不够完善，需要特殊/受控的硬宏才能实现。

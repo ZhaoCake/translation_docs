@@ -1,19 +1,19 @@
 ---
 layout: docs
-title:  "Functional Module Creation"
+title:  "函数式模块创建"
 section: "chisel3"
 ---
 
-# Functional Module Creation
+# 函数式模块创建
 
-Objects in Scala have a pre-existing creation function (method) called `apply`.
-When an object is used as value in an expression (which basically means that the constructor was called), this method determines the returned value.
-When dealing with hardware modules, one would expect the module output to be representative of the hardware module's functionality.
-Therefore, we would sometimes like the module output to be the value returned when using the object as a value in an expression.
-Since hardware modules are represented as Scala objects, this can be done by defining the object's `apply` method to return the module's output.
-This can be referred to as creating a functional interface for module construction.
-If we apply this on the standard mux2 example, we would to return the mux2 output ports when we used mux2 in an expression.
-Implementing this requires building a constructor that takes multiplexer inputs as parameters and returns the multiplexer output:
+Scala中的对象有一个预先存在的创建函数（方法）称为`apply`。
+当对象在表达式中用作值时（这基本上意味着构造函数被调用），这个方法决定了返回的值。
+处理硬件模块时，人们期望模块输出能代表硬件模块的功能。
+因此，我们有时希望在表达式中使用对象作为值时，返回的值是模块的输出。
+由于硬件模块表示为Scala对象，可以通过定义对象的`apply`方法来返回模块的输出来实现这一点。
+这可以被称为为模块构建创建函数式接口。
+如果我们将此应用于标准mux2示例，我们希望在表达式中使用mux2时返回mux2输出端口。
+实现这一点需要构建一个构造函数，该函数将多路复用器输入作为参数并返回多路复用器输出：
 
 ```scala mdoc:silent
 import chisel3._
@@ -39,9 +39,9 @@ object Mux2 {
 }
 ```
 
-As we can see in the code example, we defined the `apply` method to take the Mux2 inputs as the method parameters, and return the Mux2 output as the function's return value.
-By defining modules in this way, it is easier to later implement larger and more complex version of this regular module.
-For example, we previously implemented Mux4 like this:
+正如我们在代码示例中看到的，我们定义了`apply`方法，以Mux2输入作为方法参数，并将Mux2输出作为函数的返回值。
+通过这种方式定义模块，以后实现这个常规模块的更大、更复杂的版本会更容易。
+例如，我们之前是这样实现Mux4的：
 
 ```scala mdoc:silent
 class Mux4 extends Module {
@@ -72,12 +72,11 @@ class Mux4 extends Module {
 }
 ```
 
-However, by using the creation function we redefined for Mux2, we can now use the Mux2 outputs as values of the modules themselves
-when writing the Mux4 output expression:
+然而，通过使用我们为Mux2重新定义的创建函数，现在我们可以在编写Mux4输出表达式时将Mux2输出用作模块本身的值：
 
 ```scala mdoc:invisible:reset
-// We need to re-do this to allow us to `reset`
-// and then re-define Mux4
+// 我们需要重新执行此操作以允许我们`reset`
+// 然后重新定义Mux4
 import chisel3._
 
 class Mux2 extends Module {
@@ -117,4 +116,4 @@ class Mux4 extends Module {
 }
 ```
 
-This allows us to write more intuitively readable hardware connection descriptions, which are similar to software expression evaluation.
+这使我们能够编写更直观可读的硬件连接描述，类似于软件表达式求值。

@@ -4,37 +4,36 @@ title:  "Width Inference"
 section: "chisel3"
 ---
 
-# Width Inference
+# 位宽推断
 
-Chisel provides bit width inference to reduce design effort. Users are encouraged to manually specify widths of ports and registers to prevent any surprises, but otherwise unspecified widths will be inferred by the FIRRTL compiler.
+Chisel 提供位宽推断来减少设计工作量。我们鼓励用户手动指定端口和寄存器的位宽以防止出现任何意外，但未指定的位宽将由 FIRRTL 编译器推断。
 
-For all circuit components declared with unspecified widths, the FIRRTL compiler will infer the minimum possible width that maintains the legality of all its incoming connections. Implicit here is that inference is done in a right to left fashion in the sense of an assignment statement in chisel, i.e. from the left hand side from the right hand side. If a component has no incoming connections, and the width is unspecified, then an error is thrown to indicate that the width could not be inferred.
+对于所有未指定位宽的电路组件，FIRRTL 编译器将推断保持其所有输入连接合法性所需的最小可能位宽。这里隐含的是推断是以 Chisel 中赋值语句从右到左的方式进行的，即从右侧到左侧。如果一个组件没有输入连接，且位宽未指定，则会抛出错误表明无法推断位宽。
 
-For module input ports with unspecified widths, the inferred width is the minimum possible width that maintains the legality of all incoming connections to all instantiations of the module.
-The width of a ground-typed multiplexor expression is the maximum of its two corresponding input widths. For multiplexing aggregate-typed expressions, the resulting widths of each leaf subelement is the maximum of its corresponding two input leaf subelement widths.
-The width of a conditionally valid expression is the width of its input expression.  For the full formal description see the [Firrtl Spec](https://github.com/freechipsproject/firrtl/blob/master/spec/spec.pdf).
+对于未指定位宽的模块输入端口，推断的位宽是保持该模块所有实例的所有输入连接合法性所需的最小可能位宽。
+基本类型的多路复用器表达式的位宽是其两个对应输入位宽的最大值。对于多路复用聚合类型的表达式，每个叶子子元素的生成位宽是其对应的两个输入叶子子元素位宽的最大值。
+条件有效表达式的位宽是其输入表达式的位宽。完整的形式化描述请参见 [Firrtl 规范](https://github.com/freechipsproject/firrtl/blob/master/spec/spec.pdf)。
 
-Hardware operators have output widths as defined by the following set of rules:
+硬件运算符的输出位宽由以下规则集定义：
 
-| operation        | bit width           |
-| ---------        | ---------           |
-| `z = x + y` *or* `z = x +% y`        | `w(z) = max(w(x), w(y))`   |
-| `z = x +& y`       | `w(z) = max(w(x), w(y)) + 1`   |
-| `z = x - y` *or* `z = x -% y`       | `w(z) = max(w(x), w(y))`    |
-| `z = x -& y`       | `w(z) = max(w(x), w(y)) + 1`   |
-| `z = x & y`        | `w(z) = max(w(x), w(y))`    |
-| `z = Mux(c, x, y)` | `w(z) = max(w(x), w(y))`    |
-| `z = w * y`        | `w(z) = w(x) + w(y)`        |
-| `z = x << n`       | `w(z) = w(x) + maxNum(n)` |
-| `z = x >> n`       | `w(z) = w(x) - minNum(n)` |
-| `z = Cat(x, y)`    | `w(z) = w(x) + w(y)`      |
-| `z = Fill(n, x)`   | `w(z) = w(x) * maxNum(n)` |
+| 操作                                      | 位宽                             |
+| ---------                                | ---------                        |
+| `z = x + y` *或* `z = x +% y`           | `w(z) = max(w(x), w(y))`        |
+| `z = x +& y`                            | `w(z) = max(w(x), w(y)) + 1`    |
+| `z = x - y` *或* `z = x -% y`           | `w(z) = max(w(x), w(y))`        |
+| `z = x -& y`                            | `w(z) = max(w(x), w(y)) + 1`    |
+| `z = x & y`                             | `w(z) = max(w(x), w(y))`        |
+| `z = Mux(c, x, y)`                      | `w(z) = max(w(x), w(y))`        |
+| `z = w * y`                             | `w(z) = w(x) + w(y)`            |
+| `z = x << n`                            | `w(z) = w(x) + maxNum(n)`       |
+| `z = x >> n`                            | `w(z) = w(x) - minNum(n)`       |
+| `z = Cat(x, y)`                         | `w(z) = w(x) + w(y)`            |
+| `z = Fill(n, x)`                        | `w(z) = w(x) * maxNum(n)`       |
 
->where for instance `w(z)` is the bit width of wire `z`, and the `&`
-rule applies to all bitwise logical operations.
+>其中例如 `w(z)` 是线 `z` 的位宽，而 `&` 规则适用于所有按位逻辑运算。
 
-Given a path of connections that begins with an unspecified width element (most commonly a top-level input), then the compiler will throw an exception indicating a certain width was uninferrable.
+给定一个从未指定位宽元素（通常是顶层输入）开始的连接路径，编译器将抛出异常，指示某个位宽无法推断。
 
-A common "gotcha" comes from truncating addition and subtraction with the operators `+` and `-`. Users who want the result to maintain the full, expanded precision of the addition or subtraction should use the expanding operators `+&` and `-&`.
+一个常见的"陷阱"来自于使用截断加法和减法操作符 `+` 和 `-`。希望结果保持加法或减法完整、扩展精度的用户应该使用扩展操作符 `+&` 和 `-&`。
 
-> The default truncating operation comes from Chisel's history as a microprocessor design language.
+> 默认的截断操作来自 Chisel 作为微处理器设计语言的历史。

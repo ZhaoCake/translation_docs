@@ -1,22 +1,22 @@
 ---
 layout: docs
-title:  "Chisel Type vs Scala Type"
+title:  "Chisel类型与Scala类型"
 section: "chisel3"
 ---
 
-# Chisel Type vs Scala Type
+# Chisel类型与Scala类型
 
-The Scala compiler cannot distinguish between Chisel's representation of hardware such as `false.B`, `Reg(Bool())`
-and pure Chisel types (e.g. `Bool()`). You can get runtime errors passing a Chisel type when hardware is expected, and vice versa.
+Scala编译器无法区分Chisel对硬件的表示（如`false.B`、`Reg(Bool())`）
+和纯Chisel类型（例如`Bool()`）。当期望硬件时传递Chisel类型，或反之，可能会得到运行时错误。
 
-## Scala Type vs Chisel Type vs Hardware
+## Scala类型与Chisel类型与硬件
 
 ```scala mdoc:invisible
 import chisel3._
 import circt.stage.ChiselStage
 ```
 
-The *Scala* type of the Data is recognized by the Scala compiler, such as `Bool`, `Decoupled[UInt]` or `MyBundle` in
+Data的*Scala*类型由Scala编译器识别，例如`Bool`、`Decoupled[UInt]`或下面的`MyBundle`
 ```scala mdoc:silent
 class MyBundle(w: Int) extends Bundle {
   val foo = UInt(w.W)
@@ -24,49 +24,49 @@ class MyBundle(w: Int) extends Bundle {
 }
 ```
 
-The *Chisel* type of a `Data` is a Scala object. It captures all the fields actually present,
-by names, and their types including widths.
-For example, `MyBundle(3)` creates a Chisel Type with fields `foo: UInt(3.W),  bar: UInt(3.W))`.
+`Data`的*Chisel*类型是一个Scala对象。它捕获所有实际存在的字段，
+按名称和包括宽度在内的类型。
+例如，`MyBundle(3)`创建一个具有字段`foo: UInt(3.W), bar: UInt(3.W))`的Chisel类型。
 
-Hardware is `Data` that is "bound" to synthesizable hardware. For example `false.B` or `Reg(Bool())`.
-The binding is what determines the actual directionality of each field, it is not a property of the Chisel type.
+硬件是"绑定"到可合成硬件的`Data`。例如`false.B`或`Reg(Bool())`。
+绑定决定了每个字段的实际方向，它不是Chisel类型的属性。
 
-A literal is a `Data` that is respresentable as a literal value without being wrapped in Wire, Reg, or IO.
+字面量是可以表示为字面值的`Data`，无需包装在Wire、Reg或IO中。
 
-## Chisel Type vs Hardware vs Literals
+## Chisel类型与硬件与字面量
 
-The below code demonstrates how objects with the same Scala type (`MyBundle`) can have different properties.
+下面的代码演示了具有相同Scala类型（`MyBundle`）的对象如何具有不同的属性。
 
 ```scala mdoc:silent
 import chisel3.experimental.BundleLiterals._
 
 class MyModule(gen: () => MyBundle) extends Module {
-                                                            //   Hardware   Literal
-    val xType:    MyBundle     = new MyBundle(3)            //      -          -
-    val dirXType: MyBundle     = Input(new MyBundle(3))     //      -          -
-    val xReg:     MyBundle     = Reg(new MyBundle(3))       //      x          -
-    val xIO:      MyBundle     = IO(Input(new MyBundle(3))) //      x          -
-    val xRegInit: MyBundle     = RegInit(xIO)               //      x          -
-    val xLit:     MyBundle     = xType.Lit(                 //      x          x
+                                                            //   硬件    字面量
+    val xType:    MyBundle     = new MyBundle(3)            //    -        -
+    val dirXType: MyBundle     = Input(new MyBundle(3))     //    -        -
+    val xReg:     MyBundle     = Reg(new MyBundle(3))       //    x        -
+    val xIO:      MyBundle     = IO(Input(new MyBundle(3))) //    x        -
+    val xRegInit: MyBundle     = RegInit(xIO)               //    x        -
+    val xLit:     MyBundle     = xType.Lit(                 //    x        x
       _.foo -> 0.U(3.W),
       _.bar -> 0.U(3.W)
     )
     val y:        MyBundle = gen()                          //      ?          ?
 
-    // Need to initialize all hardware values
+    // 需要初始化所有硬件值
     xReg := DontCare
 }
 ```
 
 ```scala mdoc:invisible
-// Just here to compile check the above
+// 仅用于编译检查上面的内容
 import circt.stage.ChiselStage.elaborate
 elaborate(new MyModule(() => new MyBundle(3)))
 ```
 
-## Chisel Type vs Hardware -- Specific Functions and Errors
+## Chisel类型与硬件 -- 特定函数和错误
 
-`.asTypeOf` works for both hardware and Chisel type:
+`.asTypeOf`对硬件和Chisel类型都有效：
 
 ```scala mdoc:silent
 elaborate(new Module {
@@ -78,25 +78,25 @@ elaborate(new Module {
 })
 ```
 
-Can only `:=` to hardware:
+只能对硬件使用`:=`：
 ```scala mdoc:silent
-// Do this...
+// 这样做...
 elaborate(new Module {
   val hardware = Wire(new MyBundle(3))
   hardware := DontCare
 })
 ```
 ```scala mdoc:crash
-// Not this...
+// 不要这样做...
 elaborate(new Module {
   val chiselType = new MyBundle(3)
   chiselType := DontCare
 })
 ```
 
-Can only `:=` from hardware:
+只能从硬件`:=`：
 ```scala mdoc:silent
-// Do this...
+// 这样做...
 elaborate(new Module {
   val hardware = IO(new MyBundle(3))
   val moarHardware = Wire(new MyBundle(3))

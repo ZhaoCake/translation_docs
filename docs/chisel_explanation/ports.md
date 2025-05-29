@@ -4,19 +4,18 @@ title:  "Ports"
 section: "chisel3"
 ---
 
-# Ports
+# 端口
 
-Ports are used as interfaces to hardware components.  A port is simply
-any `Data` object that has directions assigned to its members.
+端口用作硬件组件的接口。端口实际上就是一个 `Data` 对象，其成员都被赋予了方向。
 
-Chisel provides port constructors to allow a direction to be added
-(input or output) to an object at construction time. Primitive port
-constructors wrap the type of the port in `Input` or `Output`.
+Chisel 提供了端口构造器，允许在构造时为对象添加方向（输入或输出）。基本的端口构造器通过 `Input` 或 `Output` 包装端口的类型。
 
-An example port declaration is as follows:
+下面是一个端口声明的例子：
+
 ```scala mdoc:invisible
 import chisel3._
 ```
+
 ```scala mdoc
 class Decoupled extends Bundle {
   val ready = Output(Bool())
@@ -25,19 +24,16 @@ class Decoupled extends Bundle {
 }
 ```
 
-After defining ```Decoupled```, it becomes a new type that can be
-used as needed for module interfaces or for named collections of
-wires.
+在定义了 ```Decoupled``` 之后，它就成为了一个新的类型，可以根据需要用于模块接口或命名的线集合。
 
-By folding directions into the object declarations, Chisel is able to
-provide powerful wiring constructs described later.
+通过将方向信息折叠到对象声明中，Chisel 能够提供后面将要描述的强大的接线构造。
 
-## Inspecting Module ports
+## 检查模块端口
 
 (Chisel 3.2+)
 
-Chisel 3.2 introduced `DataMirror.modulePorts` which can be used to inspect the IOs of any Chisel module (this includes modules in both `import chisel3._` and `import Chisel._`, as well as BlackBoxes from each package).
-Here is an example of how to use this API:
+Chisel 3.2 引入了 `DataMirror.modulePorts`，可以用来检查任何 Chisel 模块的 IO（这包括来自 `import chisel3._` 和 `import Chisel._` 的模块，以及来自这两个包的 BlackBox）。
+以下是如何使用这个 API 的示例：
 
 ```scala mdoc
 import chisel3.reflect.DataMirror
@@ -52,20 +48,21 @@ class Adder extends Module {
 
 class Test extends Module {
   val adder = Module(new Adder)
-  // for debug only
+  // 仅用于调试
   adder.a := DontCare
   adder.b := DontCare
 
-  // Inspect ports of adder
-  // See the result below.
-   DataMirror.modulePorts(adder).foreach { case (name, port) => {
+  // 检查 adder 的端口
+  // 查看下面的结果
+  DataMirror.modulePorts(adder).foreach { case (name, port) => {
     println(s"Found port $name: $port")
   }}
 }
 ```
-This will print the following:
+
+这将打印以下内容：
 ```scala mdoc:passthrough
 println("```")
-chisel3.docs.emitSystemVerilog(new Test): Unit // suppress String output, just want to see stdout
+chisel3.docs.emitSystemVerilog(new Test): Unit // 抑制字符串输出，只想看到标准输出
 println("```")
 ```

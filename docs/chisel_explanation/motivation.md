@@ -1,44 +1,22 @@
 ---
 layout: docs
-title:  "Motivation"
+title:  "动机"
 section: "chisel3"
 ---
 
-# Motivation -- "Why Chisel?"
+# 动机 -- "为什么选择 Chisel?"
 
-We were motivated to develop a new hardware language by years of
-struggle with existing hardware description languages in our research
-projects and hardware design courses.  _Verilog_ and _VHDL_ were developed
-as hardware _simulation_ languages, and only later did they become
-a basis for hardware _synthesis_.  Much of the semantics of these
-languages are not appropriate for hardware synthesis and, in fact,
-many constructs are simply not synthesizable.  Other constructs are
-non-intuitive in how they map to hardware implementations, or their
-use can accidentally lead to highly inefficient hardware structures.
-While it is possible to use a subset of these languages and still get
-acceptable results, they nonetheless present a cluttered and confusing
-specification model, particularly in an instructional setting.
+我们之所以开发新的硬件语言，是因为在研究项目和硬件设计课程中多年来与现有硬件描述语言的斗争。
+_Verilog_ 和 _VHDL_ 最初是作为硬件 _仿真_ 语言开发的，后来才成为硬件 _综合_ 的基础。
+这些语言的许多语义并不适合硬件综合，事实上，许多语言结构根本就无法综合。
+其他语言结构在如何映射到硬件实现方面也不直观，或者它们的使用可能会意外地导致高度低效的硬件结构。
+虽然使用这些语言的一个子集仍然可以获得可接受的结果，但它们仍然呈现出一个杂乱而令人困惑的规范模型，尤其是在教学环境中。
 
-However, our strongest motivation for developing a new hardware
-language is our desire to change the way that electronic system design
-takes place.  We believe that it is important to not only teach
-students how to design circuits, but also to teach them how to design
-*circuit generators* ---programs that automatically generate
-designs from a high-level set of design parameters and constraints.
-Through circuit generators, we hope to leverage the hard work of
-design experts and raise the level of design abstraction for everyone.
-To express flexible and scalable circuit construction, circuit
-generators must employ sophisticated programming techniques to make
-decisions concerning how to best customize their output circuits
-according to high-level parameter values and constraints.  While
-Verilog and VHDL include some primitive constructs for programmatic
-circuit generation, they lack the powerful facilities present in
-modern programming languages, such as object-oriented programming,
-type inference, support for functional programming, and reflection.
+然而，我们开发新硬件语言的最强动力是我们希望改变电子系统设计的方式。
+我们认为，不仅要教导学生如何设计电路，还要教他们如何设计 *电路生成器* —— 能够根据高层次的设计参数和约束自动生成设计的程序。
+通过电路生成器，我们希望能够利用设计专家的辛勤工作，为每个人提高设计抽象的层次。
+为了表达灵活和可扩展的电路构建，电路生成器必须采用复杂的编程技术，以便根据高层次参数值和约束做出关于如何最佳定制其输出电路的决策。
+虽然 Verilog 和 VHDL 包含一些用于程序化电路生成的原始结构，但它们缺乏现代编程语言中存在的强大功能，如面向对象编程、类型推断、函数式编程支持和反射。
 
-Instead of building a new hardware design language from scratch, we
-chose to embed hardware construction primitives within an existing
-language.  We picked Scala not only because it includes the
-programming features we feel are important for building circuit
-generators, but because it was specifically developed as a base for
-domain-specific languages.
+我们没有从头开始构建新的硬件设计语言，而是选择将硬件构建原语嵌入到现有语言中。
+我们选择 Scala 不仅是因为它包含了我们认为对构建电路生成器很重要的编程特性，还因为它是专门开发作为领域特定语言基础的语言。

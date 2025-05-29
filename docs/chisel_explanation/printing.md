@@ -4,20 +4,20 @@ title:  "Printing"
 section: "chisel3"
 ---
 
-# Printing in Chisel
+# Chisel 中的打印
 
-Chisel provides the `printf` function for debugging purposes. It comes in two flavors:
+Chisel 提供 `printf` 函数用于调试目的。它有两种风格：
 
-* [Scala-style](#scala-style)
-* [C-style](#c-style)
+* [Scala 风格](#scala-风格)
+* [C 风格](#c-风格)
 
-Chisel also provides "logging" support for printing to files in addition to the default standard error, see [Logging](#logging).
+Chisel 还提供了"日志"支持，除了默认的标准错误输出外，还可以打印到文件，详见[日志](#日志)。
 
-## Scala-style
+## Scala 风格
 
-Chisel also supports printf in a style similar to [Scala's String Interpolation](http://docs.scala-lang.org/overviews/core/string-interpolation.html). Chisel provides a custom string interpolator `cf` which follows C-style format specifiers (see section [C-style](#c-style) below).
+Chisel 也支持类似于 [Scala 字符串插值](http://docs.scala-lang.org/overviews/core/string-interpolation.html) 的 printf 风格。Chisel 提供了一个自定义的字符串插值器 `cf`，它遵循 C 风格的格式说明符（参见下面的 [C 风格](#c-风格) 部分）。
 
-Note that the Scala s-interpolator is not supported in Chisel constructs and will throw an error:
+注意，Scala 的 s-插值器在 Chisel 构造中不受支持，会抛出错误：
 
 ```scala mdoc:invisible
 import chisel3._
@@ -30,64 +30,64 @@ class MyModule extends Module {
 }
 ```
 
-Instead, use Chisel's `cf` interpolator as in the following examples:
+相反，请使用 Chisel 的 `cf` 插值器，如下例所示：
 
 ```scala mdoc:compile-only
 val myUInt = 33.U
 printf(cf"myUInt = $myUInt") // myUInt = 33
 ```
 
-Note that when concatenating `cf"..."` strings, you need to start with a `cf"..."` string:
+注意，当连接 `cf"..."` 字符串时，你需要以 `cf"..."` 字符串开头：
 
 ```scala mdoc:compile-only
-// Does not interpolate the second string
+// 不会对第二个字符串进行插值
 val myUInt = 33.U
 printf("my normal string" + cf"myUInt = $myUInt")
 ```
 
-### Simple formatting
+### 简单格式化
 
-Other formats are available as follows:
+其他格式可用如下：
 
 ```scala mdoc:compile-only
 val myUInt = 33.U
-// Hexadecimal
+// 十六进制
 printf(cf"myUInt = 0x$myUInt%x") // myUInt = 0x21
-// Binary
+// 二进制
 printf(cf"myUInt = $myUInt%b") // myUInt = 100001
-// Character
+// 字符
 printf(cf"myUInt = $myUInt%c") // myUInt = !
 ```
 
-### Special values
+### 特殊值
 
-There are special values you can include in your `cf` interpolated string:
+在你的 `cf` 插值字符串中可以包含一些特殊值：
 
-* `HierarchicalModuleName` (`%m`): The hierarchical name of the current module
-* `SimulationTime` (`%T`): The current simulation time (unlike Verilog's `%t`, this does not take an argument)
-* `Percent` (`%%`): A literal `%`
+* `HierarchicalModuleName` (`%m`)：当前模块的层次名称
+* `SimulationTime` (`%T`)：当前仿真时间（与 Verilog 的 `%t` 不同，它不接受参数）
+* `Percent` (`%%`)：字面上的 `%`
 
 ```scala mdoc:compile-only
 printf(cf"hierarchical path = $HierarchicalModuleName\n") // hierarchical path = <verilog.module.path>
-printf(cf"hierarchical path = %m\n") // equivalent to the above
+printf(cf"hierarchical path = %m\n") // 等同于上面的例子
 
 printf(cf"simulation time = $SimulationTime\n") // simulation time = <simulation.time>
-printf(cf"simulation time = %T\n") // equivalent to the above
+printf(cf"simulation time = %T\n") // 等同于上面的例子
 
 printf(cf"100$Percent\n") // 100%
-printf(cf"100%%\n") // equivalent to the above
+printf(cf"100%%\n") // 等同于上面的例子
 ```
 
-### Format modifiers
+### 格式修饰符
 
-Chisel supports standard Verilog-style modifiers for `%d`, `%x`, and `%b` between the `%` and the format specifier.
+Chisel 支持 `%d`、`%x` 和 `%b` 的标准 Verilog 风格修饰符，位于 `%` 和格式说明符之间。
 
-Verilog simulators will pad values out to the width of the signal.
-With decimal formatting, space is used for padding.
-For all other formats, `0` is used for padding.
+Verilog 模拟器会将值填充到信号的宽度。
+对于十进制格式，使用空格进行填充。
+对于所有其他格式，使用 `0` 进行填充。
 
-* A non-negative field width will override the default Verilog sizing of the value.
-* Specifying a field width of `0` will always display the value with the minimum width (no zero nor space padding).
+* 非负字段宽度会覆盖默认的 Verilog 值大小。
+* 指定字段宽度为 `0` 将始终以最小宽度显示值（无零填充和空格填充）。
 
 ```scala mdoc:compile-only
 val foo = WireInit(UInt(32.W), 33.U)
@@ -103,9 +103,9 @@ printf(cf"bar = $bar%0b!\n") // foo = 101!
 printf(cf"bar = $bar%4b!\n") // foo = 0101!
 ```
 
-### Aggregate data-types
+### 聚合数据类型
 
-Chisel provides default custom "pretty-printing" for Vecs and Bundles. The default printing of a Vec is similar to printing a Seq or List in Scala while printing a Bundle is similar to printing a Scala Map.
+Chisel 为 Vec 和 Bundle 提供了默认的自定义"美化打印"功能。Vec 的默认打印类似于打印 Scala 的 Seq 或 List，而打印 Bundle 类似于打印 Scala Map。
 
 ```scala mdoc:compile-only
 val myVec = VecInit(5.U, 10.U, 13.U)
@@ -120,9 +120,9 @@ myBundle.bar := 11.U
 printf(cf"myBundle = $myBundle") // myBundle = Bundle(a -> 3, b -> 11)
 ```
 
-### Custom Printing
+### 自定义打印
 
-Chisel also provides the ability to specify _custom_ printing for user-defined Bundles.
+Chisel 还提供了为用户定义的 Bundle 指定自定义打印格式的功能。
 
 ```scala mdoc:compile-only
 class Message extends Bundle {
@@ -130,13 +130,13 @@ class Message extends Bundle {
   val addr = UInt(32.W)
   val length = UInt(4.W)
   val data = UInt(64.W)
+  
   override def toPrintable: Printable = {
-    val char = Mux(valid, 'v'.U, '-'.U)
     cf"Message:\n" +
-    cf"  valid  : $char%c\n" +
-    cf"  addr   : $addr%x\n" +
+    cf"  valid  : $valid\n" +
+    cf"  addr   : 0x$addr%x\n" +
     cf"  length : $length\n" +
-    cf"  data   : $data%x\n"
+    cf"  data   : 0x$data%x"
   }
 }
 
@@ -149,66 +149,66 @@ myMessage.data := "hdeadbeef".U
 printf(cf"$myMessage")
 ```
 
-Which prints the following:
+打印结果将如下：
 
 ```
 Message:
-  valid  : v
+  valid  : 1
   addr   : 0x00001234
   length : 10
   data   : 0x00000000deadbeef
 ```
 
-Notice the use of `+` between `cf` interpolated "strings". The results of `cf` interpolation can be concatenated by using the `+` operator.
+注意 `cf` 插值"字符串"之间使用 `+` 的用法。`cf` 插值的结果可以使用 `+` 运算符连接。
 
-## C-Style
+## C 风格
 
-Chisel provides `printf` in a similar style to its C namesake. It accepts a double-quoted format string and a variable number of arguments which will then be printed on rising clock edges. Chisel supports the following format specifiers:
+Chisel 提供 `printf`，其风格类似于 C 语言的 `printf`。它接受一个双引号括起来的格式字符串和可变数量的参数，这些参数将在上升沿时被打印。Chisel 支持以下格式说明符：
 
-| Format Specifier | Meaning |
+| 格式说明符 | 含义 |
 | :-----: | :-----: |
-| `%d` | decimal number |
-| `%x` | hexadecimal number |
-| `%b` | binary number |
-| `%c` | 8-bit ASCII character |
-| `%n` | name of signal |
-| `%N` | full name of signal |
-| `%%` | literal percent |
-| `%m` | hierarchical name |
-| `%T` | simulation time |
+| `%d` | 十进制数 |
+| `%x` | 十六进制数 |
+| `%b` | 二进制数 |
+| `%c` | 8 位 ASCII 字符 |
+| `%n` | 信号名称 |
+| `%N` | 信号的全名 |
+| `%%` | 字面上的百分号 |
+| `%m` | 层次名称 |
+| `%T` | 仿真时间 |
 
-`%d`, `%x`, and `%b` support the modifiers described in the [Format modifiers](#format-modifiers) section above.
+`%d`、`%x` 和 `%b` 支持上述[格式修饰符](#格式修饰符)部分描述的修饰符。
 
-It also supports a small set of escape characters:
+它还支持一小部分转义字符：
 
-| Escape Character | Meaning |
+| 转义字符 | 含义 |
 | :-----: | :-----: |
-| `\n` | newline |
-| `\t` | tab |
-| `\"` | literal double quote |
-| `\'` | literal single quote |
-| `\\` | literal backslash |
+| `\n` | 换行 |
+| `\t` | 制表符 |
+| `\"` | 字面上的双引号 |
+| `\'` | 字面上的单引号 |
+| `\\` | 字面上的反斜杠 |
 
-Note that single quotes do not require escaping, but are legal to escape.
+注意，单引号不需要转义，但转义是合法的。
 
-Thus printf can be used in a way very similar to how it is used in C:
+因此，`printf` 的使用方式与 C 语言中非常相似：
 
 ```scala mdoc:compile-only
 val myUInt = 32.U
 printf("myUInt = %d", myUInt) // myUInt = 32
 ```
 
-## Logging
+## 日志
 
-Chisel supports logging via the `SimLog` API.
-`SimLog` provides a way to write simulation logs to files or standard error. It's particularly useful when you need to:
-* Write simulation output to specific files.
-* Have multiple log files in a single simulation.
-* Write reusable code that can target different log destinations.
+Chisel 通过 `SimLog` API 支持日志记录。
+`SimLog` 提供了一种将仿真日志写入文件或标准错误的方法。当你需要以下功能时，它特别有用：
+* 将仿真输出写入特定文件。
+* 在单个仿真中拥有多个日志文件。
+* 编写可重用的代码，以便可以针对不同的日志目标。
 
-### Basic Usage
+### 基本用法
 
-The most common use of `SimLog` is to write to a file:
+`SimLog` 最常见的用法是写入文件：
 
 ```scala mdoc:compile-only
 class MyModule extends Module {
@@ -218,7 +218,7 @@ class MyModule extends Module {
 }
 ```
 
-You can also write to standard error using the default file descriptor:
+你也可以使用默认文件描述符写入标准错误：
 
 ```scala mdoc:compile-only
 class MyModule extends Module {
@@ -229,10 +229,10 @@ class MyModule extends Module {
 ```
 
 :::note
-This is the same as standard `printf`.
+这与标准的 `printf` 是相同的。
 :::
 
-SimLog filenames can themselves be `Printable` values:
+SimLog 文件名本身可以是 `Printable` 值：
 
 ```scala mdoc:compile-only
 class MyModule extends Module {
@@ -243,15 +243,15 @@ class MyModule extends Module {
 }
 ```
 
-It is strongly recommended to use `%0d` with UInts in filenames to avoid spaces in the filename.
+强烈建议在文件名中使用 `%0d` 与 UInts 一起使用，以避免文件名中出现空格。
 
 :::warning
-Be careful to avoid uninitialized registers in the filename.
+注意避免在文件名中使用未初始化的寄存器。
 :::
 
-### Writing Generic Code
+### 编写通用代码
 
-`SimLog` allows you to write code that can work with any log destination. This is useful when creating reusable components:
+`SimLog` 允许你编写可以与任何日志目标一起使用的代码。这在创建可重用组件时非常有用：
 
 ```scala mdoc:compile-only
 class MyLogger(log: SimLog) extends Module {
@@ -259,27 +259,27 @@ class MyLogger(log: SimLog) extends Module {
   log.printf(cf"in = $in%d\n")
 }
 
-// Use with a file
+// 使用文件
 val withFile = Module(new MyLogger(SimLog.file("data.log")))
 
-// Use with stderr
+// 使用标准错误
 val withStderr = Module(new MyLogger(SimLog.StdErr))
 ```
 
-### Flush
+### 刷新
 
-`SimLog` objects can be flushed to ensure that all buffered output is written.
-This is useful in simulations using the logged output as input to a co-simulated components like a checker or golden model.
+`SimLog` 对象可以被刷新，以确保所有缓冲的输出都被写入。
+这在使用被记录的输出作为协同仿真组件（如检查器或黄金模型）的输入时非常有用。
 
 ```scala mdoc:compile-only
 val log = SimLog.file("logfile.log")
 val in = IO(Input(UInt(8.W)))
 log.printf(cf"in = $in%d\n")
-log.flush() // Flush buffered output right away.
+log.flush() // 立即刷新缓冲的输出。
 ```
 
-You can also flush standard error:
+你也可以刷新标准错误：
 
 ```scala mdoc:compile-only
-SimLog.StdErr.flush() // This will flush all standard printfs.
+SimLog.StdErr.flush() // 这将刷新所有标准输出。
 ```

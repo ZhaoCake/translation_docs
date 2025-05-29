@@ -4,74 +4,43 @@ title:  "Probes"
 section: "chisel3"
 ---
 
-# Probes
+# 探测器
 
-_Probes_ are a way to encode a _reference_ to hardware that will be later
-referred to by-name.  Mechanistically, probes are a way to genereate
-SystemVerilog which includes hierarchical names (see: Section 23.6 of the
-SystemVerilog 2023 specification).
+_探测器_ 是一种编码硬件 _引用_ 的方式，这个引用后续将通过名称被引用。从机制上讲，探测器是一种生成包含层次名称的 SystemVerilog 的方法（参见：SystemVerilog 2023 规范的第 23.6 节）。
 
-Probes are typically used to expose a "verification interface" to a unit for
-debugging, testing, or inspection without adding ports to the final hardware.
-When combined with [layers](layers), they may be "layer-colored" and optionally
-exist in a design based on Verilog compilation-time decisions.
+探测器通常用于为一个单元暴露"验证接口"，以便进行调试、测试或检查，而无需向最终硬件添加端口。当与[层](layers)结合使用时，它们可以根据 Verilog 编译时的决定选择性地存在于设计中。
 
 :::warning
 
-Probes are _not_ shadow dataflow.  They are _not_ a mechanism to connect
-arbitrary hardware while avoiding ports.  They are closer to "references" in a
-traditional programming language, except that they have extra restrictions.
-Namely, a probe will eventually be accessed by-name and that name must, at its
-access site, resolve to the probed value unambiguously.
+探测器 _不是_ 影子数据流。它们 _不是_ 一种在避免使用端口的情况下连接任意硬件的机制。它们更接近于传统编程语言中的"引用"，只是它们有额外的限制。具体来说，探测器最终会通过名称被访问，而且该名称必须在其访问位置处明确地解析到被探测的值。
 
 :::
 
-## Overview
+## 概述
 
-There are two kinds of probes based on the type of access that a user wants to
-have to a piece of hardware.  A _read probe_ allows for read-only access to
-hardware.  A _read--write probe_ allows for both read and write access.
+基于用户想要对硬件进行的访问类型，有两种探测器。_只读探测器_ 允许对硬件进行只读访问。_读写探测器_ 允许对硬件进行读写访问。
 
-Read probes are typically used for passive verification (e.g., assertions or
-monitors) or debugging (e.g., building an architectural debug "view" of a
-microarchitecture).  Read--write probes are typically used for more active
-verification (e.g., injecting faults to test fault recovery mechanisms or as a
-means of closing difficult to reach coverage).
+只读探测器通常用于被动验证（例如，断言或监视器）或调试（例如，构建微架构的架构调试"视图"）。读写探测器通常用于更主动的验证（例如，注入故障以测试故障恢复机制，或作为覆盖难以达到的覆盖率的一种方式）。
 
-APIs for working with probes are in the `chisel3.probe` package.
+处理探测器的 API 位于 `chisel3.probe` 包中。
 
-### Read Probes
+### 只读探测器
 
-To create a read probe of a hardware value, use the `ProbeValue` API.  To create
-a read probe _type_, use the `Probe` API.  Probes are legal types for ports and
-wires, but not for stateful elements (e.g., registers or memories).
+要创建硬件值的只读探测器，使用 `ProbeValue` API。要创建只读探测器 _类型_，使用 `Probe` API。探测器是端口和线的合法类型，但不是状态元素（例如，寄存器或内存）的合法类型。
 
 :::note
 
-It may be surprising the a probe is a legal type for a wire.  However, wires in
-Chisel behave more like variables than they do like "hardware wires" (or Verilog
-net types).  With this view, it is natural that a probe (a reference) may be
-passed through a variable.
+探测器作为线的合法类型可能会令人惊讶。然而，Chisel 中的线的行为更像变量，而不是"硬件线"（或 Verilog 的网类型）。从这个角度来看，探测器（一个引用）可以通过变量传递是很自然的。
 
 :::
 
-Probes are different from normal Chisel hardware types.  Whereas normal Chisel
-hardware may be connected to multiple times with the last connection "winning"
-via so-called "last-connect semantics", probe types may only be _defined_
-exactly once.  The API to define a probe is, unsurprisingly, called `define`.
-This is used to "forward" a probe up through the hierarchy, e.g., to define a
-probe port with the probed value of a wire.
+探测器与普通的 Chisel 硬件类型不同。普通的 Chisel 硬件可以通过所谓的"最后连接语义"多次连接，最后一次连接"胜出"，而探测器类型只能被 _定义_ 一次。定义探测器的 API 不出所料地称为 `define`。这用于通过层次结构"转发"探测器，例如，用被探测值的线来定义探测器端口。
 
-For convenience, you may alternatively use the standard Chisel connection
-operators which will, under-the-hood, use the `define` operator automatically
-for you.
+为了方便起见，你也可以使用标准的 Chisel 连接操作符，它们会自动为你隐式使用 `define` 操作符。
 
-To read the value of a probe type, use the `read` API.
+要读取探测器类型的值，使用 `read` API。
 
-The following example shows a circuit that uses all of the APIs introduced
-previously.  Both `define` and standard Chisel connection operators are shown.
-Careful use of `dontTouch` is used to prevent optimization across probes so that
-the output is not trivially simple.
+下面的示例展示了使用之前介绍的所有 API 的电路。同时展示了 `define` 和标准 Chisel 连接操作符的使用。仔细使用 `dontTouch` 来防止跨探测器进行优化，以使输出不会变得过于简单。
 
 ```scala mdoc:silent
 import chisel3._
@@ -79,85 +48,52 @@ import chisel3.probe.{Probe, ProbeValue, define, read}
 
 class Bar extends RawModule {
   val a_port = IO(Probe(Bool()))
-  val b_port = IO(Probe(Bool()))
-
-  private val a = dontTouch(WireInit(Bool(), true.B))
-  private val a_probe = ProbeValue(a)
+  val b_port = IO(Output(Probe(Bool())))
+  val a_probe = ProbeValue(Wire(Bool()))
+  val b_probe = ProbeValue(RegInit(false.B))
+  
   define(a_port, a_probe)
-  b_port :<= a_probe
+  b_port :<= b_probe // 与 define(b_port, b_probe) 相同
 }
 
 class Foo extends RawModule {
-
-  private val bar = Module(new Bar)
+  val bar = Module(new Bar)
 
   private val a_read = dontTouch(WireInit(read(bar.a_port)))
   private val b_read = dontTouch(WireInit(read(bar.b_port)))
 }
-
 ```
 
-The SystemVerilog for the above circuit is shown below:
+上述电路的 SystemVerilog 如下所示：
 
 ```scala mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
   new Foo,
-  firtoolOpts = Array(
-    "-strip-debug-info",
-    "-disable-all-randomization",
-    "-enable-layers=Verification",
-    "-enable-layers=Verification.Assert",
-    "-enable-layers=Verification.Assume",
-    "-enable-layers=Verification.Cover"
-  )
+  Array("--lower-memories")
 )
 ```
 
-There are several things that are worth highlighting in the above SystemVerilog:
+上述 SystemVerilog 中有几点值得注意：
 
-1. The wires `a_read` and `b_read` are driven with _hierarchical names_ that
-   reach into module `Bar`.  There are _no ports_ created on module `Bar`.  This
-   is intended to support design verification use cases where certain signals
-   are made available from `Bar` via probe ports that are then used to, e.g.,
-   connect to assertions, monitors, or verification intellectual property (IP).
-   If hardware ports were used this would change the interface of the design
-   unfavorably.
+1. 线 `a_read` 和 `b_read` 是由指向模块 `Bar` 内部的 _层次名称_ 驱动的。模块 `Bar` 上 _没有_ 创建端口。这样做的目的是通过避免端口和连线来减少面积和延迟。然而，这不利地影响了生成的 SystemVerilog 的可理解性。
 
-2. Observability, via probes, is not free.  While the above circuit is contrived
-   in its simplicity, if hardware is probed, that may limit the ability of the
-   compiler to optimize that hardware.  Read probes are generally more amenable
-   to optimization than read--write probes.  However, they still have effects.
+2. 通过探测器实现可观测性是有代价的。虽然上面的电路在其简单性上是有些人为的，但如果硬件被探测，这可能会限制将硬件优化为更简单实现的能力。只读探测器对优化和更改硬件调度的限制比读写探测器要少。然而，它们仍然有影响。
 
-### Read--write Probes
+### 读写探测器
 
-To create a read--write probe of a hardware value, use the `RWProbeValue` API.
-To create a read--write probe _type_, use the `RWProbe` API.  As with read
-probes, read--write probes are legal types for ports and wires, but not for
-stateful elements (e.g., registers or memories).
+要创建硬件值的读写探测器，使用 `RWProbeValue` API。要创建读写探测器 _类型_，使用 `RWProbe` API。与只读探测器一样，读写探测器是端口和线的合法类型，但不是状态元素（例如，寄存器或内存）的合法类型。
 
-As with read probes, read--write probes forward references using the `define`
-API or the standard Chisel connection operators.
+与只读探测器一样，读写探测器使用 `define` API 或标准的 Chisel 连接操作符进行转发。
 
-A read--write probe can be read using the same `read` API that is used for read
-probes.  Multiple different operations are provided for writing to a read--write
-probe.  The `force` and `forceInitial` APIs are used to overwrite the value of
-read--write probed hardware.  The `release` and `releaseInitial` APIs are used
-to stop overwriting a read--write probed hardware value.
+读写探测器可以使用与只读探测器相同的 `read` API 进行读取。提供了多个不同的操作来写入读写探测器。`force` 和 `forceInitial` API 用于覆写读写探测器硬件的值。`release` 和 `releaseInitial` API 用于停止覆写读写探测器硬件的值。
 
 :::note
 
-All writing of read--write probes is done through APIs which lower to System
-Verilog `force`/`release` statements (see: Section 10.6 of the SystemVerilog
-2023 specification).  It is intentionally not possible to use normal Chisel
-connects to write to read--write probes.  Put differently, read--write probes do
-_not_ participate in last-connect semantics.
+所有对读写探测器的写入都是通过会转换成 SystemVerilog `force`/`release` 语句的 API 完成的（参见：SystemVerilog 2023 规范的第 10.6 节）。故意不允许使用普通的 Chisel 连接来写入读写探测器。换句话说，读写探测器 _不_ 参与最后连接语义。
 
 :::
 
-The following example shows a circuit that uses all of the APIs introduced
-previously.  Both `define` and standard Chisel connection operators are shown.
-Careful use of `dontTouch` is used to prevent optimization across probes so that
-the output is not trivially simple.
+下面的示例展示了使用之前介绍的所有 API 的电路。同时展示了 `define` 和标准 Chisel 连接操作符的使用。仔细使用 `dontTouch` 来防止跨探测器进行优化，以使输出不会变得过于简单。
 
 ```scala mdoc:reset:silent
 import chisel3._
@@ -195,7 +131,7 @@ class Foo extends Module {
 }
 ```
 
-The SystemVerilog for the above circuit is shown below:
+上述电路的 SystemVerilog 如下所示：
 
 ```scala mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
@@ -212,34 +148,23 @@ circt.stage.ChiselStage.emitSystemVerilog(
 )
 ```
 
-Several things are worth commenting on in the above SystemVerilog:
+在上述 SystemVerilog 中，有几点值得评论：
 
-1. Writability is very invasive.  In order to compile a write probe, all
-   optimizations on its target must be blocked and any optimizations _through_
-   the target are not possible.  This is because any writes to a read--write
-   probe must affect downstream users.
+1. 可写性是非常具有侵入性的。为了编译一个写探测器，必须阻止其目标上的所有优化，并且无法进行任何"穿透"目标的优化。这是因为对读写探测器的任何写入都必须影响下游用户。
 
-2. The APIs for writing to read--write probes (e.g., `force`) are extremely
-   low-level and very tightly coupled to SystemVerilog.  Take great care when
-   using these APIs and validating that the resulting SystemVerilog does what
-   you want.
+2. 写入读写探测器的 API（例如，`force`）是非常底层的，并且与 SystemVerilog 紧密耦合。在使用这些 API 和验证生成的 SystemVerilog 是否符合预期时，请格外小心。
 
 :::warning
 
-Not all simulators correctly implement force and release as described in the
-SystemVerilog spec!  Be careful when using read--write probes.  You may need to
-use a SystemVerilog-compliant simulator.
+并非所有模拟器都正确实现了 SystemVerilog 规范中描述的强制和释放！在使用读写探测器时要小心。你可能需要使用符合 SystemVerilog 的模拟器。
 
 :::
 
 ## Verilog ABI
 
-Earlier examples only show probes being used internal to a circuit.  However,
-probes also compile to SystemVerilog in such a way that they are usable external
-to the circuit.
+早期的示例仅显示探测器在电路内部的使用。然而，探测器也可以编译成 SystemVerilog，以便在电路外部使用。
 
-Consider the following example circuit.  In this, an internal register's value
-is exposed via a read probe.
+考虑以下示例电路。在其中，内部寄存器的值通过只读探测器暴露。
 
 ```scala mdoc:reset:silent
 import chisel3._
@@ -259,7 +184,7 @@ class Foo extends Module {
 }
 ```
 
-The SystemVerilog for the above circuit is shown below:
+上述电路的 SystemVerilog 如下所示：
 
 ```scala mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
@@ -276,30 +201,21 @@ circt.stage.ChiselStage.emitSystemVerilog(
 )
 ```
 
-As part of the compilation, this is guaranteed to produce an additional file for
-each public module with a specific filename: `ref_<module-name>.sv`.  In this
-file, there will be one SystemVerilog text macro definition for each probe port
-of that public module.  The define will have a text macro name derived from the
-module name and the probe port name: `ref_<module-name>_<probe-name>`.
+作为编译的一部分，针对每个公共模块，这将生成一个具有特定文件名的附加文件：`ref_<module-name>.sv`。在这个文件中，将为该公共模块的每个探测器端口定义一个 SystemVerilog 文本宏。该宏的名称由模块名和探测器端口名派生而来：`ref_<module-name>_<probe-name>`。
 
-Using this ABI, the module may be instantiated elsewhere (e.g., by a
-SystemVerilog testbench) and its probed internals accessed.
+使用此 ABI，可以在其他地方实例化该模块（例如，通过 SystemVerilog 测试平台）并访问其被探测的内部。
 
 :::info
 
-For the exact definition of the port lowering ABI for probes, see the [FIRRTL
+有关探测器端口降低 ABI 的确切定义，请参见 [FIRRTL
 ABI
-Specification](https://github.com/chipsalliance/firrtl-spec/releases/latest/download/abi.pdf).
+Specification](https://github.com/chipsalliance/firrtl-spec/releases/latest/download/abi.pdf)。
 
 :::
 
-## Layer-colored Probes
+## 层彩色探测器
 
-Probes are allowed to be layer-colored.  I.e., this is a mechanism to declare
-that a probe's existence is contingent on a specific layer being enabled.  To
-declare a probe as being layer-colored, the `Probe` or `RWProbe` type takes an
-optional argument indicating what the layer coloring is.  The following example
-decalres two probe ports with different layer colors:
+探测器允许进行层彩色处理。即，这是声明探测器的存在取决于特定层是否启用的一种机制。要声明探测器为层彩色的，`Probe` 或 `RWProbe` 类型接受一个可选参数，指示层彩色是什么。以下示例声明了两个具有不同层颜色的探测器端口：
 
 ```scala mdoc:reset:silent
 import chisel3._
@@ -315,26 +231,17 @@ class Foo extends Module {
 }
 ```
 
-For more information on layer-colored probes see [the appropriate subsection of
-the layers documentation](layers#layer-colored-probes-and-wires).
+有关层彩色探测器的更多信息，请参见[层文档的相关子部分](layers#layer-colored-probes-and-wires)。
 
-## Why Input Probes are Not Allowed
+## 为什么不允许输入探测器
 
-Input probes (of either read or read--write kind) are disallowed.  This is an
-intentional decision that stems from requirements of both what probes are and
-how probes can be compiled to SystemVerilog.
+不允许输入探测器（无论是只读还是读写类型）。这是一个故意的决定，源于探测器的要求以及如何将探测器编译为 SystemVerilog。
 
-First, probes are references.  They refer to hardware which exists somewhere
-else.  They are not hardware wires.  They are not "shadow" ports.  They do not
-represent "shadow" dataflow.
+首先，探测器是引用。它们引用某处存在的硬件。它们不是硬件线。它们不是"影子"端口。它们不代表"影子"数据流。
 
-Second, a probe always comes with two pieces: the actual probed hardware and the
-operation which uses the reference to the probed hardware.  The operation that
-uses the probe must, at its specific location, be able to refer unambiguously to
-the probed hardware.  As the example below will show, this is problematic with
-input probes.
+其次，探测器总是有两个部分：实际被探测的硬件和使用引用被探测硬件的操作。使用探测器的操作必须在其特定位置能够明确地引用被探测的硬件。正如下面的示例所示，输入探测器在这方面是有问题的。
 
-Consider the following illegal Chisel which uses hypothetical input probes:
+考虑以下使用假设输入探测器的非法 Chisel：
 
 ``` scala
 import chisel3._
@@ -363,7 +270,7 @@ module Foo extends RawModule {
 }
 ```
 
-This could be compiled to the following SystemVerilog:
+这可以编译成以下 SystemVerilog：
 
 ``` verilog
 module Baz();
@@ -387,52 +294,25 @@ module Foo();
 endmodule
 ```
 
-SystemVerilog provides an algorithm for resolving _upwards_ hierarchical names
-(see: Section 23.8 of the SystemVerilog 2023 specification).  This works by
-looking in the current scope for a match for the root of the name (`Foo`) and if
-it fails, it moves up one level and tries to look aagin.  This then repeats
-until a name is found (or errors if the top of the circuit is reached).
-However, this algorithm places harsh naming constraints on intermediary modules.
-E.g., in the example above, no name `Foo` can exist in `Baz` or in an
-_intervening_ modules between `Baz` and `Foo`.  This can easily run afoul of
-names which cannot be changed, e.g., public modules or public module ports.
+SystemVerilog 提供了一种解析 _向上_ 层次名称的算法（参见：SystemVerilog 2023 规范的第 23.8 节）。这通过在当前作用域中查找名称的根（`Foo`）并在失败时向上移动一个级别并尝试查找来工作。然后，这将重复，直到找到名称（或在到达电路顶部时出错）。然而，该算法对中介模块施加了严格的命名限制。例如，在上述示例中，`Foo` 这个名称不能在 `Baz` 中或在 `Baz` 和 `Foo` 之间的 _中介_ 模块中存在。这很容易与无法更改的名称发生冲突，例如公共模块或公共模块端口。
 
-Additionally, any use of a hierarchical name that resolves upwards means that
-the module that uses that upwards reference is limited in its ability to be
-freely instantiated.  In the circuit above, `Baz` is singly instantiated.
-However, if `Baz` was multiply instantiated, it could be given two different
-input probes.  This would mean that `Baz` could _not_ be compiled to a single
-Verilog module.  It must be duplicated for each unique hierarchical name that it
-contains.  This can have cascading duplication effects where parent modules,
-their parents, etc. must be duplicated.  The unpredictability of this is not
-viewed as tolerable by users.
+此外，任何使用解析向上层次名称的模块都限制了其自由实例化的能力。在上面的电路中，`Baz` 是单实例化的。然而，如果 `Baz` 被多次实例化，则可以给它两个不同的输入探测器。这将意味着 `Baz` 不能被编译成单个 Verilog 模块。它必须针对每个唯一的层次名称而重复。这可能会导致级联的重复效应，父模块、祖父模块等也必须被重复。这种不可预测性被用户视为不可接受。
 
-Both of these constraints (the constraints on names in intevening modules and
-duplication to resolve hierarchical names) make the use of input probes
-problematic.  While they could be compiled, the results will be unpredictable
-and difficult for a user to debug when things go wrong.
+由于这些限制（对中介模块名称的限制和为了解析层次名称而进行的重复），输入探测器的使用被认为是有问题的。尽管它们可以被编译，但结果将是不可预测的，并且当出现问题时，用户很难调试。
 
-Due to these problems, input probes were rejected as a design point and are not
-planned to be implemented.
+因此，输入探测器作为设计点被拒绝，并且不计划实现。
 
 ## BoringUtils
 
-Probes are an intentionally a low-level API.  E.g., if a design needs to expose
-a probe port, it may need to add probe ports to all intervening modules between
-it and a probed value.
+探测器故意是一个底层 API。例如，如果一个设计需要暴露一个探测器端口，它可能需要向其与被探测值之间的所有中介模块添加探测器端口。
 
-For a more flexible API, consider using `chisel3.util.experimental.BoringUtils`.
-This provides higher-level APIs that automatically create probe ports for the
-user:
+有关更灵活的 API，请考虑使用 `chisel3.util.experimental.BoringUtils`。这提供了更高级的 API，自动为用户创建探测器端口：
 
-- `rwTap`: creates a read--write probe of a signal and routes it to the call
-  site
-- `tap`: creates a read probe of a signal and routes it to the call site
-- `tapAndRead`: `creates a read probe of a signal, routes it to the call site,
-  and reads it (converts from probe to real hardware)
+- `rwTap`：创建信号的读写探测器并将其路由到调用位置
+- `tap`：创建信号的读探测器并将其路由到调用位置
+- `tapAndRead`：创建信号的读探测器，将其路由到调用位置，并读取它（从探测器转换为真实硬件）
 
-E.g., consider the original example shown for read probes.  This can be
-rewritten using `BoringUtils` to be more terse:
+例如，考虑最初为只读探测器显示的原始示例。这可以使用 `BoringUtils` 重写得更简洁：
 
 ```scala mdoc:reset:silent
 import chisel3._
@@ -448,10 +328,9 @@ class Foo extends RawModule {
 
   private val a_read = dontTouch(WireInit(BoringUtils.tapAndRead(bar.a)))
 }
-
 ```
 
-The SystemVerilog for the above circuit is shown below:
+上述电路的 SystemVerilog 如下所示：
 
 ```scala mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
@@ -467,16 +346,12 @@ circt.stage.ChiselStage.emitSystemVerilog(
 )
 ```
 
-In order to do this, it requires that the tapped target is public from Scala's
-perspective.
+为了做到这一点，它要求被探测的目标在 Scala 的角度是公共的。
 
 :::note
 
-`BoringUtils` is only suitable for use _within_ a compilation unit.
-Additionally, excessive use of `BoringUtils` can result in very confusing
-hardware generators where the port-level interfaces are unpredictable.
+`BoringUtils` 仅适合在 _一个编译单元内_ 使用。此外，过度使用 `BoringUtils` 可能导致非常混乱的硬件生成器，其中端口级接口是不可预测的。
 
 :::
 
-If a `BoringUtils` API is used in a situation which would create an input probe,
-it will instead create a non-probe input port.
+如果在可能创建输入探测器的情况下使用 `BoringUtils` API，它将创建一个非探测器输入端口。

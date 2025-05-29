@@ -4,74 +4,58 @@ title:  "Properties"
 section: "chisel3"
 ---
 
-# Properties
+# 属性
 
-Chisel *properties* represent information about the design that is not hardware.
-This is useful to capture domain-specific knowledge and design intent alongside
-the hardware description within the same generator.
+Chisel *属性* 表示设计中非硬件的信息。这对于在同一生成器中捕获领域特定知识和设计意图，并与硬件描述一起使用非常有用。
 
 :::warning
 
-Properties are under active development and are not yet considered stable.
+属性功能正在积极开发中，尚未被视为稳定。
 
 :::
 
-## Property Types
+## 属性类型
 
-The core primitive for using properties is the `Property` type.
+使用属性的核心原语是 `Property` 类型。
 
-`Property` types work similarly to the other Chisel
-[Data Types](../explanations/data-types), but rather than specifying the type of
-values held in state elements or flowing through wires in the circuit,
-properties never flow through or affect the generated hardware. Instead, they
-flow through the hierarchy as ports that can be connected.
+`Property` 类型的工作方式类似于其他 Chisel [数据类型](../explanations/data-types)，但与指定电路中状态元素或流经电路的线上的值类型不同，属性永远不会流经或影响生成的硬件。相反，它们作为可以连接的端口在层次结构中流动。
 
-What makes `Property` types useful is their ability to express non-hardware
-information that is present in the generated hierarchy, and can be composed to
-create domain-specific data models that are tightly coupled to the design. An
-input port with `Property` type represents a part of the data model that must be
-supplied when its module is instantiated. An output port with `Property` type
-represents a part of the data model that may be accessed when its module is
-instantiated. As the complete design is generated, an arbitrary data model can
-be generated alongside it.
+`Property` 类型的有用之处在于它们能够表达生成的层次结构中存在的非硬件信息，并且可以组合以创建与设计紧密耦合的特定领域数据模型。具有 `Property` 类型的输入端口表示在实例化其模块时必须提供的数据模型的一部分。具有 `Property` 类型的输出端口表示在实例化其模块时可以访问的数据模型的一部分。随着完整设计的生成，可以同时生成任意数据模型。
 
-The following are legal `Property` types:
+以下是合法的 `Property` 类型：
 
 * `Property[Int]`
 * `Property[Long]`
 * `Property[BigInt]`
 * `Property[String]`
 * `Property[Boolean]`
-* `Property[Seq[A]]` (where `A` is itself a `Property`)
+* `Property[Seq[A]]` (其中 `A` 本身是一个 `Property`)
 
-## Using Properties
+## 使用属性
 
-The `Property` functionality can be used with the following imports:
+可以通过以下导入语句使用 `Property` 功能：
 
 ```scala mdoc:silent
 import chisel3._
 import chisel3.properties.Property
 ```
 
-The subsections below show example uses of `Property` types in various Chisel
-constructs.
+下面的小节展示了在各种 Chisel 构造中使用 `Property` 类型的示例。
 
-### Property Ports
+### 属性端口
 
-The legal `Property` types may be used in ports. For example:
+合法的 `Property` 类型可以用在端口中。例如：
 
 ```scala mdoc:silent
 class PortsExample extends RawModule {
-  // An Int Property type port.
+  // 一个 Int Property 类型的端口
   val myPort = IO(Input(Property[Int]()))
 }
 ```
 
-### Property Connections
+### 属性连接
 
-The legal `Property` types may be connected using the `:=` operator. For
-example, an input `Property` type port may be connected to an output `Property`
-type port:
+合法的 `Property` 类型可以使用 `:=` 运算符进行连接。例如，一个输入 `Property` 类型的端口可以连接到一个输出 `Property` 类型的端口：
 
 ```scala mdoc:silent
 class ConnectExample extends RawModule {
@@ -81,15 +65,11 @@ class ConnectExample extends RawModule {
 }
 ```
 
-Connections are only supported between the same `Property` type. For example, a
-`Property[Int]` may only be connected to a `Property[Int]`. This is enforced by
-the Scala compiler.
+连接只支持相同的 `Property` 类型之间。例如，一个 `Property[Int]` 只能连接到一个 `Property[Int]`。这由 Scala 编译器强制执行。
 
-### Property Values
+### 属性值
 
-The legal `Property` types may be used to construct values by applying the
-`Property` object to a value of the `Property` type. For example, a
-`Property` value may be connected to an output `Property` type port:
+合法的 `Property` 类型可以通过将 `Property` 对象应用于 `Property` 类型的值来构造。例如，一个 `Property` 值可以连接到一个输出 `Property` 类型的端口：
 
 ```scala mdoc:silent
 class LiteralExample extends RawModule {
@@ -98,38 +78,31 @@ class LiteralExample extends RawModule {
 }
 ```
 
-### Property Sequences
+### 属性序列
 
-Similarly to the primitive `Property` types, sequences of `Properties` may also be
-for creating ports and values and they may also be connected:
+与原始 `Property` 类型类似，`Properties` 的序列也可以用于创建端口和值，它们也可以被连接：
 
 ```scala mdoc:silent
 class SequenceExample extends RawModule {
   val inPort = IO(Input(Property[Int]()))
   val outPort1 = IO(Output(Property[Seq[Int]]()))
   val outPort2 = IO(Output(Property[Seq[Int]]()))
-  // A Seq of literals can by turned into a Property
+  // 字面值序列可以转换为 Property
   outPort1 := Property(Seq(123, 456))
-  // Property ports and literals can be mixed together into a Seq
+  // Property 端口和字面值可以混合在一起形成序列
   outPort2 := Property(Seq(inPort, Property(789)))
 }
 ```
 
-### Property Expressions
+### 属性表达式
 
-Expressions can be built out of `Property` values for certain `Property` types.
-This is useful for expressing design intent that is parameterized by input
-`Property` values.
+对于某些 `Property` 类型，可以使用 `Property` 值构建表达式。这对于表达由输入 `Property` 值参数化的设计意图很有用。
 
-#### Integer Arithmetic
+#### 整数运算
 
-The integral `Property` types, like `Property[Int]`, `Property[Long]` and 
-`Property[BigInt]`, can be used to build arithmetic expressions in terms of
-`Property` values.
+整数 `Property` 类型，如 `Property[Int]`、`Property[Long]` 和 `Property[BigInt]`，可以用于根据 `Property` 值构建算术表达式。
 
-In the following example, an output `address` port of `Property[Int]` type is
-computed as the addition of an `offset` `Property[Int]` value relative to an 
-input `base` `Property[Int]` value.
+在下面的示例中，`Property[Int]` 类型的输出 `address` 端口通过将 `offset` `Property[Int]` 值相对于输入 `base` `Property[Int]` 值相加来计算。
 
 ```scala mdoc:silent
 class IntegerArithmeticExample extends RawModule {
@@ -140,24 +113,20 @@ class IntegerArithmeticExample extends RawModule {
 }
 ```
 
-The following table lists the possible arithmetic operators that are supported
-on integral `Property` typed values.
+下表列出了在整型 `Property` 类型值上支持的算术运算符。
 
-| Operation | Description                                                                         |
-| --------- | -----------                                                                         |
-| `+`       | Perform addition as defined by FIRRTL spec section Integer Add Operation            |
-| `*`       | Perform multiplication as defined by FIRRTL spec section Integer Multiply Operation |
-| `>>`      | Perform shift right as defined by FIRRTL spec section Integer Shift Right Operation |
-| `<<`      | Perform shift left as defined by FIRRTL spec section Integer Shift Left Operation   |
+| 运算符 | 描述 |
+| ----- | ---- |
+| `+`   | 执行加法，如 FIRRTL 规范的整数加法运算部分所定义 |
+| `*`   | 执行乘法，如 FIRRTL 规范的整数乘法运算部分所定义 |
+| `>>`  | 执行右移，如 FIRRTL 规范的整数右移运算部分所定义 |
+| `<<`  | 执行左移，如 FIRRTL 规范的整数左移运算部分所定义 |
 
-#### Sequence Operations
+#### 序列运算
 
-The sequence `Property` types, like `Property[Seq[Int]]` support some basic
-operations to create new sequences from existing sequences.
+序列 `Property` 类型，如 `Property[Seq[Int]]`，支持一些基本操作来从现有序列创建新序列。
 
-In the following example, and output `c` port of `Property[Seq[Int]]` type is
-computed as the concatenation of the `a` and `b` ports of `Property[Seq[Int]]`
-type.
+在下面的示例中，`Property[Seq[Int]]` 类型的输出 `c` 端口是通过连接 `Property[Seq[Int]]` 类型的 `a` 和 `b` 端口计算得出的。
 
 ```scala mdoc:silent
 class SequenceOperationExample extends RawModule {
@@ -168,52 +137,25 @@ class SequenceOperationExample extends RawModule {
 }
 ```
 
-The following table lists the possible sequence operators that are supported on
-sequence `Property` typed values.
+下表列出了在序列 `Property` 类型值上支持的序列运算符。
 
-| Operation | Description                                                                          |
-| --------- | -----------                                                                          |
-| `++`      | Perform concatenation as defined by FIRRTL spec section List Concatenation Operation |
+| 运算符 | 描述 |
+| ----- | ---- |
+| `++`  | 执行连接操作，如 FIRRTL 规范的列表连接运算部分所定义 |
 
-### Classes and Objects
+### 类和对象
 
-Classes and Objects are to `Property` types what modules and instances are to
-hardware types. That is, they provide a means to declare hierarchies through
-which `Property` typed values flow. `Class` declares a hierarchical container
-with input and output `Property` ports, and a body that contains `Property`
-connections and `Object`s. `Object`s represent the instantiation of a `Class`,
-which requires any input `Property` ports to be assigned, and allows any output
-`Property` ports to be read.
+对于 `Property` 类型来说，类和对象就像模块和实例对于硬件类型一样。也就是说，它们提供了一种声明层次结构的方式，通过这些层次结构可以流动 `Property` 类型的值。`Class` 声明了一个层次容器，具有输入和输出 `Property` 端口，以及包含 `Property` 连接和 `Object` 的主体。`Object` 表示 `Class` 的实例化，它要求必须分配任何输入 `Property` 端口，并允许读取任何输出 `Property` 端口。
 
-This allows domain-specific data models to be built using the basic primitives
-of an object-oriented programming language, and embedded directly in the
-instance graph Chisel is constructing. Intuitively, inputs to a `Class` are like
-constructor arguments, which must be supplied to create an `Object`. Similarly,
-outputs from a `Class` are like fields, which may be accessed from an `Object`.
-This separation allows `Class` declarations to abstract over any `Object`s
-created in their body--from the outside, the inputs must be supplied and only
-the outputs may be accessed.
+这允许使用面向对象编程语言的基本原语来构建特定领域的数据模型，并将其直接嵌入到 Chisel 正在构建的实例图中。直观地说，`Class` 的输入就像构造函数参数，在创建 `Object` 时必须提供。类似地，`Class` 的输出就像字段，可以从 `Object` 访问。这种分离允许 `Class` 声明抽象出其主体中创建的任何 `Object` - 从外部来看，必须提供输入，并且只能访问输出。
 
-The graphs represented by `Class` declarations and `Object` instantiations
-coexist within the hardware instance graph. `Object` instances can exist
-within hardware modules, providing domain-specific information, but hardware
-instances cannot exist within `Class` declarations.
+由 `Class` 声明和 `Object` 实例化表示的图与硬件实例图共存。`Object` 实例可以存在于硬件模块中，提供特定领域的信息，但硬件实例不能存在于 `Class` 声明中。
 
-`Object`s can be referenced, and references to `Object`s are a special kind of
-`Property[ClassType]` type. This allows the data model captured by `Class`
-declarations and `Object` instances to form arbitrary graphs.
+`Object` 可以被引用，对 `Object` 的引用是一种特殊的 `Property[ClassType]` 类型。这允许由 `Class` 声明和 `Object` 实例捕获的数据模型形成任意图。
 
-To understand how `Object` graphs are represented, and can ultimately be
-queried, consider how the hardware instance graph is elaborated. To build the
-`Object` graph, we first pick an entrypoint module to start elaboration. The
-elaboration process works according to the Verilog spec's definition of
-elaboration--instances of modules and `Object`s are instantiated in-memory,
-with connections to their inputs and outputs. Inputs are supplied, and outputs
-may be read. After elaboration completes, the `Object` graph is exposed in terms
-of the output ports, which may contain any `Property` types, including
-references to `Object`s.
+为了理解 `Object` 图是如何表示的，以及最终如何被查询，考虑一下硬件实例图是如何展开的。为了构建 `Object` 图，我们首先选择一个入口模块来开始展开。展开过程按照 Verilog 规范对展开的定义进行工作 - 模块和 `Object` 的实例在内存中实例化，连接到它们的输入和输出。输入被提供，输出可以被读取。展开完成后，`Object` 图通过输出端口暴露，这些端口可以包含任何 `Property` 类型，包括对 `Object` 的引用。
 
-To illustrate how these pieces come together, consider the following examples:
+为了说明这些部分是如何结合在一起的，考虑以下示例：
 
 ```scala mdoc:silent
 import chisel3.properties.Class
@@ -241,17 +183,11 @@ class CSRDescription extends Class {
 }
 ```
 
-The `CSRDescription` is a `Class` that represents domain-specific information
-about a CSR. This uses `@instantiable` and `@public` so the `Class` can work
-with the `Definition` and `Instance` APIs.
+`CSRDescription` 是一个 `Class`，它表示有关 CSR 的领域特定信息。它使用 `@instantiable` 和 `@public` 以便 `Class` 可以与 `Definition` 和 `Instance` API 一起使用。
 
-The readable fields we want to expose on `Object`s of the `CSRDescription` class
-are a string identifier, a string description, and an integer bitwidth, so these
-are output `Property` type ports on the `Class`.
+我们希望在 `CSRDescription` 类的 `Object` 上公开的可读字段是一个字符串标识符、一个字符串描述和一个整数位宽，因此这些都是 `Class` 上的输出 `Property` 类型端口。
 
-To capture concrete values at each `Object` instantiation, we have corresponding
-input `Property` type ports, which are connected directly to the outputs. This
-is how we would represent something like a Scala `case class` using `Class`.
+为了在每个 `Object` 实例化时捕获具体值，我们有相应的输入 `Property` 类型端口，直接连接到输出。这就是我们如何使用 `Class` 表示类似 Scala 的 `case class` 的方式。
 
 ```scala mdoc:silent
 // A hardware module representing a CSR and its description.
@@ -286,11 +222,7 @@ class CSRModule(
 }
 ```
 
-The `CSRModule` is a `Module` that represents the (dummy) hardware for a CSR, as
-well as a `CSRDescription`. Using a `Definition` of a `CSRDescription`, an
-`Object` is created and its inputs supplied from the `CSRModule` constructor
-arguments. Then, a reference to the `Object` is connected to the `CSRModule`
-output, so the reference will be exposed to the outside.
+`CSRModule` 是一个 `Module`，它表示 CSR 的（虚拟）硬件以及 `CSRDescription`。使用 `CSRDescription` 的 `Definition`，创建一个 `Object` 并从 `CSRModule` 构造函数参数提供输入。然后，将对 `Object` 的引用连接到 `CSRModule` 输出，以便引用将暴露给外部。
 
 ```scala mdoc:silent
 // The entrypoint module.
@@ -313,17 +245,11 @@ class Top extends Module {
 }
 ```
 
-The `Top` module represents the entrypoint. It creates the `Definition` of the
-`CSRDescription`, and creates some `CSRModule`s. It then takes the description
-references, collects them into a list, and outputs the list so it will be
-exposed to the outside.
+`Top` 模块表示入口点。它创建 `CSRDescription` 的 `Definition`，并创建一些 `CSRModule`。然后，它获取描述引用，将它们收集到一个列表中，并输出该列表，以便将其暴露给外部。
 
-While it is not required to use the `Definition` API to define a `Class`, this
-is the "safe" API, with support in Chisel for working with `Definition`s and
-`Instance`s of a `Class`. There is also an "unsafe" API. See `DynamicObject` for
-more information.
+虽然不需要使用 `Definition` API 来定义 `Class`，但这是 "安全" 的 API，Chisel 支持与 `Class` 的 `Definition` 和 `Instance` 一起使用。还有一个 "不安全" 的 API。有关更多信息，请参见 `DynamicObject`。
 
-To illustrate what this example generates, here is a listing of the FIRRTL:
+为了说明此示例生成的内容，这里列出了 FIRRTL：
 
 ```
 FIRRTL version 4.0.0
@@ -382,14 +308,9 @@ circuit Top :
     propassign descriptions, List<Inst<CSRDescription>>(mcycle.description, minstret.description)
 ```
 
-To understand the `Object` graph that is constructed, we will consider an
-entrypoint to elaboration, and then show a hypothetical JSON representation of
-the `Object` graph. The details of how we go from IR to an `Object` graph are
-outside the scope of this document, and implemented by related tools.
+为了理解构造的 `Object` 图，我们将考虑一个展开的入口点，然后显示 `Object` 图的假设 JSON 表示。我们从 IR 到 `Object` 图的详细信息超出了本文档的范围，由相关工具实现。
 
-If we elaborate `Top`, the `descriptions` output `Property` is our entrypoint to
-the `Object` graph. Within it, there are two `Object`s, the `CSRDescription`s of
-the `mcycle` and `minstret` modules:
+如果我们展开 `Top`，`descriptions` 输出 `Property` 是我们进入 `Object` 图的入口点。在其中，有两个 `Object`，分别是 `mcycle` 和 `minstret` 模块的 `CSRDescription`：
 
 ```json mdoc:silent
 {
@@ -408,9 +329,7 @@ the `mcycle` and `minstret` modules:
 }
 ```
 
-If instead, we elaborate one of the `CSRModule`s, for example, `minstret`, the
-`description` output `Property` is our entrypoint to the `Object` graph, which
-contains the single `CSRDescription` object:
+如果相反地，我们展开其中一个 `CSRModule`，例如 `minstret`，`description` 输出 `Property` 是我们进入 `Object` 图的入口点，其中包含单个 `CSRDescription` 对象：
 
 ```json mdoc:silent
 {
@@ -422,6 +341,4 @@ contains the single `CSRDescription` object:
 }
 ```
 
-In this way, the output `Property` ports, `Object` references, and choice of
-elaboration entrypoint allow us to view the `Object` graph representing the
-domain-specific data model from different points in the hierarchy.
+通过这种方式，输出 `Property` 端口、`Object` 引用和选择的展开入口点允许我们从层次结构中的不同点查看表示特定领域数据模型的 `Object` 图。

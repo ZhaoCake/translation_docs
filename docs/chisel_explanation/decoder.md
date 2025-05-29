@@ -1,18 +1,15 @@
 ---
 layout: docs
-title:  "Decoders"
+title:  "解码器"
 section: "chisel3"
 ---
 
-# Decoders
+# 解码器
 
-It is common in a complex design to recognize certain patterns from a big `UInt` coming from a data bus and dispatch
-actions to next pipeline stage based on such observation. The circuit doing so can be called as 'decoders' such as
-address decoders in a bus crossbar or instruction decoders in a CPU frontend. Chisel provides some utility class to
-generate them in `util.exprimental.decode` package.
+在复杂设计中，从数据总线来的大型`UInt`识别特定模式并基于这种观察将动作分派到下一个流水线阶段是很常见的。执行此操作的电路可以称为"解码器"，例如总线交叉开关中的地址解码器或CPU前端的指令解码器。Chisel在`util.exprimental.decode`包中提供了一些实用类来生成它们。
 
-## Basic Decoders
-The simplest API provided by `decoder` is essentially just a `TruthTable` encoding your desired input and output.
+## 基本解码器
+`decoder`提供的最简单API本质上只是一个编码您所需输入和输出的`TruthTable`。
 ```scala mdoc:silent
 import chisel3._
 import chisel3.util.BitPat
@@ -35,14 +32,11 @@ class SimpleDecoder extends Module {
 ```
 
 ## DecoderTable
-When the decoded result involves multiple fields, each with its own semantics, the `TruthTable` can quickly be become
-hard to maintain. The `DecoderTable` API is designed to generate decoder table from structured definitions.
+当解码结果涉及多个字段，每个字段具有自己的语义时，`TruthTable`很快就会变得难以维护。`DecoderTable` API旨在从结构化定义生成解码器表。
 
-The bridge from structured information to its encoding is `DecodePattern` trait. The `bitPat` member defines the input
-`BitPat` in the decode truth table, and other members can be defined to contain structured information.
+从结构化信息到其编码的桥梁是`DecodePattern`特质。`bitPat`成员定义了解码真值表中的输入`BitPat`，其他成员可以定义为包含结构化信息。
 
-To generate output side of the decode truth table, the trait to use is `DecodeField`. Given an instance implementing the
-`DecodePattern` object, the `genTable` method should return desired output.
+要生成解码真值表的输出端，要使用的特质是`DecodeField`。给定一个实现`DecodePattern`对象的实例，`genTable`方法应返回所需的输出。
 
 ```scala mdoc:silent
 import chisel3.util.BitPat
@@ -58,14 +52,13 @@ object NameContainsAdd extends BoolDecodeField[Pattern] {
 }
 ```
 
-Then all `DecodePattern` cases can be generated or read from external sources. And with all `DecodeField` objects, the
-decoder can be easily generated and output can be read by corresponding `DecodeField`s.
+然后所有`DecodePattern`案例可以从外部源生成或读取。有了所有`DecodeField`对象，解码器可以轻松生成，输出可以由相应的`DecodeField`读取。
 ```scala mdoc:silent
 import chisel3._
 import chisel3.util.experimental.decode._
 
 class SimpleDecodeTable extends Module {
-  val allPossibleInputs = Seq(Pattern("addi", BigInt("0x2")) /* can be generated */)
+  val allPossibleInputs = Seq(Pattern("addi", BigInt("0x2")) /* 可以生成 */)
   val decodeTable = new DecodeTable(allPossibleInputs, Seq(NameContainsAdd))
   
   val input = IO(Input(UInt(4.W)))

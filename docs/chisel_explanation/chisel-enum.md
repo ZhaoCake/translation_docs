@@ -1,25 +1,25 @@
 ---
 layout: docs
-title:  "Enumerations"
+title:  "枚举"
 section: "chisel3"
 ---
 
 # ChiselEnum
 
-The ChiselEnum type can be used to reduce the chance of error when encoding mux selectors, opcodes, and functional unit operations.
-In contrast with `Chisel.util.Enum`, `ChiselEnum` are subclasses of `Data`, which means that they can be used to define fields in `Bundle`s, including in `IO`s.
+ChiselEnum类型可用于减少在编码多路复用器选择器、操作码和功能单元操作时出错的可能性。
+与`Chisel.util.Enum`相比，`ChiselEnum`是`Data`的子类，这意味着它们可以用于定义`Bundle`中的字段，包括在`IO`中。
 
-## Functionality and Examples
+## 功能和示例
 
 ```scala mdoc
-// Imports used in the following examples
+// 在以下示例中使用的导入
 import chisel3._
 import chisel3.util._
 ```
 
 ```scala mdoc:invisible
-// Helper to print stdout from Chisel elab
-// May be related to: https://github.com/scalameta/mdoc/issues/517
+// 用于打印来自Chisel elab的stdout的辅助程序
+// 可能与以下问题有关：https://github.com/scalameta/mdoc/issues/517
 import java.io._
 import firrtl.seqToAnnoSeq
 import _root_.logger.Logger
@@ -34,18 +34,18 @@ def grabLog[T](thunk: => T): (String, T) = {
 }
 ```
 
-Below we see ChiselEnum being used as mux select for a RISC-V core. While wrapping the object in a package is not required, it is highly recommended as it allows for the type to be used in multiple files more easily.
+下面我们看到ChiselEnum被用作RISC-V核的多路复用器选择器。虽然将对象包装在包中不是必需的，但强烈建议这样做，因为这样可以更容易地在多个文件中使用该类型。
 
 ```scala mdoc
 // package CPUTypes {
 object AluMux1Sel extends ChiselEnum {
   val selectRS1, selectPC = Value
 }
-// We can see the mapping by printing each Value
+// 我们可以通过打印每个Value来查看映射
 AluMux1Sel.all.foreach(println)
 ```
 
-Here we see a mux using the AluMux1Sel to select between different inputs.
+这里我们看到一个使用AluMux1Sel的多路复用器，用于在不同输入之间进行选择。
 
 ```scala mdoc
 import AluMux1Sel._
@@ -60,7 +60,7 @@ class AluMux1Bundle extends Bundle {
 class AluMux1File extends Module {
   val io = IO(new AluMux1Bundle)
 
-  // Default value for aluMux1Out
+  // aluMux1Out的默认值
   io.aluMux1Out := 0.U
 
   switch (io.aluMux1Sel) {
@@ -78,9 +78,8 @@ class AluMux1File extends Module {
 chisel3.docs.emitSystemVerilog(new AluMux1File)
 ```
 
-ChiselEnum also allows for the user to directly set the Values by passing an `UInt` to `Value(...)`
-as shown below. Note that the magnitude of each `Value` must be strictly greater than the one before
-it.
+ChiselEnum还允许用户通过向`Value(...)`传递一个`UInt`来直接设置值，
+如下所示。注意，每个`Value`的大小必须严格大于前一个。
 
 ```scala mdoc
 object Opcode extends ChiselEnum {
@@ -96,7 +95,7 @@ object Opcode extends ChiselEnum {
 }
 ```
 
-The user can 'jump' to a value and continue incrementing by passing a start point then using a regular Value definition.
+用户可以通过传递一个起始点然后使用常规Value定义，"跳跃"到一个值并继续递增。
 
 ```scala mdoc
 object BranchFunct3 extends ChiselEnum {
@@ -104,13 +103,13 @@ object BranchFunct3 extends ChiselEnum {
     val blt = Value(4.U)
     val bge, bltu, bgeu = Value
 }
-// We can see the mapping by printing each Value
+// 我们可以通过打印每个Value来查看映射
 BranchFunct3.all.foreach(println)
 ```
 
-## Casting
+## 类型转换
 
-You can cast an enum to a `UInt` using `.asUInt`:
+你可以使用`.asUInt`将枚举转换为`UInt`：
 
 ```scala mdoc
 class ToUInt extends RawModule {
@@ -121,11 +120,11 @@ class ToUInt extends RawModule {
 ```
 
 ```scala mdoc:invisible
-// Always need to run Chisel to see if there are elaboration errors
+// 总是需要运行Chisel来查看是否有具体化错误
 chisel3.docs.emitSystemVerilog(new ToUInt)
 ```
 
-You can cast from a `UInt` to an enum by passing the `UInt` to the apply method of the `ChiselEnum` object:
+你可以通过将`UInt`传递给`ChiselEnum`对象的apply方法，从`UInt`转换为枚举：
 
 ```scala mdoc
 class FromUInt extends Module {
@@ -135,8 +134,8 @@ class FromUInt extends Module {
 }
 ```
 
-However, if you cast from a `UInt` to an Enum type when there are undefined states in the Enum values
-that the `UInt` could hit, you will see a warning like the following:
+然而，如果你从`UInt`转换为Enum类型，而该Enum的值中有未定义的状态
+可能被`UInt`命中，你将看到类似如下的警告：
 
 ```scala mdoc:passthrough
 println("```")
@@ -144,23 +143,23 @@ _root_.circt.stage.ChiselStage.emitCHIRRTL(new FromUInt): Unit // Suppress Strin
 println("```")
 ```
 
-(Note that the name of the Enum is ugly as an artifact of our documentation generation flow, it will
-be cleaner in normal use).
+（注意，由于我们的文档生成流程的特殊性，Enum的名称看起来很丑，在正常使用中
+会更整洁）。
 
-You can avoid this warning by using the `.safe` factory method which returns the cast Enum in addition
-to a `Bool` indicating if the Enum is in a valid state:
+你可以通过使用`.safe`工厂方法来避免这个警告，该方法返回转换后的Enum以及
+一个`Bool`，指示Enum是否处于有效状态：
 
 ```scala mdoc
 class SafeFromUInt extends Module {
   val in = IO(Input(UInt(7.W)))
   val out = IO(Output(Opcode()))
   val (value, valid) = Opcode.safe(in)
-  assert(valid, "Enum state must be valid, got %d!", in)
+  assert(valid, "Enum状态必须有效，得到了%d！", in)
   out := value
 }
 ```
 
-Now there will be no warning:
+现在将不会有警告：
 
 ```scala mdoc:passthrough
 println("```")
@@ -168,9 +167,9 @@ _root_.circt.stage.ChiselStage.emitCHIRRTL(new SafeFromUInt): Unit // Suppress S
 println("```")
 ```
 
-You can also suppress the warning by using `suppressEnumCastWarning`. This is
-primarily used for casting from [[UInt]] to a Bundle type that contains an
-Enum, where the [[UInt]] is known to be valid for the Bundle type.
+你也可以使用`suppressEnumCastWarning`来抑制警告。这主要
+用于从[[UInt]]转换为包含Enum的Bundle类型，
+其中[[UInt]]已知对Bundle类型有效。
 
 ```scala mdoc
 class MyBundle extends Bundle {
@@ -192,12 +191,12 @@ val (log3, _) = grabLog(_root_.circt.stage.ChiselStage.emitCHIRRTL(new Suppresse
 assert(log3.isEmpty)
 ```
 
-## Testing
+## 测试
 
-The _Type_ of the enums values is `<ChiselEnum Object>.Type` which can be useful for passing the values
-as parameters to a function (or any other time a type annotation is needed).
-Calling `.litValue` on an enum value will return the integer value of that object as a
-[`BigInt`](https://www.scala-lang.org/api/2.12.13/scala/math/BigInt.html).
+枚举值的_类型_是`<ChiselEnum对象>.Type`，这对于将值作为参数传递给函数
+（或任何其他需要类型注解的时候）非常有用。
+在枚举值上调用`.litValue`将返回该对象的整数值，表示为
+[`BigInt`](https://www.scala-lang.org/api/2.12.13/scala/math/BigInt.html)。
 
 ```scala mdoc
 def expectedSel(sel: AluMux1Sel.Type): Boolean = sel match {
@@ -207,9 +206,9 @@ def expectedSel(sel: AluMux1Sel.Type): Boolean = sel match {
 }
 ```
 
-The enum value type also defines some convenience methods for working with `ChiselEnum` values. For example, continuing with the RISC-V opcode
-example, one could easily create hardware signal that is only asserted on LOAD/STORE operations (when the enum value is equal to `Opcode.load`
-or `Opcode.store`) using the `.isOneOf` method:
+枚举值类型还定义了一些用于处理`ChiselEnum`值的便捷方法。例如，继续使用RISC-V操作码
+示例，可以使用`.isOneOf`方法轻松创建一个硬件信号，该信号仅在LOAD/STORE操作时
+（当枚举值等于`Opcode.load`或`Opcode.store`时）有效：
 
 ```scala mdoc
 class LoadStoreExample extends Module {
@@ -222,32 +221,36 @@ class LoadStoreExample extends Module {
 ```
 
 ```scala mdoc:invisible
-// Always need to run Chisel to see if there are elaboration errors
+// 总是需要运行Chisel来查看是否有具体化错误
 chisel3.docs.emitSystemVerilog(new LoadStoreExample)
 ```
 
-Some additional useful methods defined on the `ChiselEnum` object are:
+`ChiselEnum`对象上定义的一些其他有用方法有：
 
-* `.all`: returns the enum values within the enumeration
-* `.getWidth`: returns the width of the hardware type
+* `.all`：返回枚举中的枚举值
+* `.getWidth`：返回硬件类型的宽度
 
-## Workarounds
+## 解决方法
 
-As of Chisel v3.4.3 (1 July 2020), the width of the values is always inferred.
-To work around this, you can add an extra `Value` that forces the width that is desired.
-This is shown in the example below, where we add a field `ukn` to force the width to be 3 bits wide:
+截至Chisel v3.4.3（2020年7月1日），值的宽度总是被推断。
+为了解决这个问题，你可以添加一个额外的`Value`来强制使用所需的宽度。
+在下面的例子中，我们添加了一个字段`ukn`来强制宽度为3位：
 
 ```scala mdoc
 object StoreFunct3 extends ChiselEnum {
     val sb, sh, sw = Value
     val ukn = Value(7.U)
 }
-// We can see the mapping by printing each Value
+// 我们可以通过打印每个Value来查看映射
 StoreFunct3.all.foreach(println)
 ```
 
-Signed values are not supported so if you want the value signed, you must cast the UInt with `.asSInt`.
+不支持有符号值，所以如果你想要有符号值，你必须使用`.asSInt`转换UInt。
 
-## Additional Resources
+## 其他资源
 
-The ChiselEnum type is much more powerful than stated above. It allows for Sequence, Vec, and Bundle assignments, as well as a `.next` operation to allow for stepping through sequential states and an `.isValid` for checking that a hardware value is a valid `Value`. The source code for the ChiselEnum can be found [here](https://github.com/chipsalliance/chisel3/blob/2a96767097264eade18ff26e1d8bce192383a190/core/src/main/scala/chisel3/StrongEnum.scala) in the class `EnumFactory`. Examples of the ChiselEnum operations can be found [here](https://github.com/chipsalliance/chisel3/blob/dd6871b8b3f2619178c2a333d9d6083805d99e16/src/test/scala/chiselTests/StrongEnum.scala).
+ChiselEnum类型比上面所述的更强大。它允许Sequence、Vec和Bundle赋值，以及使用`.next`操作
+来允许逐步遍历顺序状态，并使用`.isValid`来检查硬件值是否是有效的`Value`。ChiselEnum的源代码可以在
+[这里](https://github.com/chipsalliance/chisel3/blob/2a96767097264eade18ff26e1d8bce192383a190/core/src/main/scala/chisel3/StrongEnum.scala)
+的`EnumFactory`类中找到。ChiselEnum操作的例子可以在
+[这里](https://github.com/chipsalliance/chisel3/blob/dd6871b8b3f2619178c2a333d9d6083805d99e16/src/test/scala/chiselTests/StrongEnum.scala)找到。

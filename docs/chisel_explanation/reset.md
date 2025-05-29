@@ -4,7 +4,7 @@ title:  "Reset"
 section: "chisel3"
 ---
 
-# Reset
+# 复位
 
 ```scala mdoc:invisible
 import chisel3._
@@ -12,79 +12,70 @@ import chisel3._
 class Submodule extends Module
 ```
 
-As of Chisel 3.2.0, Chisel 3 supports both synchronous and asynchronous reset,
-meaning that it can natively emit both synchronous and asynchronously reset registers.
+从 Chisel 3.2.0 开始，Chisel 3 同时支持同步和异步复位，这意味着它可以原生地生成同步复位和异步复位的寄存器。
 
-The type of register that is emitted is based on the type of the reset signal associated
-with the register.
+生成的寄存器类型取决于与寄存器相关联的复位信号的类型。
 
-There are three types of reset that implement a common trait `Reset`:
-* `Bool` - constructed with `Bool()`. Also known as "synchronous reset".
-* `AsyncReset` - constructed with `AsyncReset()`. Also known as "asynchronous reset".
-* `Reset` - constructed with `Reset()`. Also known as "abstract reset".
+有三种类型的复位实现了一个公共的 `Reset` 特质：
+* `Bool` - 通过 `Bool()` 构造。也称为"同步复位"。
+* `AsyncReset` - 通过 `AsyncReset()` 构造。也称为"异步复位"。
+* `Reset` - 通过 `Reset()` 构造。也称为"抽象复位"。
 
-For implementation reasons, the concrete Scala type is `ResetType`. Stylistically we avoid `ResetType`, instead using the common trait `Reset`.
+由于实现原因，具体的 Scala 类型是 `ResetType`。从风格上来说，我们避免使用 `ResetType`，而是使用公共特质 `Reset`。
 
-Registers with reset signals of type `Bool` are emitted as synchronous reset flops.
-Registers with reset signals of type `AsyncReset` are emitted as asynchronouly reset flops.
-Registers with reset signals of type `Reset` will have their reset type _inferred_ during FIRRTL compilation.
+具有 `Bool` 类型复位信号的寄存器被生成为同步复位触发器。
+具有 `AsyncReset` 类型复位信号的寄存器被生成为异步复位触发器。
+具有 `Reset` 类型复位信号的寄存器将在 FIRRTL 编译期间 _推断_ 其复位类型。
 
-### Reset Inference
+### 复位推断
 
-FIRRTL will infer a concrete type for any signals of type abstract `Reset`.
-The rules are as follows:
-1. An abstract `Reset` with only signals of type `AsyncReset`, abstract `Reset`, and `DontCare`
-in both its fan-in and fan-out will infer to be of type `AsyncReset`
-2. An abstract `Reset` with signals of both types `Bool` and `AsyncReset` in its fan-in and fan-out
-is an error.
-3. Otherwise, an abstract `Reset` will infer to type `Bool`.
+FIRRTL 将为任何抽象 `Reset` 类型的信号推断一个具体类型。
+规则如下：
+1. 如果一个抽象 `Reset` 在其输入和输出扇出中只有 `AsyncReset`、抽象 `Reset` 和 `DontCare` 类型的信号，则推断为 `AsyncReset` 类型
+2. 如果一个抽象 `Reset` 在其输入和输出扇出中同时包含 `Bool` 和 `AsyncReset` 类型的信号，这是一个错误。
+3. 否则，抽象 `Reset` 将推断为 `Bool` 类型。
 
-You can think about (3) as the mirror of (1) replacing `AsyncReset` with `Bool` with the additional
-rule that abstract `Reset`s with neither `AsyncReset` nor `Bool` in their fan-in and fan-out will
-default to type `Bool`.
-This "default" case is uncommon and implies that reset signal is ultimately driven by a `DontCare`.
+你可以把 (3) 看作是 (1) 的镜像，用 `Bool` 替换 `AsyncReset`，并增加了一条额外的规则：
+如果抽象 `Reset` 在其输入和输出扇出中既没有 `AsyncReset` 也没有 `Bool`，则默认为 `Bool` 类型。
+这种"默认"情况很少见，意味着复位信号最终由 `DontCare` 驱动。
 
-### Implicit Reset
+### 隐式复位
 
-A `Module`'s `reset` is of type abstract `Reset`.
-Prior to Chisel 3.2.0, the type of this field was `Bool`.
-For backwards compatability, if the top-level module has an implicit reset, its type will default to `Bool`.
+`Module` 的 `reset` 是抽象 `Reset` 类型。
+在 Chisel 3.2.0 之前，该字段的类型是 `Bool`。
+为了向后兼容，如果顶层模块有一个隐式复位，其类型将默认为 `Bool`。
 
-#### Setting Implicit Reset Type
+#### 设置隐式复位类型
 
-_New in Chisel 3.3.0_
+_Chisel 3.3.0 新功能_
 
-If you would like to set the reset type from within a Module (including the top-level `Module`),
-rather than relying on _Reset Inference_, you can mixin one of the following traits:
-* `RequireSyncReset` - sets the type of `reset` to `Bool`
-* `RequireAsyncReset` - sets the type of `reset` to `AsyncReset`
+如果你想从模块内部设置复位类型（包括顶层 `Module`），而不是依赖 _复位推断_，你可以混入以下特质之一：
+* `RequireSyncReset` - 将 `reset` 的类型设置为 `Bool`
+* `RequireAsyncReset` - 将 `reset` 的类型设置为 `AsyncReset`
 
-For example:
+例如：
 
 ```scala mdoc:silent
 class MyAlwaysSyncResetModule extends Module with RequireSyncReset {
-  val mySyncResetReg = RegInit(false.B) // reset is of type Bool
+  val mySyncResetReg = RegInit(false.B) // reset 的类型是 Bool
 }
 ```
 
 ```scala mdoc:silent
 class MyAlwaysAsyncResetModule extends Module with RequireAsyncReset {
-  val myAsyncResetReg = RegInit(false.B) // reset is of type AsyncReset
+  val myAsyncResetReg = RegInit(false.B) // reset 的类型是 AsyncReset
 }
 ```
 
-**Note:** This sets the concrete type, but the Scala type will remain `Reset`, so casting may still be necessary.
-This comes up most often when using a reset of type `Bool` in logic.
+**注意：**这设置了具体类型，但 Scala 类型仍然保持为 `Reset`，所以可能仍然需要类型转换。
+这在逻辑中使用 `Bool` 类型的复位时最常见。
 
+### 复位无关代码
 
-### Reset-Agnostic Code
+抽象 `Reset` 的目的是使得可以设计与所使用的复位规则无关的硬件。
+这使得工具和设计可以重用，只要复位规则对于块的功能来说并不重要。
 
-The purpose of abstract `Reset` is to make it possible to design hardware that is agnostic to the
-reset discipline used.
-This enables code reuse for utilities and designs where the reset discipline does not matter to
-the functionality of the block.
-
-Consider the two example modules below which are agnostic to the type of reset used within them:
+考虑以下两个示例模块，它们与其中使用的复位类型无关：
 
 ```scala mdoc:silent
 class ResetAgnosticModule extends Module {
@@ -107,73 +98,70 @@ class ResetAgnosticRawModule extends RawModule {
 }
 ```
 
-These modules can be used in both synchronous and asynchronous reset domains.
-Their reset types will be inferred based on the context within which they are used.
+这些模块可以在同步和异步复位域中使用。
+它们的复位类型将根据它们使用的上下文进行推断。
 
-### Forcing Reset Type
+### 强制复位类型
 
-You can set the type of a Module's implicit reset as described [above](#setting-implicit-reset-type).
+你可以按照[上文](#设置隐式复位类型)所述设置模块的隐式复位类型。
 
-You can also cast to force the concrete type of reset.
-* `.asBool` will reinterpret a `Reset` as `Bool`
-* `.asAsyncReset` will reinterpret a `Reset` as `AsyncReset`.
+你也可以通过转换来强制复位的具体类型。
+* `.asBool` 会将 `Reset` 重新解释为 `Bool`
+* `.asAsyncReset` 会将 `Reset` 重新解释为 `AsyncReset`
 
-You can then use `withReset` to use a cast reset as the implicit reset.
-See ["Multiple Clock Domains"](../explanations/multi-clock) for more information about `withReset`.
+然后你可以使用 `withReset` 将转换后的复位用作隐式复位。
+有关 `withReset` 的更多信息，请参见["多时钟域"](../explanations/multi-clock)。
 
-
-The following will make `myReg` as well as both `resetAgnosticReg`s synchronously reset:
+以下代码将使 `myReg` 以及两个 `resetAgnosticReg` 都同步复位：
 
 ```scala mdoc:silent
 class ForcedSyncReset extends Module {
-  // withReset's argument becomes the implicit reset in its scope
+  // withReset 的参数在其作用域内成为隐式复位
   withReset (reset.asBool) {
     val myReg = RegInit(0.U)
     val myModule = Module(new ResetAgnosticModule)
 
-    // RawModules do not have implicit resets so withReset has no effect
+    // RawModule 没有隐式复位，所以 withReset 无效
     val myRawModule = Module(new ResetAgnosticRawModule)
-    // We must drive the reset port manually
-    myRawModule.rst := Module.reset // Module.reset grabs the current implicit reset
+    // 我们必须手动驱动复位端口
+    myRawModule.rst := Module.reset // Module.reset 获取当前的隐式复位
   }
 }
 ```
 
-The following will make `myReg` as well as both `resetAgnosticReg`s asynchronously reset:
+以下代码将使 `myReg` 以及两个 `resetAgnosticReg` 都异步复位：
 
 ```scala mdoc:silent
 class ForcedAysncReset extends Module {
-  // withReset's argument becomes the implicit reset in its scope
+  // withReset 的参数在其作用域内成为隐式复位
   withReset (reset.asAsyncReset){
     val myReg = RegInit(0.U)
-    val myModule = Module(new ResetAgnosticModule) // myModule.reset is connected implicitly
+    val myModule = Module(new ResetAgnosticModule) // myModule.reset 隐式连接
 
-    // RawModules do not have implicit resets so withReset has no effect
+    // RawModule 没有隐式复位，所以 withReset 无效
     val myRawModule = Module(new ResetAgnosticRawModule)
-    // We must drive the reset port manually
-    myRawModule.rst := Module.reset // Module.reset grabs the current implicit reset
+    // 我们必须手动驱动复位端口
+    myRawModule.rst := Module.reset // Module.reset 获取当前的隐式复位
   }
 }
 ```
 
-**Note:** such casts (`asBool` and `asAsyncReset`) are not checked by FIRRTL.
-In doing such a cast, you as the designer are effectively telling the compiler
-that you know what you are doing and to force the type as cast.
+**注意：**这样的转换（`asBool` 和 `asAsyncReset`）不会被 FIRRTL 检查。
+在进行这样的转换时，作为设计者的你实际上是在告诉编译器你知道你在做什么，要强制使用转换后的类型。
 
-### Last-Connect Semantics
+### 最后连接语义
 
-It is **not** legal to override the reset type using last-connect semantics
-unless you are overriding a `DontCare`:
+使用最后连接语义来覆盖复位类型是 **不合法的**，除非你是在覆盖一个 `DontCare`：
 
 ```scala mdoc:silent
 class MyModule extends Module {
   val resetBool = Wire(Reset())
   resetBool := DontCare
-  resetBool := false.B // this is fine
+  resetBool := false.B // 这是可以的
   withReset(resetBool) {
     val mySubmodule = Module(new Submodule())
   }
-  resetBool := true.B // this is fine
-  resetBool := false.B.asAsyncReset // this will error in FIRRTL
+  resetBool := true.B // 这是可以的
+  resetBool := false.B.asAsyncReset // 这会在 FIRRTL 中报错
 }
 ```

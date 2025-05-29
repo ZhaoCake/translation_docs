@@ -1,10 +1,9 @@
-# Instance Choices
+# 实例选择
 
-`Instance Choice`s are instances of modules whose targets are configurable post-elaboration.
-They allow the target of an instance to be chosen from a pre-defined set after elaboration by
-enabling an option through the ABI or through specialization in the compiler.
+`Instance Choice`（实例选择）是模块的实例，其目标可在生成后配置。
+它们允许通过ABI中的选项或通过编译器中的专门化，在生成后从预定义集合中选择实例的目标。
 
-Instance choices rely on option groups to specify the available targets attached to each option:
+实例选择依赖于选项组来指定附加到每个选项的可用目标：
 
 ```scala mdoc:silent
 import chisel3.choice.{Case, Group}
@@ -15,13 +14,9 @@ object Platform extends Group {
 }
 ```
 
-The `Platform` option groups enumerates the list of platforms for which the design
-can be specialised, such as `ASIC` or `FPGA`. Specialization is not mandatory: if an
-option is left unspecified, a default variant is chosen.
+`Platform`选项组枚举了设计可以专门化的平台列表，例如`ASIC`或`FPGA`。专门化不是强制性的：如果未指定选项，则选择默认变体。
 
-The modules referenced by an instance choice must all specify the same IO interface by
-deriving from `FixedIOBaseModule`. The `ModuleChoice` operator takes the default option
-and a list of case-module mappings and returns a binding to the IO of the modules.
+实例选择引用的模块必须都通过从`FixedIOBaseModule`派生来指定相同的IO接口。`ModuleChoice`运算符接受默认选项和案例-模块映射列表，并返回对模块IO的绑定。
 
 ```scala mdoc:silent
 import chisel3._

@@ -1,93 +1,93 @@
 ---
 layout: docs
-title:  "Connectable Operators"
+title:  "可连接运算符"
 section: "chisel3"
 ---
 
-## Table of Contents
- * [Terminology](#terminology)
- * [Overview](#overview)
- * [Alignment: Flipped vs Aligned](#alignment-flipped-vs-aligned)
- * [Input/Output](#inputoutput)
- * [Connecting components with fully aligned members](#connecting-components-with-fully-aligned-members)
-   * [Mono-direction connection operator (`:=`)](#mono-direction-connection-operator-)
- * [Connecting components with mixed alignment members](#connecting-components-with-mixed-alignment-members)
-   * [Bi-direction connection operator (`:<>=`)](#bi-direction-connection-operator-)
-   * [Port-Direction Computation versus Connection-Direction Computation](#port-direction-computation-versus-connection-direction-computation)
-   * [Aligned connection operator (`:<=`)](#aligned-connection-operator-)
-   * [Flipped connection operator (`:>=`)](#flipped-connection-operator-)
-   * [Coercing mono-direction connection operator (`:#=`)](#coercing-mono-direction-connection-operator-)
+## 目录
+ * [术语](#术语)
+ * [概述](#概述)
+ * [对齐：翻转与对齐](#对齐翻转与对齐)
+ * [输入/输出](#输入输出)
+ * [连接具有完全对齐成员的组件](#连接具有完全对齐成员的组件)
+   * [单向连接运算符 (`:=`)](#单向连接运算符-)
+ * [连接具有混合对齐成员的组件](#连接具有混合对齐成员的组件)
+   * [双向连接运算符 (`:<>=`)](#双向连接运算符-)
+   * [端口方向计算与连接方向计算](#端口方向计算与连接方向计算)
+   * [对齐连接运算符 (`:<=`)](#对齐连接运算符-)
+   * [翻转连接运算符 (`:>=`)](#翻转连接运算符-)
+   * [强制单向连接运算符 (`:#=`)](#强制单向连接运算符-)
  * [Connectable](#connectable)
-   * [Connecting Records](#connecting-records)
-   * [Defaults with waived connections](#defaults-with-waived-connections)
-   * [Connecting types with optional members](#connecting-types-with-optional-members)
-   * [Always ignore extra members (partial connection operator)](#always-ignore-errors-caused-by-extra-members-partial-connection-operator)
-   * [Connecting components with different widths](#connecting-components-with-different-widths)
- * [Techniques for connecting structurally inequivalent Chisel types](#techniques-for-connecting-structurally-inequivalent-chisel-types)
-   * [Connecting different sub-types of the same super-type, with colliding names](#connecting-different-sub-types-of-the-same-super-type-with-colliding-names)
-   * [Connecting sub-types to super-types by waiving extra members](#connecting-sub-types-to-super-types-by-waiving-extra-members)
-   * [Connecting different sub-types](#connecting-different-sub-types)
- * [FAQ](#faq)
+   * [连接Records](#连接records)
+   * [带有豁免连接的默认值](#带有豁免连接的默认值)
+   * [连接具有可选成员的类型](#连接具有可选成员的类型)
+   * [始终忽略额外成员（部分连接运算符）](#始终忽略额外成员造成的错误部分连接运算符)
+   * [连接具有不同宽度的组件](#连接具有不同宽度的组件)
+ * [连接结构不等价的Chisel类型的技术](#连接结构不等价的chisel类型的技术)
+   * [连接同一超类型的不同子类型，具有冲突名称](#连接同一超类型的不同子类型具有冲突名称)
+   * [通过豁免额外成员连接子类型到超类型](#通过豁免额外成员连接子类型到超类型)
+   * [连接不同的子类型](#连接不同的子类型)
+ * [常见问题](#常见问题)
 
-## Terminology
+## 术语
 
- * "Chisel type" - a `Data` that is not bound to hardware, i.e. not a component. (more details [here](chisel-type-vs-scala-type)).
-   * E.g. `UInt(3.W)`, `new Bundle {..}`, `Vec(3, SInt(2.W))` are all Chisel types
- * "component" - a `Data` that is bound to hardware (`IO`, `Reg`, `Wire`, etc.)
-   * E.g. `Wire(UInt(3.W))` is a component, whose Chisel type is `UInt(3.W)`
- * `Aggregate` - a Chisel type or component that contains other Chisel types or components (i.e. `Vec`, `Record`, or `Bundle`)
- * `Element` - a Chisel type or component that does not contain other Chisel types or components (e.g. `UInt`, `SInt`, `Clock`, `Bool` etc.)
- * "member" - a Chisel type or component, or any of its children (could be an `Aggregate` or an `Element`)
-   * E.g. `Vec(3, UInt(2.W))(0)` is a member of the parent `Vec` Chisel type
-   * E.g. `Wire(Vec(3, UInt(2.W)))(0)` is a member of the parent `Wire` component
-   * E.g. `IO(Decoupled(Bool)).ready` is a member of the parent `IO` component
- * "relative alignment" - whether two members of the same component or Chisel type are aligned/flipped, relative to one another
-   * see section [below](#alignment-flipped-vs-aligned) for a detailed definition
- * "structural type check" - Chisel type `A` is structurally equivalent to Chisel type `B` if `A` and `B` have matching bundle field names and types (`Record` vs `Vector` vs `Element`), probe modifiers (probe vs nonprobe), vector sizes, `Element` types (UInt/SInt/Bool/Clock)
-   * ignores relative alignment (flippedness)
- * "alignment type check" - a Chisel type `A` matches alignment with another Chisel type `B` if every member of `A`'s relative alignment to `A` is the same as the structurally corresponding member of `B`'s relative alignment to `B`.
+ * "Chisel类型" - 一个未绑定到硬件的 `Data`，即不是一个组件。（更多详情[在此](chisel-type-vs-scala-type)）。
+   * 例如，`UInt(3.W)`、`new Bundle {..}`、`Vec(3, SInt(2.W))` 都是Chisel类型
+ * "组件" - 一个绑定到硬件的 `Data`（`IO`、`Reg`、`Wire` 等）
+   * 例如，`Wire(UInt(3.W))` 是一个组件，其Chisel类型是 `UInt(3.W)`
+ * `Aggregate` - 包含其他Chisel类型或组件的Chisel类型或组件（即 `Vec`、`Record` 或 `Bundle`）
+ * `Element` - 不包含其他Chisel类型或组件的Chisel类型或组件（例如 `UInt`、`SInt`、`Clock`、`Bool` 等）
+ * "成员" - Chisel类型或组件，或其任何子项（可以是 `Aggregate` 或 `Element`）
+   * 例如，`Vec(3, UInt(2.W))(0)` 是父 `Vec` Chisel类型的成员
+   * 例如，`Wire(Vec(3, UInt(2.W)))(0)` 是父 `Wire` 组件的成员
+   * 例如，`IO(Decoupled(Bool)).ready` 是父 `IO` 组件的成员
+ * "相对对齐" - 同一组件或Chisel类型的两个成员是否相对于彼此对齐/翻转
+   * 详细定义见[下文](#对齐翻转与对齐)
+ * "结构类型检查" - 如果Chisel类型 `A` 和Chisel类型 `B` 具有匹配的bundle字段名称和类型（`Record` vs `Vector` vs `Element`），探测修饰符（探测vs非探测），向量大小，`Element` 类型（UInt/SInt/Bool/Clock），则 `A` 在结构上等价于 `B`
+   * 忽略相对对齐（翻转性）
+ * "对齐类型检查" - 如果Chisel类型 `A` 的每个成员相对于 `A` 的相对对齐与Chisel类型 `B` 的结构上对应成员相对于 `B` 的相对对齐相同，则Chisel类型 `A` 与另一个Chisel类型 `B` 在对齐上匹配。
 
-## Overview
+## 概述
 
-The `Connectable` operators are the standard way to connect Chisel hardware components to one another.
+`Connectable` 运算符是连接Chisel硬件组件的标准方式。
 
-> Note: For descriptions of the semantics for the previous operators, see [`Connection Operators`](connection-operators).
+> 注意：有关先前运算符语义的描述，请参见[`连接运算符`](connection-operators)。
 
-All connection operators require the two hardware components (consumer and producer) to be structurally type equivalent.
+所有连接运算符都要求两个硬件组件（消费者和生产者）在结构上类型等价。
 
-The one exception to the structural type-equivalence rule is using the `Connectable` mechanism, detailed at this [section](#techniques-for-connecting-structurally-inequivalent-chisel-types) towards the end of this document.
+结构类型等价规则的一个例外是使用 `Connectable` 机制，详细说明在本文档末尾的[此部分](#连接结构不等价的chisel类型的技术)。
 
-Aggregate (`Record`, `Vec`, `Bundle`) Chisel types can include data members which are flipped relative to one another.
-Due to this, there are many desired connection behaviors between two Chisel components.
-The following are the Chisel connection operators between a consumer `c` and producer `p`:
- * `c := p` (mono-direction): connects all `p` members to `c`; requires `c` and `p` to not have any flipped members
- * `c :#= p` (coercing mono-direction): connects all `p` members to `c`; regardless of alignment
- * `c :<= p` (aligned-direction): connects all aligned (non-flipped) `c` members from `p`
- * `c :>= p` (flipped-direction): connects all flipped `p` members from `c`
- * `c :<>= p` (bi-direction operator): connects all aligned `c` members from `p`; all flipped `p` members from `c`
+聚合（`Record`、`Vec`、`Bundle`）Chisel类型可以包含相对于彼此翻转的数据成员。
+由于这一点，在两个Chisel组件之间有许多期望的连接行为。
+以下是Chisel连接运算符，在消费者 `c` 和生产者 `p` 之间：
+ * `c := p`（单向）：将所有 `p` 成员连接到 `c`；要求 `c` 和 `p` 没有任何翻转成员
+ * `c :#= p`（强制单向）：将所有 `p` 成员连接到 `c`；无论对齐如何
+ * `c :<= p`（对齐方向）：从 `p` 连接所有对齐（非翻转）的 `c` 成员
+ * `c :>= p`（翻转方向）：从 `c` 连接所有翻转的 `p` 成员
+ * `c :<>= p`（双向运算符）：从 `p` 连接所有对齐的 `c` 成员；从 `c` 连接所有翻转的 `p` 成员
 
-These operators may appear to be a random collection of symbols; however, the characters are consistent between operators and self-describe the semantics of each operator:
- * `:` always indicates the consumer, or left-hand-side, of the operator.
- * `=` always indicates the producer, or right-hand-side, of the operator.
-   * Hence, `c := p` connects a consumer (`c`) and a producer (`p`).
- * `<` always indicates that some members will be driven producer-to-consumer, or right-to-left.
-   * Hence, `c :<= p` drives members in producer (`p`) to members in consumer (`c`).
- * `>` always indicates that some signals will be driven consumer-to-producer, or left-to-right.
-   * Hence, `c :>= p` drives members in consumer (`c`) to members producer (`p`).
-   * Hence, `c :<>= p` both drives members from `p` to `c` and from `c` to `p`.
- * `#` always indicates to ignore member alignment and to drive producer-to-consumer, or right-to-left.
-   * Hence, `c :#= p` always drives members from `p` to `c` ignoring direction.
+这些运算符可能看起来是一组随机的符号；但是，运算符之间的字符是一致的，并且自描述每个运算符的语义：
+ * `:` 始终表示消费者，或运算符的左侧。
+ * `=` 始终表示生产者，或运算符的右侧。
+   * 因此，`c := p` 连接消费者（`c`）和生产者（`p`）。
+ * `<` 始终表示一些成员将从生产者驱动到消费者，或从右到左。
+   * 因此，`c :<= p` 将生产者（`p`）中的成员驱动到消费者（`c`）中的成员。
+ * `>` 始终表示一些信号将从消费者驱动到生产者，或从左到右。
+   * 因此，`c :>= p` 将消费者（`c`）中的成员驱动到生产者（`p`）中的成员。
+   * 因此，`c :<>= p` 既将成员从 `p` 驱动到 `c`，又将成员从 `c` 驱动到 `p`。
+ * `#` 始终表示忽略成员对齐并从生产者驱动到消费者，或从右到左。
+   * 因此，`c :#= p` 始终将成员从 `p` 驱动到 `c` 而忽略方向。
 
-> Note: in addition, an operator that ends in `=` has assignment-precedence, which means that `x :<>= y + z` will translate to `x :<>= (y + z)`, rather than `(x :<>= y) + z`.
-This was not true of the `<>` operator and was a minor painpoint for users.
+> 注意：此外，以 `=` 结尾的运算符具有赋值优先级，这意味着 `x :<>= y + z` 将转换为 `x :<>= (y + z)`，而不是 `(x :<>= y) + z`。
+这对于 `<>` 运算符来说不是真的，这是用户的一个小痛点。
 
 
-## Alignment: Flipped vs Aligned
+## 对齐：翻转与对齐
 
-A member's alignment is a relative property: a member is aligned/flipped relative to another member of the same component or Chisel type.
-Hence, one must always say whether a member is flipped/aligned *with respect to (w.r.t)* another member of that type (parent, sibling, child etc.).
+成员的对齐是一个相对属性：成员相对于同一组件或Chisel类型的另一个成员是对齐/翻转的。
+因此，必须始终说明成员是否相对于该类型的另一个成员（父级、兄弟、子级等）翻转/对齐。
 
-We use the following example of a non-nested bundle `Parent` to let us state all of the alignment relationships between members of `p`.
+我们使用以下非嵌套bundle `Parent` 的示例，让我们陈述 `p` 成员之间的所有对齐关系。
 
 ```scala mdoc:silent
 import chisel3._
@@ -100,20 +100,20 @@ class MyModule0 extends Module {
 }
 ```
 
-First, every member is always aligned with themselves:
- * `p` is aligned w.r.t `p`
- * `p.alignedChild` is aligned w.r.t `p.alignedChild`
- * `p.flippedChild` is aligned w.r.t `p.flippedChild`
+首先，每个成员总是与自身对齐：
+ * `p` 相对于 `p` 是对齐的
+ * `p.alignedChild` 相对于 `p.alignedChild` 是对齐的
+ * `p.flippedChild` 相对于 `p.flippedChild` 是对齐的
 
-Next, we list all parent/child relationships.
-Because the `flippedChild` field is `Flipped`, it changes its alignment relative to its parent.
- * `p` is aligned w.r.t `p.alignedChild`
- * `p` is flipped w.r.t `p.flippedChild`
+接下来，我们列出所有父/子关系。
+因为 `flippedChild` 字段是 `Flipped`，它改变了相对于其父级的对齐方式。
+ * `p` 相对于 `p.alignedChild` 是对齐的
+ * `p` 相对于 `p.flippedChild` 是翻转的
 
-Finally, we can list all sibling relationships:
- * `p.alignedChild` is flipped w.r.t `p.flippedChild`
+最后，我们可以列出所有兄弟关系：
+ * `p.alignedChild` 相对于 `p.flippedChild` 是翻转的
 
-The next example has a nested bundle `GrandParent` who instantiates an aligned `Parent` field and flipped `Parent` field.
+下一个示例有一个嵌套bundle `GrandParent`，它实例化了一个对齐的 `Parent` 字段和翻转的 `Parent` 字段。
 
 ```scala mdoc:silent
 import chisel3._
@@ -126,60 +126,60 @@ class MyModule1 extends Module {
 }
 ```
 
-Consider the following alignments between grandparent and grandchildren.
-An odd number of flips indicate a flipped relationship; even numbers of flips indicate an aligned relationship.
- * `g` is aligned w.r.t `g.flippedParent.flippedChild`
- * `g` is aligned w.r.t `g.alignedParent.alignedChild`
- * `g` is flipped w.r.t `g.flippedParent.alignedChild`
- * `g` is flipped w.r.t `g.alignedParent.flippedChild`
+考虑以下祖父母和孙子之间的对齐关系。
+奇数个翻转表示翻转关系；偶数个翻转表示对齐关系。
+ * `g` 相对于 `g.flippedParent.flippedChild` 是对齐的
+ * `g` 相对于 `g.alignedParent.alignedChild` 是对齐的
+ * `g` 相对于 `g.flippedParent.alignedChild` 是翻转的
+ * `g` 相对于 `g.alignedParent.flippedChild` 是翻转的
 
-Consider the following alignment relationships starting from `g.alignedParent` and `g.flippedParent`.
-*Note that whether `g.alignedParent` is aligned/flipped relative to `g` has no effect on the aligned/flipped relationship between `g.alignedParent` and `g.alignedParent.alignedChild` because alignment is only relative to the two members in question!*:
- * `g.alignedParent` is aligned w.r.t. `g.alignedParent.alignedChild`
- * `g.flippedParent` is aligned w.r.t. `g.flippedParent.alignedChild`
- * `g.alignedParent` is flipped w.r.t. `g.alignedParent.flippedChild`
- * `g.flippedParent` is flipped w.r.t. `g.flippedParent.flippedChild`
+考虑以下从 `g.alignedParent` 和 `g.flippedParent` 开始的对齐关系。
+*注意，`g.alignedParent` 相对于 `g` 是对齐还是翻转对 `g.alignedParent` 和 `g.alignedParent.alignedChild` 之间的对齐/翻转关系没有影响，因为对齐仅相对于所讨论的两个成员！*：
+ * `g.alignedParent` 相对于 `g.alignedParent.alignedChild` 是对齐的
+ * `g.flippedParent` 相对于 `g.flippedParent.alignedChild` 是对齐的
+ * `g.alignedParent` 相对于 `g.alignedParent.flippedChild` 是翻转的
+ * `g.flippedParent` 相对于 `g.flippedParent.flippedChild` 是翻转的
 
-In summary, a member is aligned or flipped w.r.t. another member of the hardware component.
-This means that the type of the consumer/producer is the only information needed to determine the behavior of any operator.
-*Whether the consumer/producer is a member of a larger bundle is irrelevant; you ONLY need to know the type of the consumer/producer*.
+总之，成员相对于硬件组件的另一个成员是对齐或翻转的。
+这意味着确定任何运算符行为所需的仅是消费者/生产者的类型。
+*消费者/生产者是否是更大bundle的成员无关紧要；你只需要知道消费者/生产者的类型*。
 
-## Input/Output
+## 输入/输出
 
-`Input(gen)`/`Output(gen)` are coercing operators.
-They perform two functions: (1) create a new Chisel type that has all flips removed from all recursive children members (still structurally equivalent to `gen` but no longer alignment type equivalent), and (2) apply `Flipped` if `Input`, keep aligned (do nothing) if `Output`.
-E.g. if we imagine a function called `cloneChiselTypeButStripAllFlips`, then `Input(gen)` is structurally and alignment type equivalent to `Flipped(cloneChiselTypeButStripAllFlips(gen))`.
+`Input(gen)`/`Output(gen)` 是强制运算符。
+它们执行两个功能：(1)创建一个新的Chisel类型，其中所有递归子成员的翻转都被移除（仍然在结构上等价于 `gen` 但不再在对齐类型上等价），以及(2)如果是 `Input` 则应用 `Flipped`，如果是 `Output` 则保持对齐（不执行任何操作）。
+例如，如果我们想象一个名为 `cloneChiselTypeButStripAllFlips` 的函数，那么 `Input(gen)` 在结构和对齐类型上等价于 `Flipped(cloneChiselTypeButStripAllFlips(gen))`。
 
-Note that if `gen` is a non-aggregate, then `Input(nonAggregateGen)` is equivalent to `Flipped(nonAggregateGen)`.
+请注意，如果 `gen` 是非聚合的，那么 `Input(nonAggregateGen)` 等价于 `Flipped(nonAggregateGen)`。
 
-> Future work will refactor how these primitives are exposed to the user to make Chisel's type system more intuitive.
-See [https://github.com/chipsalliance/chisel3/issues/2643].
+> 未来的工作将重构这些原语向用户暴露的方式，使Chisel的类型系统更加直观。
+见 [https://github.com/chipsalliance/chisel3/issues/2643]。
 
-With this in mind, we can consider the following examples and detail relative alignments of members.
+考虑到这一点，我们可以看看以下示例，并详细说明成员的相对对齐关系。
 
-First, we can use a similar example to `Parent` but use `Input/Output` instead of `Flipped`.
-Because `alignedChild` and `flippedChild` are non-aggregates, `Input` is basically just a `Flipped` and thus the alignments are unchanged compared to the previous `Parent` example.
+首先，我们可以使用类似于 `Parent` 的示例，但使用 `Input/Output` 而不是 `Flipped`。
+因为 `alignedChild` 和 `flippedChild` 是非聚合的，所以 `Input` 基本上就是一个 `Flipped`，因此对齐方式与之前的 `Parent` 示例相比没有变化。
 
 ```scala mdoc:silent
 import chisel3._
 class ParentWithOutputInput extends Bundle {
-  val alignedCoerced = Output(UInt(32.W)) // Equivalent to just UInt(32.W)
-  val flippedCoerced = Input(UInt(32.W))  // Equivalent to Flipped(UInt(32.W))
+  val alignedCoerced = Output(UInt(32.W)) // 等同于 UInt(32.W)
+  val flippedCoerced = Input(UInt(32.W))  // 等同于 Flipped(UInt(32.W))
 }
 class MyModule2 extends Module {
   val p = Wire(new ParentWithOutputInput)
 }
 ```
 
-The alignments are the same as the previous `Parent` example:
- * `p` is aligned w.r.t `p`
- * `p.alignedCoerced` is aligned w.r.t `p.alignedCoerced`
- * `p.flippedCoerced` is aligned w.r.t `p.flippedCoerced`
- * `p` is aligned w.r.t `p.alignedCoerced`
- * `p` is flipped w.r.t `p.flippedCoerced`
- * `p.alignedCoerced` is flipped w.r.t `p.flippedCoerced`
+对齐关系与之前的 `Parent` 示例相同：
+ * `p` 相对于 `p` 是对齐的
+ * `p.alignedCoerced` 相对于 `p.alignedCoerced` 是对齐的
+ * `p.flippedCoerced` 相对于 `p.flippedCoerced` 是对齐的
+ * `p` 相对于 `p.alignedCoerced` 是对齐的
+ * `p` 相对于 `p.flippedCoerced` 是翻转的
+ * `p.alignedCoerced` 相对于 `p.flippedCoerced` 是翻转的
 
-The next example has a nested bundle `GrandParent` who instantiates an `Output` `ParentWithOutputInput` field and an `Input` `ParentWithOutputInput` field.
+下一个示例有一个嵌套bundle `GrandParent`，它实例化了一个 `Output` 类型的 `ParentWithOutputInput` 字段和一个 `Input` 类型的 `ParentWithOutputInput` 字段。
 
 ```scala mdoc:silent
 import chisel3._
@@ -192,31 +192,31 @@ class MyModule3 extends Module {
 }
 ```
 
-Remember that `Output(gen)/Input(gen)` recursively strips the `Flipped` of any recursive children.
-This makes every member of `gen` aligned with every other member of `gen`.
+请记住，`Output(gen)/Input(gen)` 会递归地去除任何递归子成员的 `Flipped`。
+这使得 `gen` 的每个成员都与 `gen` 的其他所有成员对齐。
 
-Consider the following alignments between grandparent and grandchildren.
-Because `alignedCoerced` and `flippedCoerced` are aligned with all their recursive members, they are fully aligned.
-Thus, only their alignment to `g` influences grandchildren alignment:
- * `g` is aligned w.r.t `g.alignedCoerced.alignedCoerced`
- * `g` is aligned w.r.t `g.alignedCoerced.flippedCoerced`
- * `g` is flipped w.r.t `g.flippedCoerced.alignedCoerced`
- * `g` is flipped w.r.t `g.flippedCoerced.flippedCoerced`
+考虑祖父母和孙子之间的以下对齐关系。
+因为 `alignedCoerced` 和 `flippedCoerced` 与它们的所有递归成员对齐，所以它们是完全对齐的。
+因此，只有它们与 `g` 的对齐关系影响孙子的对齐关系：
+ * `g` 相对于 `g.alignedCoerced.alignedCoerced` 是对齐的
+ * `g` 相对于 `g.alignedCoerced.flippedCoerced` 是对齐的
+ * `g` 相对于 `g.flippedCoerced.alignedCoerced` 是翻转的
+ * `g` 相对于 `g.flippedCoerced.flippedCoerced` 是翻转的
 
-Consider the following alignment relationships starting from `g.alignedCoerced` and `g.flippedCoerced`.
-*Note that whether `g.alignedCoerced` is aligned/flipped relative to `g` has no effect on the aligned/flipped relationship between `g.alignedCoerced` and `g.alignedCoerced.alignedCoerced` or `g.alignedCoerced.flippedCoerced` because alignment is only relative to the two members in question! However, because alignment is coerced, everything is aligned between `g.alignedCoerced`/`g.flippedAligned` and their children*:
- * `g.alignedCoerced` is aligned w.r.t. `g.alignedCoerced.alignedCoerced`
- * `g.alignedCoerced` is aligned w.r.t. `g.alignedCoerced.flippedCoerced`
- * `g.flippedCoerced` is aligned w.r.t. `g.flippedCoerced.alignedCoerced`
- * `g.flippedCoerced` is aligned w.r.t. `g.flippedCoerced.flippedCoerced`
+考虑从 `g.alignedCoerced` 和 `g.flippedCoerced` 开始的以下对齐关系。
+*请注意，`g.alignedCoerced` 相对于 `g` 是对齐还是翻转对 `g.alignedCoerced` 和 `g.alignedCoerced.alignedCoerced` 或 `g.alignedCoerced.flippedCoerced` 之间的对齐/翻转关系没有影响，因为对齐仅相对于所讨论的两个成员！但是，由于对齐被强制，`g.alignedCoerced`/`g.flippedAligned` 与其子项之间的所有关系都是对齐的*：
+ * `g.alignedCoerced` 相对于 `g.alignedCoerced.alignedCoerced` 是对齐的
+ * `g.alignedCoerced` 相对于 `g.alignedCoerced.flippedCoerced` 是对齐的
+ * `g.flippedCoerced` 相对于 `g.flippedCoerced.alignedCoerced` 是对齐的
+ * `g.flippedCoerced` 相对于 `g.flippedCoerced.flippedCoerced` 是对齐的
 
-In summary, `Input(gen)` and `Output(gen)` recursively coerce children alignment, as well as dictate `gen`'s alignment to its parent bundle (if it exists).
+总之，`Input(gen)` 和 `Output(gen)` 递归地强制子项对齐，并决定 `gen` 相对于其父bundle（如果存在）的对齐方式。
 
-## Connecting components with fully aligned members
+## 连接具有完全对齐成员的组件
 
-### Mono-direction connection operator (:=)
+### 单向连接运算符 (`:=`)
 
-For simple connections where all members are aligned (non-flipped) w.r.t. one another, use `:=`:
+对于所有成员相互对齐（非翻转）的简单连接，使用 `:=`：
 
 
 ```scala mdoc:silent
@@ -232,19 +232,19 @@ class Example0 extends RawModule {
 }
 ```
 
-This generates the following Verilog, where each member of `incoming` drives every member of `outgoing`:
+这会生成以下Verilog代码，其中 `incoming` 的每个成员都驱动 `outgoing` 的每个成员：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example0)
 ```
 
-> You may be thinking "Wait, I'm confused! Isn't `incoming` flipped and `outgoing` aligned?" -- Noo! Whether `incoming` is aligned with `outgoing` makes no sense; remember, you only evaluate alignment between members of the same component or Chisel type.
-Because components are always aligned to themselves, `outgoing` is aligned to `outgoing`, and `incoming` is aligned to `incoming`, there is no problem.
-Their relative flippedness to anything else is irrelevant.
+> 你可能会想："等等，我困惑了！`incoming` 不是被翻转而 `outgoing` 是对齐的吗？" —— 不是！`incoming` 是否与 `outgoing` 对齐没有意义；记住，你只在同一组件或Chisel类型的成员之间评估对齐关系。
+因为组件总是与自身对齐，`outgoing` 与 `outgoing` 对齐，而 `incoming` 与 `incoming` 对齐，所以没有问题。
+它们相对于其他任何东西的翻转程度都无关紧要。
 
-## Connecting components with mixed alignment members
+## 连接具有混合对齐成员的组件
 
-Aggregate Chisel types can include data members which are flipped relative to one another; in the example below, `alignedChild` and `flippedChild` are aligned/flipped relative to `MixedAlignmentBundle`.
+聚合Chisel类型可以包含相对于彼此翻转的数据成员；在下面的示例中，`alignedChild` 和 `flippedChild` 相对于 `MixedAlignmentBundle` 是对齐/翻转的。
 
 ```scala mdoc:silent
 import chisel3._
@@ -254,14 +254,14 @@ class MixedAlignmentBundle extends Bundle {
 }
 ```
 
-Due to this, there are many desired connection behaviors between two Chisel components.
-First we will introduce the most common Chisel connection operator, `:<>=`, useful for connecting components with members of mixed-alignments, then take a moment to investigate a common source of confusion between port-direction and connection-direction.
-Then, we will explore the remainder of the Chisel connection operators.
+由于这一点，两个Chisel组件之间有许多期望的连接行为。
+首先，我们将介绍最常见的Chisel连接运算符 `:<>=`，它适用于连接具有混合对齐成员的组件，然后花点时间研究端口方向和连接方向之间常见的混淆源。
+然后，我们将探索其余的Chisel连接运算符。
 
 
-### Bi-direction connection operator (`:<>=`)
+### 双向连接运算符 (`:<>=`)
 
-For connections where you want 'bulk-connect-like-semantics' where the aligned members are driven producer-to-consumer and flipped members are driven consumer-to-producer, use `:<>=`.
+对于希望采用"类批量连接语义"的连接，其中对齐成员从生产者驱动到消费者，翻转成员从消费者驱动到生产者，使用 `:<>=`。
 
 ```scala mdoc:silent
 class Example1 extends RawModule {
@@ -271,146 +271,146 @@ class Example1 extends RawModule {
 }
 ```
 
-This generates the following Verilog, where the aligned members are driven `incoming` to `outgoing` and flipped members are driven `outgoing` to `incoming`:
+这会生成以下Verilog代码，其中对齐成员从 `incoming` 驱动到 `outgoing`，翻转成员从 `outgoing` 驱动到 `incoming`：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example1)
 ```
 
-### Port-Direction Computation versus Connection-Direction Computation
+### 端口方向计算与连接方向计算
 
-A common question is if you use a mixed-alignment connection (such as `:<>=`) to connect submembers of parent components, does the alignment of the submember to their parent affect anything? The answer is no, because *alignment is always computed relative to what is being connected to, and members are always aligned with themselves.*
+一个常见问题是，如果使用混合对齐连接（如 `:<>=`）连接父组件的子成员，子成员与其父组件的对齐关系会影响什么吗？答案是否定的，因为*对齐始终相对于正在连接的对象计算，且成员始终与自身对齐。*
 
-In the following example connecting from `incoming.alignedChild` to `outgoing.alignedChild`, whether `incoming.alignedChild` is aligned with `incoming` is irrelevant because the `:<>=` only computes alignment relative to the thing being connected to, and `incoming.alignedChild` is aligned with `incoming.alignedChild`.
+在以下示例中，从 `incoming.alignedChild` 连接到 `outgoing.alignedChild`，`incoming.alignedChild` 是否与 `incoming` 对齐无关紧要，因为 `:<>=` 仅根据正在连接的对象计算对齐关系，而 `incoming.alignedChild` 与 `incoming.alignedChild` 是对齐的。
 
 ```scala mdoc:silent
 class Example1a extends RawModule {
   val incoming = IO(Flipped(new MixedAlignmentBundle))
   val outgoing = IO(new MixedAlignmentBundle)
-  outgoing.alignedChild :<>= incoming.alignedChild // whether incoming.alignedChild is aligned/flipped to incoming is IRRELEVANT to what gets connected with :<>=
+  outgoing.alignedChild :<>= incoming.alignedChild // incoming.alignedChild 是否与 incoming 对齐/翻转与 :<>= 连接的内容无关
 }
 ```
 
-While `incoming.flippedChild`'s alignment with `incoming` does not affect our operators, it does influence whether `incoming.flippedChild` is an output or input port of my module.
-A common source of confusion is to mistake the process for determining whether `incoming.flippedChild` will resolve to a Verilog `output`/`input` (the port-direction computation) with the process for determining how `:<>=` drives what with what (the connection-direction computation).
-While both processes consider relative alignment, they are distinct.
+虽然 `incoming.flippedChild` 与 `incoming` 的对齐关系不影响我们的运算符，但它确实影响 `incoming.flippedChild` 是我们模块的输出端口还是输入端口。
+一个常见的混淆源是将确定 `incoming.flippedChild` 是否解析为Verilog的 `output`/`input`（端口方向计算）的过程与确定 `:<>=` 如何驱动什么到什么（连接方向计算）的过程混淆。
+虽然这两个过程都考虑相对对齐，但它们是不同的。
 
-The port-direction computation always computes alignment relative to the component marked with `IO`.
-An `IO(Flipped(gen))` is an incoming port, and any member of `gen` that is aligned/flipped with `gen` is an incoming/outgoing port.
-An `IO(gen)` is an outgoing port, and any member of `gen` that is aligned/flipped with `gen` is an outgoing/incoming port.
+端口方向计算始终根据标记为 `IO` 的组件计算对齐关系。
+`IO(Flipped(gen))` 是一个传入端口，`gen` 的任何与 `gen` 对齐/翻转的成员都是传入/传出端口。
+`IO(gen)` 是一个传出端口，`gen` 的任何与 `gen` 对齐/翻转的成员都是传出/传入端口。
 
-The connection-direction computation always computes alignment based on the explicit consumer/producer referenced for the connection.
-If one connects `incoming :<>= outgoing`, alignments are computed based on `incoming` and `outgoing`.
-If one connects `incoming.alignedChild :<>= outgoing.alignedChild`, then alignments are computed based on `incoming.alignedChild` and `outgoing.alignedChild` (and the alignment of `incoming` to `incoming.alignedChild` is irrelevant).
+连接方向计算始终根据连接引用的显式消费者/生产者计算对齐关系。
+如果连接 `incoming :<>= outgoing`，则根据 `incoming` 和 `outgoing` 计算对齐关系。
+如果连接 `incoming.alignedChild :<>= outgoing.alignedChild`，则根据 `incoming.alignedChild` 和 `outgoing.alignedChild` 计算对齐关系（`incoming` 与 `incoming.alignedChild` 的对齐关系无关紧要）。
 
-This means that users can try to connect to input ports of their module! If I write `x :<>= y`, and `x` is an input to the current module, then that is what the connection is trying to do.
-However, because input ports are not drivable from within the current module, Chisel will throw an error.
-This is the same error a user would get using a mono-directioned operator: `x := y` will throw the same error if `x` is an input to the current module.
-*Whether a component is drivable is irrelevant to the semantics of any connection operator attempting to drive to it.*
+这意味着用户可能会尝试连接到其模块的输入端口！如果我写 `x :<>= y`，而 `x` 是当前模块的输入，那么连接就是试图做到这一点。
+然而，由于从当前模块内部无法驱动输入端口，Chisel将抛出错误。
+这与使用单向运算符时会得到的错误相同：如果 `x` 是当前模块的输入，`x := y` 将抛出同样的错误。
+*组件是否可驱动与尝试驱动它的任何连接运算符的语义无关。*
 
-In summary, the port-direction computation is relative to the root marked `IO`, but connection-direction computation is relative to the consumer/producer that the connection is doing.
-This has the positive property that connection semantics are solely based on the Chisel structural type and its relative alignments of the consumer/producer (nothing more, nothing less).
+总之，端口方向计算是相对于标记为 `IO` 的根进行的，但连接方向计算是相对于连接正在进行的消费者/生产者进行的。
+这具有积极特性，即连接语义仅基于消费者/生产者的Chisel结构类型及其相对对齐关系（无需更多，无需更少）。
 
-### Aligned connection operator (`:<=`)
+### 对齐连接运算符 (`:<=`)
 
-For connections where you want the aligned-half of 'bulk-connect-like-semantics' where the aligned members are driven producer-to-consumer and flipped members are ignored, use `:<=` (the "aligned connection").
+对于希望采用"类批量连接语义"的对齐半部分的连接，其中对齐成员从生产者驱动到消费者，而忽略翻转成员，使用 `:<=`（"对齐连接"）。
 
 ```scala mdoc:silent
 class Example2 extends RawModule {
   val incoming = IO(Flipped(new MixedAlignmentBundle))
   val outgoing = IO(new MixedAlignmentBundle)
-  incoming.flippedChild := DontCare // Otherwise FIRRTL throws an uninitialization error
+  incoming.flippedChild := DontCare // 否则FIRRTL会抛出未初始化错误
   outgoing :<= incoming
 }
 ```
 
-This generates the following Verilog, where the aligned members are driven `incoming` to `outgoing` and flipped members are ignored:
+这会生成以下Verilog代码，其中对齐成员从 `incoming` 驱动到 `outgoing`，而忽略翻转成员：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example2)
 ```
 
-### Flipped connection operator (`:>=`)
+### 翻转连接运算符 (`:>=`)
 
-For connections where you want the flipped-half of 'bulk-connect-like-semantics' where the aligned members are ignored and flipped members are connected consumer-to-producer, use `:>=` (the "flipped connection", or "backpressure connection").
+对于希望采用"类批量连接语义"的翻转半部分的连接，其中对齐成员被忽略而翻转成员从消费者连接到生产者，使用 `:>=`（"翻转连接"或"反压连接"）。
 
 ```scala mdoc:silent
 class Example3 extends RawModule {
   val incoming = IO(Flipped(new MixedAlignmentBundle))
   val outgoing = IO(new MixedAlignmentBundle)
-  outgoing.alignedChild := DontCare // Otherwise FIRRTL throws an uninitialization error
+  outgoing.alignedChild := DontCare // 否则FIRRTL会抛出未初始化错误
   outgoing :>= incoming
 }
 ```
 
-This generates the following Verilog, where the aligned members are ignored and the flipped members are driven `outgoing` to `incoming`:
+这会生成以下Verilog代码，其中对齐成员被忽略，翻转成员从 `outgoing` 驱动到 `incoming`：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example3)
 ```
 
-> Note: Astute observers will realize that `c :<>= p` is semantically equivalent to `c :<= p` followed by `c :>= p`.
+> 注意：敏锐的观察者会发现 `c :<>= p` 在语义上等同于 `c :<= p` 后跟 `c :>= p`。
 
-### Coercing mono-direction connection operator (`:#=`)
+### 强制单向连接运算符 (`:#=`)
 
-For connections where you want to every producer member to always drive every consumer member, regardless of alignment, use `:#=` (the "coercion connection").
-This operator is useful for initializing wires whose types contain members of mixed alignment.
+对于希望每个生产者成员始终驱动每个消费者成员的连接，无论对齐如何，使用 `:#=`（"强制连接"）。
+这个运算符对于初始化包含混合对齐成员的类型的wire很有用。
 
 ```scala mdoc:silent
 import chisel3.experimental.BundleLiterals._
 class Example4 extends RawModule {
   val w = Wire(new MixedAlignmentBundle)
-  dontTouch(w) // So we see it in the output Verilog
+  dontTouch(w) // 这样我们可以在输出的Verilog中看到它
   w :#= (new MixedAlignmentBundle).Lit(_.alignedChild -> true.B, _.flippedChild -> true.B)
 }
 ```
 
-This generates the following Verilog, where all members are driven from the literal to `w`, regardless of alignment:
+这会生成以下Verilog代码，其中所有成员都从字面值驱动到 `w`，无论对齐如何：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example4)
 ```
 
-> Note: Astute observers will realize that `c :#= p` is semantically equivalent to `c :<= p` followed by `p :>= c` (note `p` and `c` switched places in the second connection).
+> 注意：敏锐的观察者会发现 `c :#= p` 在语义上等同于 `c :<= p` 后跟 `p :>= c`（注意在第二个连接中 `p` 和 `c` 交换了位置）。
 
-Another use case for `:#=` is for connecting a mixed-directional bundle to a fully-aligned monitor.
+`:#=` 的另一个用例是将混合方向的bundle连接到完全对齐的监视器。
 
 ```scala mdoc:silent
 import chisel3.experimental.BundleLiterals._
 class Example4b extends RawModule {
   val monitor = IO(Output(new MixedAlignmentBundle))
   val w = Wire(new MixedAlignmentBundle)
-  dontTouch(w) // So we see it in the output Verilog
+  dontTouch(w) // 这样我们可以在输出的Verilog中看到它
   w :#= DontCare
   monitor :#= w
 }
 ```
 
-This generates the following Verilog, where all members are driven from the literal to `w`, regardless of alignment:
+这会生成以下Verilog代码，其中所有成员都从字面值驱动到 `w`，无论对齐如何：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example4b)
 ```
 ## Connectable
 
-Sometimes a user wants to connect Chisel components which are not type equivalent.
-For example, a user may want to hook up anonymous `Record` components who may have an intersection of their fields being equivalent, but cannot because they are not structurally equivalent.
-Alternatively, one may want to connect two types that have different widths.
+有时用户希望连接不是类型等价的Chisel组件。
+例如，用户可能希望连接匿名的 `Record` 组件，这些组件可能有字段的交集是等价的，但由于结构上不等价而无法连接。
+或者，有人可能希望连接具有不同宽度的两种类型。
 
-`Connectable` is the mechanism to specialize connection operator behavior in these scenarios.
-For additional members which are not present in the other component being connected to, or for mismatched widths, or for always excluding a member from being connected to, they can be explicitly called out from the `Connectable` object, rather than trigger an error.
+`Connectable` 是在这些场景中特化连接运算符行为的机制。
+对于在连接到的另一个组件中不存在的附加成员，或者对于不匹配的宽度，或者对于始终排除不被连接的成员，可以从 `Connectable` 对象中明确调用它们，而不是触发错误。
 
-In addition, there are other techniques that can be used to address similar use cases including `.viewAsSuperType`, a static cast to a supertype (e.g. `(x: T)`), or creating a custom `DataView`.
-For a discussion about when to use each technique, please continue [here](#techniques-for-connecting-structurally-inequivalent-chisel-types).
+此外，还有其他技术可用于解决类似用例，包括 `.viewAsSuperType`、对超类型的静态转换（例如 `(x: T)`）或创建自定义 `DataView`。
+关于何时使用每种技术的讨论，请继续[此处](#连接结构不等价的chisel类型的技术)。
 
-This section demonstrates how `Connectable` specifically can be used in a multitude of scenarios.
+本节演示了如何在多种情况下使用 `Connectable`。
 
-### Connecting Records
+### 连接Records
 
-One use case is to try to connect two `Record`s; for matching members, they should be connected, but for unmatched members, the errors caused due to them being unmatched should be ignored.
-To accomplish this, use the other operators to initialize all `Record` members, then use `:<>=` with `.waive` to connect only the matching members.
+一个用例是尝试连接两个 `Record`；对于匹配的成员，它们应该被连接，但对于不匹配的成员，由于它们不匹配而导致的错误应该被忽略。
+为了实现这一点，使用其他运算符初始化所有 `Record` 成员，然后使用 `:<>=` 和 `.waive` 只连接匹配的成员。
 
-> Note that none of `.viewAsSuperType`, static casts, nor a custom `DataView` helps this case because the Scala types are still `Record`.
+> 请注意，`.viewAsSuperType`、静态转换或自定义 `DataView` 都无法帮助解决这种情况，因为Scala类型仍然是 `Record`。
 
 ```scala mdoc:silent
 import scala.collection.immutable.SeqMap
@@ -429,16 +429,16 @@ class Example9 extends RawModule {
 }
 ```
 
-This generates the following Verilog, where `p.b` is driven from `c.b`:
+这会生成以下Verilog代码，其中 `p.b` 从 `c.b` 驱动：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example9)
 ```
 
-### Defaults with waived connections
+### 带有豁免连接的默认值
 
-Another use case is to try to connect two `Record`s; for matching members, they should be connected, but for unmatched members, *they should be connected to a default value*.
-To accomplish this, use the other operators to initialize all `Record` members, then use `:<>=` with `.waive` to connect only the matching members.
+另一个用例是尝试连接两个 `Record`；对于匹配的成员，它们应该被连接，但对于不匹配的成员，*它们应该被连接到默认值*。
+为了实现这一点，使用其他运算符初始化所有 `Record` 成员，然后使用 `:<>=` 和 `.waive` 只连接匹配的成员。
 
 
 ```scala mdoc:silent
@@ -451,8 +451,8 @@ class Example10 extends RawModule {
   val p = Wire(abType)
   val c = Wire(bcType)
 
-  dontTouch(p) // So it doesn't get constant-propped away for the example
-  dontTouch(c) // So it doesn't get constant-propped away for the example
+  dontTouch(p) // 这样它就不会因为示例而被常量传播掉
+  dontTouch(c) // 这样它就不会因为示例而被常量传播掉
 
   p :#= abType.Lit(_.elements("a") -> true.B, _.elements("b") -> true.B)
   c :#= bcType.Lit(_.elements("b") -> true.B, _.elements("c") -> true.B)
@@ -461,15 +461,15 @@ class Example10 extends RawModule {
 }
 ```
 
-This generates the following Verilog, where `p.b` is driven from `c.b`, and `p.a`, `c.b`, and `c.c` are initialized to default values:
+这会生成以下Verilog代码，其中 `p.b` 从 `c.b` 驱动，而 `p.a`、`c.b` 和 `c.c` 被初始化为默认值：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example10)
 ```
 
-### Connecting types with optional members
+### 连接具有可选成员的类型
 
-In the following example, we can use `:<>=` and `.waive` to connect two `MyDecoupledOpts`'s, where only one has a `bits` member.
+在以下示例中，我们可以使用 `:<>=` 和 `.waive` 连接两个 `MyDecoupledOpt`，其中只有一个有 `bits` 成员。
 
 ```scala mdoc:silent
 class MyDecoupledOpt(hasBits: Boolean) extends Bundle {
@@ -480,22 +480,22 @@ class MyDecoupledOpt(hasBits: Boolean) extends Bundle {
 class Example6 extends RawModule {
   val in  = IO(Flipped(new MyDecoupledOpt(true)))
   val out = IO(new MyDecoupledOpt(false))
-  out :<>= in.waive(_.bits.get) // We can know to call .get because we can inspect in.bits.isEmpty
+  out :<>= in.waive(_.bits.get) // 我们可以知道调用 .get 是因为我们可以检查 in.bits.isEmpty
 }
 ```
 
-This generates the following Verilog, where `ready` and `valid` are connected, and `bits` is ignored:
+这会生成以下Verilog代码，其中 `ready` 和 `valid` 被连接，而 `bits` 被忽略：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example6)
 ```
 
-### Always ignore errors caused by extra members (partial connection operator)
+### 始终忽略额外成员造成的错误（部分连接运算符）
 
-The most unsafe connection is to connect only members that are present in both consumer and producer, and ignore all other members.
-This is unsafe because this connection will never error on any Chisel types.
+最不安全的连接是只连接消费者和生产者中都存在的成员，并忽略所有其他成员。
+这是不安全的，因为这种连接在任何Chisel类型上都不会出错。
 
-To do this, you can use `.waiveAll` and static cast to `Data`:
+要做到这一点，你可以使用 `.waiveAll` 和静态转换到 `Data`：
 
 ```scala mdoc:silent
 class OnlyA extends Bundle {
@@ -514,18 +514,18 @@ class Example11 extends RawModule {
 }
 ```
 
-This generates the following Verilog, where nothing is connected:
+这会生成以下Verilog代码，其中没有任何连接：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example11)
 ```
 
-### Connecting components with different widths
+### 连接具有不同宽度的组件
 
-Non-`Connectable` operators implicitly truncate if a component with a larger width is connected to a component with a smaller width.
-`Connectable` operators disallow this implicit truncation behavior and require the driven component to be equal or larger in width that the sourcing component.
+非 `Connectable` 运算符会在将具有较大宽度的组件连接到具有较小宽度的组件时隐式截断。
+`Connectable` 运算符不允许这种隐式截断行为，并要求被驱动的组件的宽度等于或大于源组件的宽度。
 
-If implicit truncation behavior is desired, then `Connectable` provides a `squeeze` mechanism which will allow the connection to continue with implicit truncation.
+如果需要隐式截断行为，那么 `Connectable` 提供了一个 `squeeze` 机制，它将允许连接继续进行隐式截断。
 
 ```scala mdoc:silent
 import scala.collection.immutable.SeqMap
@@ -538,17 +538,17 @@ class Example14 extends RawModule {
 }
 ```
 
-This generates the following Verilog, where `p` is truncated prior to driving `c`:
+这会生成以下Verilog代码，其中 `p` 在驱动 `c` 之前被截断：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example14)
 ```
 
-### Excluding members from any operator on a Connectable
+### 从Connectable上的任何运算符中排除成员
 
-If a user wants to always exclude a field from a connect, use the `.exclude` mechanism which will never connect the field (as if it didn't exist to the connection).
+如果用户希望始终从连接中排除某个字段，请使用 `.exclude` 机制，它永远不会连接该字段（就好像它对连接不存在一样）。
 
-Note that if a field matches in both producer and consumer, but only one is excluded, the other non-excluded field will still trigger an error; to fix this, use either `.waive` or `.exclude`.
+请注意，如果字段在生产者和消费者中都匹配，但只有一个被排除，另一个未排除的字段仍会触发错误；要解决此问题，请使用 `.waive` 或 `.exclude`。
 
 ```scala mdoc:silent
 import scala.collection.immutable.SeqMap
@@ -561,7 +561,7 @@ class Example15 extends RawModule {
   val p = IO(Flipped(new BundleWithSpecialField()))
   val c = IO(new BundleWithSpecialField())
 
-  c.special := true.B // must initialize it
+  c.special := true.B // 必须初始化它
 
   c.exclude(_.special) :<>= p.exclude(_.special)
 }
@@ -573,39 +573,39 @@ This generates the following Verilog, where the `special` field is not connected
 chisel3.docs.emitSystemVerilog(new Example15)
 ```
 
-## Techniques for connecting structurally inequivalent Chisel types
+## 连接结构不等价的Chisel类型的技术
 
-`DataView` and `.viewAsSupertype` create a view of the component that has a different Chisel type.
-This means that a user can first create a `DataView` of the consumer or producer (or both) so that the Chisel types are structurally equivalent.
-This is useful when the difference between the consumer and producer aren't super nested, and also if they have rich Scala types which encode their structure.
-In general, `DataView` is the preferred mechanism to use (if you can) because it maintains the most amount of Chisel information in the Scala type, but there are many instances where it doesn't work and thus one must fall back on `Connectable`.
+`DataView` 和 `.viewAsSupertype` 创建一个具有不同Chisel类型的组件视图。
+这意味着用户可以首先创建消费者或生产者（或两者）的 `DataView`，使Chisel类型在结构上等价。
+当消费者和生产者之间的差异不是超级嵌套，并且它们具有编码其结构的丰富Scala类型时，这种方法很有用。
+一般来说，`DataView` 是首选机制（如果可以使用的话），因为它在Scala类型中保留了最多的Chisel信息，但在许多情况下它不起作用，因此必须回退到使用 `Connectable`。
 
-`Connectable` does not change the Chisel type, but instead changes the semantics of the operator to not error on the waived members if they are dangling or unconnected.
-This is useful for when differences between the consumer and producer do not show up in the Scala type system (e.g. present/missing fields of type `Option[Data]`, or anonymous `Record`s) or are deeply nested in a bundle that is especially onerous to create a `DataView`.
+`Connectable` 不改变Chisel类型，而是改变运算符的语义，使其在豁免成员悬空或未连接时不报错。
+当消费者和生产者之间的差异在Scala类型系统中不显示（例如，类型为 `Option[Data]` 的存在/缺失字段，或匿名 `Record`），或者深度嵌套在创建 `DataView` 特别繁重的bundle中时，这种方法很有用。
 
-Static casts (e.g. `(x: T)`) allows connecting components that have different Scala types, but leaves the Chisel type unchanged.
-Use this to force a connection to occur, even if the Scala types are different.
+静态转换（例如 `(x: T)`）允许连接具有不同Scala类型的组件，但保持Chisel类型不变。
+即使Scala类型不同，也可以使用它来强制进行连接。
 
-> One may wonder why the operators require identical Scala types in the first place, if they can easily be bypassed.
-The reason is to encourage users to use the Scala type system to encode Chisel information as it can make their code more robust; however, we don't want to be draconian about it because there are times when we want to enable the user to "just connect the darn thing".
+> 有人可能会疑惑，如果运算符要求相同的Scala类型可以轻易绕过，为什么一开始就要求它们相同？
+原因是鼓励用户使用Scala类型系统来编码Chisel信息，因为这可以使他们的代码更加健壮；然而，我们不想过于严格，因为有时候我们希望允许用户"就是要连接这个东西"。
 
-When all else fails one can always manually expand the connection to do what they want to happen, member by member.
-The down-side to this approach is its verbosity and that adding new members to a component will require updating the manual connections.
+当其他方法都失败时，始终可以手动展开连接，成员逐个地实现他们想要的行为。
+这种方法的缺点是冗长，并且向组件添加新成员将需要更新手动连接。
 
-Things to remember about `Connectable` vs `.viewAsSupertype`/`DataView` vs static cast (e.g. `(x: T)`):
+关于 `Connectable` 与 `.viewAsSupertype`/`DataView` 与静态转换（例如 `(x: T)`）需要记住的事项：
 
-- `DataView` and `.viewAsSupertype` will preemptively remove members that are not present in the new view which has a different Chisel type, thus `DataView` *does* affect what is connected
-- `Connectable` can be used to waive the error on members who end up being dangling or unconnected.
-Importantly, `Connectable` waives *do not* affect what is connected
-- Static cast does not remove extra members, thus a static cast *does not* affect what is connected
+- `DataView` 和 `.viewAsSupertype` 会预先移除新视图中不存在的成员，而新视图具有不同的Chisel类型，因此 `DataView` *确实*影响连接的内容
+- `Connectable` 可用于豁免最终悬空或未连接的成员上的错误。
+重要的是，`Connectable` 豁免*不会*影响连接的内容
+- 静态转换不会移除额外的成员，因此静态转换*不会*影响连接的内容
 
-### Connecting different sub-types of the same super-type, with colliding names
+### 连接同一超类型的不同子类型，具有冲突的名称
 
-In these examples, we are connecting `MyDecoupled` with `MyDecoupledOtherBits`.
-Both are subtypes of `MyReadyValid`, and both have a `bits` field of type `UInt(32.W)`.
+在这些示例中，我们将连接 `MyDecoupled` 和 `MyDecoupledOtherBits`。
+两者都是 `MyReadyValid` 的子类型，且都有一个 `UInt(32.W)` 类型的 `bits` 字段。
 
-The first example will use `.viewAsSupertype` to connect them as `MyReadyValid`.
-Because it changes the Chisel type to omit both `bits` fields, the `bits` fields are unconnected.
+第一个示例将使用 `.viewAsSupertype` 将它们作为 `MyReadyValid` 连接。
+因为它改变了Chisel类型以省略两个 `bits` 字段，所以 `bits` 字段未连接。
 
 ```scala mdoc:silent
 import experimental.dataview._
@@ -622,16 +622,16 @@ class Example12 extends RawModule {
 }
 ```
 
-Note that the `bits` fields are unconnected.
+注意 `bits` 字段未连接。
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example12)
 ```
 
-The second example will use a static cast and `.waive(_.bits)` to connect them as `MyReadyValid`.
-Note that because the static cast does not change the Chisel type, the connection finds that both consumer and producer have a `bits` field.
-This means that since they are structurally equivalent, they match and are connected.
-The `waive(_.bits)` does nothing, because the `bits` are neither dangling nor unconnected.
+第二个示例将使用静态转换和 `.waive(_.bits)` 将它们作为 `MyReadyValid` 连接。
+注意，由于静态转换不改变Chisel类型，连接发现消费者和生产者都有一个 `bits` 字段。
+这意味着由于它们在结构上等价，它们匹配并被连接。
+`waive(_.bits)` 不起作用，因为 `bits` 既不悬空也不是未连接的。
 
 
 
@@ -647,18 +647,18 @@ class Example13 extends RawModule {
 }
 ```
 
-Note that the `bits` fields ARE connected, even though they are waived, as `.waive` just changes whether an error should be thrown if they are missing, NOT to not connect them if they are structurally equivalent.
-To always omit the connection, use `.exclude` on one side and either `.exclude` or `.waive` on the other side.
+注意，`bits` 字段确实被连接了，即使它们被豁免，因为 `.waive` 只是改变了当它们缺失时是否应该抛出错误，而不是在它们结构等价时不连接它们。
+要始终省略连接，请在一侧使用 `.exclude`，在另一侧使用 `.exclude` 或 `.waive`。
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example13)
 ```
 
-### Connecting sub-types to super-types by waiving extra members
+### 通过豁免额外成员连接子类型到超类型
 
-> Note that in this example, it would be better to use `.viewAsSupertype`.
+> 注意，在此示例中，最好使用 `.viewAsSupertype`。
 
-In the following example, we can use `:<>=` to connect a `MyReadyValid` to a `MyDecoupled` by waiving the `bits` member.
+在以下示例中，我们可以使用 `:<>=` 通过豁免 `bits` 成员将 `MyReadyValid` 连接到 `MyDecoupled`。
 
 ```scala mdoc:silent
 class MyReadyValid extends Bundle {
@@ -675,19 +675,19 @@ class Example5 extends RawModule {
 }
 ```
 
-This generates the following Verilog, where `ready` and `valid` are connected, and `bits` is ignored:
+这会生成以下Verilog代码，其中 `ready` 和 `valid` 被连接，而 `bits` 被忽略：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example5)
 ```
 
-### Connecting different sub-types
+### 连接不同的子类型
 
-> Note that in this example, it would be better to use `.viewAsSupertype`.
+> 注意，在此示例中，最好使用 `.viewAsSupertype`。
 
-Note that the connection operator requires the `consumer` and `producer` to be the same Scala type to encourage capturing more information statically, but they can always be cast to `Data` or another common supertype prior to connecting.
+注意，连接运算符要求 `consumer` 和 `producer` 具有相同的Scala类型，以鼓励静态捕获更多信息，但它们总是可以在连接之前转换为 `Data` 或其他共同的超类型。
 
-In the following example, we can use `:<>=` and `.waiveAs` to connect two different sub-types of `MyReadyValid`.
+在以下示例中，我们可以使用 `:<>=` 和 `.waiveAs` 连接 `MyReadyValid` 的两个不同子类型。
 
 ```scala mdoc:silent
 class HasBits extends MyReadyValid {
@@ -703,35 +703,35 @@ class Example7 extends RawModule {
 }
 ```
 
-This generates the following Verilog, where `ready` and `valid` are connected, and `bits` and `echo` are ignored:
+这会生成以下Verilog代码，其中 `ready` 和 `valid` 被连接，而 `bits` 和 `echo` 被忽略：
 
 ```scala mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example7)
 ```
 
-## FAQ
+## 常见问题
 
-### How do I connect two items as flexibly as possible (try your best but never error)
+### 如何尽可能灵活地连接两个项目（尽力而为但永不报错）
 
-Use `.unsafe` (both waives and allows squeezing of all fields).
+使用 `.unsafe`（豁免并允许挤压所有字段）。
 
 ```scala mdoc:silent
 class ExampleUnsafe extends RawModule {
   val in  = IO(Flipped(new Bundle { val foo = Bool(); val bar = Bool() }))
   val out = IO(new Bundle { val baz = Bool(); val bar = Bool() })
-  out.unsafe :<>= in.unsafe // bar is connected, and nothing errors
+  out.unsafe :<>= in.unsafe // bar被连接，且没有错误
 }
 ```
 
-### How do I connect two items but don't care about the Scala types being equivalent?
+### 如何连接两个项目但不关心Scala类型是否等价？
 
-Use `.as` (upcasts the Scala type).
+使用 `.as`（向上转换Scala类型）。
 
 ```scala mdoc:silent
 class ExampleAs extends RawModule {
   val in  = IO(Flipped(new Bundle { val foo = Bool(); val bar = Bool() }))
   val out = IO(new Bundle { val foo = Bool(); val bar = Bool() })
-  // foo and bar are connected, although Scala types aren't the same
+  // foo和bar被连接，尽管Scala类型不相同
   out.as[Data] :<>= in.as[Data]
 }
 ```

@@ -1,134 +1,103 @@
 ---
 layout: docs
-title:  "Chisel Data Types"
+title:  "Chisel数据类型"
 section: "chisel3"
 ---
 
-# Chisel Data Types
+# Chisel数据类型
 
-Chisel datatypes are used to specify the type of values held in state
-elements or flowing on wires.  While hardware designs ultimately
-operate on vectors of binary digits, other more abstract
-representations for values allow clearer specifications and help the
-tools generate more optimal circuits.  In Chisel, a raw collection of
-bits is represented by the ```Bits``` type.  Signed and unsigned integers
-are considered subsets of fixed-point numbers and are represented by
-types ```SInt``` and ```UInt``` respectively. Signed fixed-point
-numbers, including integers, are represented using two's-complement
-format.  Boolean values are represented as type ```Bool```.  Note
-that these types are distinct from Scala's builtin types such as
-```Int``` or ```Boolean```.
+Chisel数据类型用于指定状态元素中保存的值或在线路上流动的值的类型。虽然硬件设计最终操作的是二进制数字向量，但其他更抽象的值表示方式可以让规范更清晰，并帮助工具生成更优的电路。在Chisel中，原始的位集合由```Bits```类型表示。有符号和无符号整数被视为定点数的子集，分别由类型```SInt```和```UInt```表示。有符号定点数（包括整数）使用二进制补码格式表示。布尔值表示为类型```Bool```。请注意，这些类型与Scala的内置类型（如```Int```或```Boolean```）是不同的。
 
-Additionally, Chisel defines `Bundles` for making
-collections of values with named fields (similar to ```structs``` in
-other languages), and ```Vecs``` for indexable collections of
-values.
+此外，Chisel定义了`Bundles`用于创建具有命名字段的值集合（类似于其他语言中的```structs```），以及```Vecs```用于可索引的值集合。
 
-Bundles and Vecs will be covered in the next section.
+Bundles和Vecs将在下一节中介绍。
 
-Constant or literal values are expressed using Scala integers or
-strings passed to constructors for the types:
+常量或字面值通过传递给类型构造函数的Scala整数或字符串表示：
 ```scala
-1.U       // decimal 1-bit lit from Scala Int.
-"ha".U    // hexadecimal 4-bit lit from string.
-"o12".U   // octal 4-bit lit from string.
-"b1010".U // binary 4-bit lit from string.
+1.U       // 从Scala Int得到的十进制1位字面值
+"ha".U    // 从字符串得到的十六进制4位字面值
+"o12".U   // 从字符串得到的八进制4位字面值
+"b1010".U // 从字符串得到的二进制4位字面值
 
-5.S    // signed decimal 4-bit lit from Scala Int.
--8.S   // negative decimal 4-bit lit from Scala Int.
-5.U    // unsigned decimal 3-bit lit from Scala Int.
+5.S    // 有符号十进制4位字面值，来自Scala Int
+-8.S   // 负十进制4位字面值，来自Scala Int
+5.U    // 无符号十进制3位字面值，来自Scala Int
 
-8.U(4.W) // 4-bit unsigned decimal, value 8.
--152.S(32.W) // 32-bit signed decimal, value -152.
+8.U(4.W) // 4位无符号十进制，值为8
+-152.S(32.W) // 32位有符号十进制，值为-152
 
-true.B // Bool lits from Scala lits.
+true.B // 从Scala字面值得到的Bool字面值
 false.B
 ```
-Underscores can be used as separators in long string literals to aid
-readability, but are ignored when creating the value, e.g.:
+下划线可以用作长字符串字面值中的分隔符以提高可读性，但在创建值时会被忽略，例如：
 ```scala
-"h_dead_beef".U   // 32-bit lit of type UInt
+"h_dead_beef".U   // 32位UInt类型的字面值
 ```
 
-By default, the Chisel compiler will size each constant to the minimum
-number of bits required to hold the constant, including a sign bit for
-signed types. Bit widths can also be specified explicitly on
-literals, as shown below. Note that (`.W` is used to cast a Scala Int
-to a Chisel width)
+默认情况下，Chisel编译器会将每个常量的大小调整为保存该常量所需的最小位数，对于有符号类型还包括一个符号位。位宽也可以在字面值上显式指定，如下所示。注意（`.W`用于将Scala Int转换为Chisel宽度）
 ```scala
-"ha".asUInt(8.W)     // hexadecimal 8-bit lit of type UInt
-"o12".asUInt(6.W)    // octal 6-bit lit of type UInt
-"b1010".asUInt(12.W) // binary 12-bit lit of type UInt
+"ha".asUInt(8.W)     // 十六进制8位UInt类型的字面值
+"o12".asUInt(6.W)    // 八进制6位UInt类型的字面值
+"b1010".asUInt(12.W) // 二进制12位UInt类型的字面值
 
-5.asSInt(7.W) // signed decimal 7-bit lit of type SInt
-5.asUInt(8.W) // unsigned decimal 8-bit lit of type UInt
+5.asSInt(7.W) // 有符号十进制7位SInt字面值
+5.asUInt(8.W) // 无符号十进制8位UInt字面值
 ```
 
-For literals of type ```UInt```, the value is
-zero-extended to the desired bit width.  For literals of type
-```SInt```, the value is sign-extended to fill the desired bit width.
-If the given bit width is too small to hold the argument value, then a
-Chisel error is generated.
+对于```UInt```类型的字面值，值会被零扩展到所需的位宽。对于```SInt```类型的字面值，值会被符号扩展以填充所需的位宽。如果给定的位宽太小而无法容纳参数值，则会生成Chisel错误。
 
->We are working on a more concise literal syntax for Chisel using
-symbolic prefix operators, but are stymied by the limitations of Scala
-operator overloading and have not yet settled on a syntax that is
-actually more readable than constructors taking strings.
+>我们正在为Chisel开发一种更简洁的字面值语法，使用符号前缀运算符，但受到Scala运算符重载限制的阻碍，尚未确定一种比接受字符串的构造函数更可读的语法。
 
->We have also considered allowing Scala literals to be automatically
-converted to Chisel types, but this can cause type ambiguity and
-requires an additional import.
+>我们还考虑过允许Scala字面值自动转换为Chisel类型，但这可能导致类型歧义，并需要额外的导入。
 
->The SInt and UInt types will also later support an optional exponent
-field to allow Chisel to automatically produce optimized fixed-point
-arithmetic circuits.
+>SInt和UInt类型以后还将支持可选的指数字段，以允许Chisel自动生成优化的定点算术电路。
 
-## Casting
+## 类型转换
 
-We can also cast types in Chisel:
+我们也可以在Chisel中进行类型转换：
 
 ```scala
-val sint = 3.S(4.W)             // 4-bit SInt
+val sint = 3.S(4.W)             // 4位SInt
 
-val uint = sint.asUInt          // cast SInt to UInt
-uint.asSInt                     // cast UInt to SInt
+val uint = sint.asUInt          // 将SInt转换为UInt
+uint.asSInt                     // 将UInt转换为SInt
 ```
 
-**NOTE**: `asUInt`/`asSInt` with an explicit width can **not** be used to cast (convert) between Chisel datatypes.
-No width parameter is accepted, as Chisel will automatically pad or truncate as required when the objects are connected.
+**注意**：带有显式宽度的`asUInt`/`asSInt`**不能**用于在Chisel数据类型之间进行转换。
+不接受宽度参数，因为当对象连接时，Chisel会自动进行填充或截断。
 
-We can also perform casts on clocks, though you should be careful about this, since clocking (especially in ASIC) requires special attention:
+我们也可以对时钟进行转换，不过你应该对此保持谨慎，因为时钟（尤其是在ASIC中）需要特别注意：
 
 ```scala
-val bool: Bool = false.B        // always-low wire
-val clock = bool.asClock        // always-low clock
+val bool: Bool = false.B        // 始终为低电平的线
+val clock = bool.asClock        // 始终为低电平的时钟
 
-clock.asUInt                    // convert clock to UInt (width 1)
-clock.asUInt.asBool             // convert clock to Bool (Chisel 3.2+)
-clock.asUInt.toBool             // convert clock to Bool (Chisel 3.0 and 3.1 only)
+clock.asUInt                    // 将时钟转换为UInt（宽度为1）
+clock.asUInt.asBool             // 将时钟转换为Bool（Chisel 3.2+）
+clock.asUInt.toBool             // 将时钟转换为Bool（仅Chisel 3.0和3.1）
 ```
 
-## Analog/BlackBox type
+## Analog/BlackBox类型
 
-(Experimental, Chisel 3.1+)
+（实验性功能，Chisel 3.1+）
 
-Chisel supports an `Analog` type (equivalent to Verilog `inout`) that can be used to support arbitrary nets in Chisel. This includes analog wires, tri-state/bi-directional wires, and power nets (with appropriate annotations).
+Chisel支持`Analog`类型（等同于Verilog的`inout`），可用于支持Chisel中的任意网络。这包括模拟线路、三态/双向线路和电源网络（使用适当的注解）。
 
-`Analog` is an undirectioned type, and so it is possible to connect multiple `Analog` nets together using the `attach` operator. It is possible to connect an `Analog` **once** using `<>` but illegal to do it more than once.
+`Analog`是一个无方向类型，因此可以使用`attach`运算符将多个`Analog`网络连接在一起。可以使用`<>`**一次**连接`Analog`，但多次连接是非法的。
 
 ```scala
 val a = IO(Analog(1.W))
 val b = IO(Analog(1.W))
 val c = IO(Analog(1.W))
 
-// Legal
+// 合法
 attach(a, b)
 attach(a, c)
 
-// Legal
+// 合法
 a <> b
 
-// Illegal - connects 'a' multiple times
+// 非法 - 多次连接'a'
 a <> b
 a <> c
 ```
