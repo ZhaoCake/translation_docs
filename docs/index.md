@@ -16,7 +16,6 @@
 
 源文档：[https://www.chisel-lang.org/docs/cookbooks](https://www.chisel-lang.org/docs/cookbooks)
 
-
 Chisel是一种用Scala编写的开源硬件描述语言(HDL)，通过提供更高级的抽象和类型安全功能，使硬件设计更加高效和可靠。
 
 Chisel Cookbook包含了各种常见问题的解决方案和最佳实践，涵盖了以下主题：
@@ -29,6 +28,33 @@ Chisel Cookbook包含了各种常见问题的解决方案和最佳实践，涵�
 - [对象模型](chisel_cookbooks/objectmodel.md) - Chisel对象模型的使用
 - [测试](chisel_cookbooks/testing.md) - 硬件测试方法
 - [故障排除](chisel_cookbooks/troubleshooting.md) - 常见问题解决方案
+
+### [Chisel 解释文档](chisel_explanation/motivation.md)
+
+源文档：[https://www.chisel-lang.org/docs/explanations](https://www.chisel-lang.org/docs/explanations)
+
+这是Chisel的详细解释文档，深入介绍了Chisel的各个方面。文档分为三个主要部分：
+
+#### 基础概念
+- [动机](chisel_explanation/motivation.md) - 为什么选择Chisel
+- [数据类型](chisel_explanation/data-types.md) - Chisel的基本数据类型
+- [端口](chisel_explanation/ports.md) - 模块接口定义
+- [运算符](chisel_explanation/operators.md) - 支持的运算操作
+- [Bundle和Vec](chisel_explanation/bundles-and-vecs.md) - 复合数据类型
+
+#### 电路构建
+- [模块](chisel_explanation/modules.md) - 模块的定义和使用
+- [组合电路](chisel_explanation/combinational-circuits.md) - 组合逻辑设计
+- [时序电路](chisel_explanation/sequential-circuits.md) - 时序逻辑设计
+- [存储器](chisel_explanation/memories.md) - 内存和寄存器
+- [宽度推断](chisel_explanation/width-inference.md) - 自动位宽推断
+
+#### 高级特性
+- [多态与参数化](chisel_explanation/polymorphism-and-parameterization.md) - 可重用硬件设计
+- [多时钟域](chisel_explanation/multi-clock.md) - 多时钟设计
+- [黑盒](chisel_explanation/blackboxes.md) - 外部模块集成
+- [注解](chisel_explanation/annotations.md) - 元数据和转换
+- [测试](chisel_explanation/testing.md) - 硬件验证方法
 
 ## 即将添加
 

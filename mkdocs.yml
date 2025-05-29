@@ -97,6 +97,48 @@ nav:
     - 对象模型(objectmodel): chisel_cookbooks/objectmodel.md
     - 测试(testing): chisel_cookbooks/testing.md
     - 故障排除(troubleshooting): chisel_cookbooks/troubleshooting.md
+  - Chisel 解释文档:
+    - 基础概念:
+      - 动机: chisel_explanation/motivation.md
+      - 支持的硬件: chisel_explanation/supported-hardware.md
+      - 数据类型: chisel_explanation/data-types.md
+      - Chisel类型vs Scala类型: chisel_explanation/chisel-type-vs-scala-type.md
+      - 端口: chisel_explanation/ports.md
+      - 运算符: chisel_explanation/operators.md
+      - Bundle和Vec: chisel_explanation/bundles-and-vecs.md
+    - 电路构建:
+      - 模块: chisel_explanation/modules.md
+      - 组合电路: chisel_explanation/combinational-circuits.md
+      - 时序电路: chisel_explanation/sequential-circuits.md
+      - 接口与连接: chisel_explanation/interfaces-and-connections.md
+      - 连接运算符: chisel_explanation/connection-operators.md
+      - 多路选择器: chisel_explanation/muxes-and-input-selection.md
+      - 存储器: chisel_explanation/memories.md
+      - 宽度推断: chisel_explanation/width-inference.md
+    - 高级特性:
+      - 注解: chisel_explanation/annotations.md
+      - 黑盒: chisel_explanation/blackboxes.md
+      - Chisel枚举: chisel_explanation/chisel-enum.md
+      - 可连接性: chisel_explanation/connectable.md
+      - DataView: chisel_explanation/dataview.md
+      - 解码器: chisel_explanation/decoder.md
+      - 函数抽象: chisel_explanation/functional-abstraction.md
+      - 函数式模块创建: chisel_explanation/functional-module-creation.md
+      - 实例选择: chisel_explanation/instchoice.md
+      - 内部函数: chisel_explanation/intrinsics.md
+      - 层级: chisel_explanation/layers.md
+      - 模块前缀: chisel_explanation/moduleprefix.md
+      - 命名: chisel_explanation/naming.md
+      - 多时钟域: chisel_explanation/multi-clock.md
+      - 多态与参数化: chisel_explanation/polymorphism-and-parameterization.md
+      - 打印: chisel_explanation/printing.md
+      - 探针: chisel_explanation/probes.md
+      - 属性: chisel_explanation/properties.md
+      - 复位: chisel_explanation/reset.md
+      - 源码定位: chisel_explanation/source-locators.md
+      - 测试: chisel_explanation/testing.md
+      - 未连接线: chisel_explanation/unconnected-wires.md
+      - 警告: chisel_explanation/warnings.md
 
 extra:
   social:
