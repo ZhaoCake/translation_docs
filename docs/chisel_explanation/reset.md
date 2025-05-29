@@ -6,7 +6,8 @@ section: "chisel3"
 
 # 复位
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 
 class Submodule extends Module
@@ -55,13 +56,15 @@ _Chisel 3.3.0 新功能_
 
 例如：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class MyAlwaysSyncResetModule extends Module with RequireSyncReset {
   val mySyncResetReg = RegInit(false.B) // reset 的类型是 Bool
 }
 ```
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class MyAlwaysAsyncResetModule extends Module with RequireAsyncReset {
   val myAsyncResetReg = RegInit(false.B) // reset 的类型是 AsyncReset
 }
@@ -77,7 +80,8 @@ class MyAlwaysAsyncResetModule extends Module with RequireAsyncReset {
 
 考虑以下两个示例模块，它们与其中使用的复位类型无关：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ResetAgnosticModule extends Module {
   val io = IO(new Bundle {
     val out = UInt(4.W)
@@ -114,7 +118,8 @@ class ResetAgnosticRawModule extends RawModule {
 
 以下代码将使 `myReg` 以及两个 `resetAgnosticReg` 都同步复位：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ForcedSyncReset extends Module {
   // withReset 的参数在其作用域内成为隐式复位
   withReset (reset.asBool) {
@@ -131,7 +136,8 @@ class ForcedSyncReset extends Module {
 
 以下代码将使 `myReg` 以及两个 `resetAgnosticReg` 都异步复位：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ForcedAysncReset extends Module {
   // withReset 的参数在其作用域内成为隐式复位
   withReset (reset.asAsyncReset){
@@ -153,7 +159,8 @@ class ForcedAysncReset extends Module {
 
 使用最后连接语义来覆盖复位类型是 **不合法的**，除非你是在覆盖一个 `DontCare`：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class MyModule extends Module {
   val resetBool = Wire(Reset())
   resetBool := DontCare

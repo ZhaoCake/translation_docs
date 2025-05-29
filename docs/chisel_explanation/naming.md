@@ -15,13 +15,15 @@ Chisel 3.4 引入了一个自定义的 Scala 编译器插件，使得在声明�
 
 ### 编译器插件
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 // Imports used by the following examples
 import chisel3._
 import chisel3.experimental.{prefix, noPrefix}
 ```
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3.docs.emitSystemVerilog
 ```
 
@@ -39,7 +41,8 @@ addCompilerPlugin("edu.berkeley.cs" % "chisel3-plugin" % "3.6.0" cross CrossVers
 
 如果这行代码在 bundle 声明中或是模块实例化，它会被重写为使用 `withName` 的调用，该调用会为信号/模块命名。
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class MyBundle extends Bundle {
   val foo = Input(UInt(3.W))
   // val foo = withName("foo")(Input(UInt(3.W)))
@@ -50,13 +53,15 @@ class Example1 extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new Example1)
 ```
 
 否则，它还会被重写为包含名称作为前缀，这个前缀会应用到在 val 声明的右侧执行过程中生成的所有信号：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class Example2 extends Module {
   val in = IO(Input(UInt(2.W)))
   // val in = withName("in")(prefix("in")(IO(Input(UInt(2.W)))))
@@ -86,14 +91,16 @@ class Example2 extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new Example2)
 ```
 
 前缀也可以从连接左侧信号的名称推导出来。
 虽然这不是通过编译器插件实现的，但行为应该感觉类似：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class ConnectPrefixing extends Module {
   val in = IO(Input(UInt(2.W)))
   // val in = withName("in")(prefix("in")(IO(Input(UInt(2.W)))))
@@ -114,13 +121,15 @@ class ConnectPrefixing extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new ConnectPrefixing)
 ```
 
 注意，当硬件类型嵌套在 `Option` 或 `Iterable` 的子类型中时，命名机制也同样有效：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class Example3 extends Module {
   val in = IO(Input(UInt(2.W)))
   // val in = withName("in")(prefix("in")(IO(Input(UInt(2.W)))))
@@ -141,13 +150,15 @@ class Example3 extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new Example3)
 ```
 
 还有一个重载的变体可以通过 unapply 提供的名称为硬件命名：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class UnapplyExample extends Module {
   val foo = IO(Input(UInt(2.W)))
   def mkIO() = (IO(Input(UInt(2.W))), foo, IO(Output(UInt(2.W))))
@@ -158,7 +169,8 @@ class UnapplyExample extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new UnapplyExample)
 ```
 
@@ -172,7 +184,8 @@ emitSystemVerilog(new UnapplyExample)
 
 还要注意，前缀是相互附加的（包括编译器插件生成的前缀）：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class Example6 extends Module {
   val in = IO(Input(UInt(2.W)))
   val out = IO(Output(UInt(4.W)))
@@ -186,14 +199,16 @@ class Example6 extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new Example6)
 ```
 
 有时您可能希望禁用前缀。这可能发生在您编写库函数并且不希望出现前缀行为的情况下。
 在这种情况下，您可以调用 `noPrefix`：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class Example7 extends Module {
   val in = IO(Input(UInt(2.W)))
   val out = IO(Output(UInt(4.W)))
@@ -207,7 +222,8 @@ class Example7 extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new Example7)
 ```
 
@@ -215,7 +231,8 @@ emitSystemVerilog(new Example7)
 
 如果您想指定信号的名称，可以始终使用 `.suggestName` API。请注意，建议的名称仍然会被前缀（包括插件生成的前缀）。您可以始终使用 `noPrefix` 对象来去除前缀。
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class Example8 extends Module {
   val in = IO(Input(UInt(2.W)))
   val out = IO(Output(UInt(4.W)))
@@ -229,14 +246,16 @@ class Example8 extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new Example8)
 ```
 
 注意，使用 `.suggestName` 并不会影响源自 val 名称的前缀；
 但是，它 _可以_ 影响源自连接（例如 `:=`）的前缀：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class ConnectionPrefixExample extends Module {
   val in0 = IO(Input(UInt(2.W)))
   val in1 = IO(Input(UInt(2.W)))
@@ -273,7 +292,8 @@ class ConnectionPrefixExample extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new ConnectionPrefixExample)
 ```
 
@@ -286,7 +306,8 @@ emitSystemVerilog(new ConnectionPrefixExample)
 Chisel 会在前缀中保留以 `_` 开头的约定，以表示通过前缀生成的信号是匿名信号。
 例如：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class TemporaryExample extends Module {
   val in0 = IO(Input(UInt(2.W)))
   val in1 = IO(Input(UInt(2.W)))
@@ -305,14 +326,16 @@ class TemporaryExample extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new TemporaryExample)
 ```
 
 如果一个匿名信号本身被用来生成前缀，前导的 `_` 将被忽略，以避免在进一步嵌套信号的名称中出现双下划线 `__`。
 
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class TemporaryPrefixExample extends Module {
   val in0 = IO(Input(UInt(2.W)))
   val in1 = IO(Input(UInt(2.W)))
@@ -328,7 +351,8 @@ class TemporaryPrefixExample extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new TemporaryPrefixExample)
 ```
 
@@ -337,7 +361,8 @@ emitSystemVerilog(new TemporaryPrefixExample)
 
 如果您想指定模块的名称（而不是模块实例的名称），可以始终覆盖 `desiredName` 值。请注意，您可以通过模块的参数对名称进行参数化。这是使您的模块名称更稳定的好方法，强烈建议您这样做。
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class Example9(width: Int) extends Module {
   override val desiredName = s"EXAMPLE9WITHWIDTH$width"
   val in = IO(Input(UInt(width.W)))
@@ -349,7 +374,8 @@ class Example9(width: Int) extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 emitSystemVerilog(new Example9(8))
 emitSystemVerilog(new Example9(1))
 ```

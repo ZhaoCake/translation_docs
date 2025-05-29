@@ -12,11 +12,13 @@ Chisel 提供了端口构造器，允许在构造时为对象添加方向（输�
 
 下面是一个端口声明的例子：
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 ```
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class Decoupled extends Bundle {
   val ready = Output(Bool())
   val data  = Input(UInt(32.W))
@@ -35,7 +37,8 @@ class Decoupled extends Bundle {
 Chisel 3.2 引入了 `DataMirror.modulePorts`，可以用来检查任何 Chisel 模块的 IO（这包括来自 `import chisel3._` 和 `import Chisel._` 的模块，以及来自这两个包的 BlackBox）。
 以下是如何使用这个 API 的示例：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import chisel3.reflect.DataMirror
 import chisel3.stage.ChiselGeneratorAnnotation
 
@@ -61,7 +64,8 @@ class Test extends Module {
 ```
 
 这将打印以下内容：
-```scala mdoc:passthrough
+```scala
+// 原始代码块中的标记: mdoc:passthrough
 println("```")
 chisel3.docs.emitSystemVerilog(new Test): Unit // 抑制字符串输出，只想看到标准输出
 println("```")

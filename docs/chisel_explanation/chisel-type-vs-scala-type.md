@@ -11,13 +11,15 @@ Scala编译器无法区分Chisel对硬件的表示（如`false.B`、`Reg(Bool())
 
 ## Scala类型与Chisel类型与硬件
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 import circt.stage.ChiselStage
 ```
 
 Data的*Scala*类型由Scala编译器识别，例如`Bool`、`Decoupled[UInt]`或下面的`MyBundle`
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class MyBundle(w: Int) extends Bundle {
   val foo = UInt(w.W)
   val bar = UInt(w.W)
@@ -37,7 +39,8 @@ class MyBundle(w: Int) extends Bundle {
 
 下面的代码演示了具有相同Scala类型（`MyBundle`）的对象如何具有不同的属性。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.experimental.BundleLiterals._
 
 class MyModule(gen: () => MyBundle) extends Module {
@@ -58,7 +61,8 @@ class MyModule(gen: () => MyBundle) extends Module {
 }
 ```
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 // 仅用于编译检查上面的内容
 import circt.stage.ChiselStage.elaborate
 elaborate(new MyModule(() => new MyBundle(3)))
@@ -68,7 +72,8 @@ elaborate(new MyModule(() => new MyBundle(3)))
 
 `.asTypeOf`对硬件和Chisel类型都有效：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 elaborate(new Module {
   val chiselType = new MyBundle(3)
   val hardware = Wire(new MyBundle(3))
@@ -79,14 +84,16 @@ elaborate(new Module {
 ```
 
 只能对硬件使用`:=`：
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // 这样做...
 elaborate(new Module {
   val hardware = Wire(new MyBundle(3))
   hardware := DontCare
 })
 ```
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 // 不要这样做...
 elaborate(new Module {
   val chiselType = new MyBundle(3)
@@ -95,7 +102,8 @@ elaborate(new Module {
 ```
 
 只能从硬件`:=`：
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // 这样做...
 elaborate(new Module {
   val hardware = IO(new MyBundle(3))
@@ -104,7 +112,8 @@ elaborate(new Module {
   hardware := moarHardware
 })
 ```
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 // Not this...
 elaborate(new Module {
   val hardware = IO(new MyBundle(3))
@@ -114,7 +123,8 @@ elaborate(new Module {
 ```
 
 Have to pass hardware to `chiselTypeOf`:
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // Do this...
 elaborate(new Module {
   val hardware = Wire(new MyBundle(3))
@@ -122,7 +132,8 @@ elaborate(new Module {
   val chiselType = chiselTypeOf(hardware)
 })
 ```
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 // Not this...
 elaborate(new Module {
   val chiselType = new MyBundle(3)
@@ -131,7 +142,8 @@ elaborate(new Module {
 ```
 
 Have to pass hardware to `*Init`:
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // Do this...
 elaborate(new Module {
   val hardware = Wire(new MyBundle(3))
@@ -139,7 +151,8 @@ elaborate(new Module {
   val moarHardware = WireInit(hardware)
 })
 ```
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 // Not this...
 elaborate(new Module {
   val crash = WireInit(new MyBundle(3))
@@ -147,14 +160,16 @@ elaborate(new Module {
 ```
 
 Can't pass hardware to a `Wire`, `Reg`, `IO`:
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // Do this...
 elaborate(new Module {
   val hardware = Wire(new MyBundle(3))
   hardware := DontCare
 })
 ```
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 // Not this...
 elaborate(new Module {
   val hardware = Wire(new MyBundle(3))
@@ -163,7 +178,8 @@ elaborate(new Module {
 ```
 
 `.Lit` can only be called on Chisel type:
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // Do this...
 elaborate(new Module {
   val hardwareLit = (new MyBundle(3)).Lit(
@@ -172,7 +188,8 @@ elaborate(new Module {
   )
 })
 ```
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 //Not this...
 elaborate(new Module {
   val hardware = Wire(new MyBundle(3))
@@ -184,7 +201,8 @@ elaborate(new Module {
 ```
 
 Can only use a Chisel type within a `Bundle` definition:
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // Do this...
 elaborate(new Module {
   val hardware = Wire(new Bundle {
@@ -193,7 +211,8 @@ elaborate(new Module {
   hardware := DontCare
 })
 ```
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 // Not this...
 elaborate(new Module {
   val crash = Wire(new Bundle {
@@ -203,7 +222,8 @@ elaborate(new Module {
 ```
 
 Can only call `directionOf` on Hardware:
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.reflect.DataMirror
 
 class Child extends Module{
@@ -212,7 +232,8 @@ class Child extends Module{
   val chiselType = new MyBundle(3)
 }
 ```
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // Do this...
 elaborate(new Module {
   val child = Module(new Child())
@@ -220,7 +241,8 @@ elaborate(new Module {
   val direction = DataMirror.directionOf(child.hardware)
 })
 ```
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 // Not this...
 elaborate(new Module {
 val child = Module(new Child())
@@ -230,7 +252,8 @@ val child = Module(new Child())
 ```
 
 Can call `specifiedDirectionOf` on hardware or Chisel type:
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 elaborate(new Module {
   val child = Module(new Child())
   child.hardware := DontCare
@@ -244,7 +267,8 @@ elaborate(new Module {
 `.asInstanceOf` is a Scala runtime cast, usually used for telling the compiler
 that you have more information than it can infer to convert Scala types:
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ScalaCastingModule(gen: () => Bundle) extends Module {
   val io = IO(Output(gen().asInstanceOf[MyBundle]))
   io.foo := 0.U
@@ -252,12 +276,14 @@ class ScalaCastingModule(gen: () => Bundle) extends Module {
 ```
 
 This works if we do indeed have more information than the compiler:
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 elaborate(new ScalaCastingModule( () => new MyBundle(3)))
 ```
 
 But if we are wrong, we can get a Scala runtime exception:
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 class NotMyBundle extends Bundle {val baz = Bool()}
 elaborate(new ScalaCastingModule(() => new NotMyBundle()))
 ```
@@ -267,11 +293,13 @@ It is commonly used to assign data to all-zeros, as described in [this cookbook 
 also be used (though not really recommended, as there is no checking on
 width matches) to convert one Chisel type to another:
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3.docs.emitSystemVerilog
 ```
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class SimilarToMyBundle(w: Int) extends Bundle{
   val foobar = UInt((2*w).W)
 }

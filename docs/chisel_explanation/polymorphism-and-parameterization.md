@@ -59,11 +59,13 @@ def FIR[T <: Data with Num[T]](ws: Seq[T], x: T): T =
 
 就像参数化函数一样，我们也可以参数化类使其更易复用。例如，我们可以使 Filter 类泛化以使用任何类型的连接。我们通过参数化 `FilterIO` 类并定义构造函数来接收类型 `T` 的单个参数 `gen` 来实现这一点，如下所示：
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 ```
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class FilterIO[T <: Data](gen: T) extends Bundle {
   val x = Input(gen)
   val y = Output(gen)
@@ -72,7 +74,8 @@ class FilterIO[T <: Data](gen: T) extends Bundle {
 
 现在我们可以通过定义一个也接受连接类型构造函数参数并将其传递给 `FilterIO` 接口构造函数的模块类来定义 `Filter`：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Filter[T <: Data](gen: T) extends Module {
   val io = IO(new FilterIO(gen))
   // ...
@@ -81,7 +84,8 @@ class Filter[T <: Data](gen: T) extends Module {
 
 我们现在可以这样定义一个基于 `PLink` 的 `Filter`：
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 class SimpleLink extends Bundle {
   val data = Output(UInt(16.W))
   val valid = Output(Bool())
@@ -91,13 +95,15 @@ class PLink extends SimpleLink {
 }
 ```
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val f = Module(new Filter(new PLink))
 ```
 
 泛型 FIFO 可以这样定义：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.util.log2Up
 
 class DataBundle extends Bundle {
@@ -137,13 +143,15 @@ class Fifo[T <: Data](gen: T, n: Int) extends Module {
 
 一个包含 8 个 DataBundle 类型元素的 FIFO 可以这样实例化：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val fifo = Module(new Fifo(new DataBundle, 8))
 ```
 
 也可以定义一个泛型的解耦（ready/valid）接口：
 
-```scala mdoc:invisible:reset
+```scala
+// 原始代码块中的标记: mdoc:invisible:reset
 import chisel3._
 class DataBundle extends Bundle {
   val a = UInt(32.W)
@@ -151,7 +159,8 @@ class DataBundle extends Bundle {
 }
 ```
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class DecoupledIO[T <: Data](data: T) extends Bundle {
   val ready = Input(Bool())
   val valid = Output(Bool())
@@ -161,13 +170,15 @@ class DecoupledIO[T <: Data](data: T) extends Bundle {
 
 这个模板可以用来为任何信号集添加握手协议：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class DecoupledDemo extends DecoupledIO(new DataBundle)
 ```
 
 现在 FIFO 接口可以简化为：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Fifo[T <: Data](data: T, n: Int) extends Module {
   val io = IO(new Bundle {
     val enq = Flipped(new DecoupledIO(data))
@@ -181,7 +192,8 @@ class Fifo[T <: Data](data: T, n: Int) extends Module {
 
 你也可以基于其他模块而不仅仅是类型来参数化模块。下面是一个基于其他模块而不是类型参数化的模块示例。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.RawModule
 import chisel3.experimental.BaseModule
 

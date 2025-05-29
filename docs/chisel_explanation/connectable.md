@@ -89,7 +89,8 @@ section: "chisel3"
 
 我们使用以下非嵌套bundle `Parent` 的示例，让我们陈述 `p` 成员之间的所有对齐关系。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class Parent extends Bundle {
   val alignedChild = UInt(32.W)
@@ -115,7 +116,8 @@ class MyModule0 extends Module {
 
 下一个示例有一个嵌套bundle `GrandParent`，它实例化了一个对齐的 `Parent` 字段和翻转的 `Parent` 字段。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class GrandParent extends Bundle {
   val alignedParent = new Parent
@@ -160,7 +162,8 @@ class MyModule1 extends Module {
 首先，我们可以使用类似于 `Parent` 的示例，但使用 `Input/Output` 而不是 `Flipped`。
 因为 `alignedChild` 和 `flippedChild` 是非聚合的，所以 `Input` 基本上就是一个 `Flipped`，因此对齐方式与之前的 `Parent` 示例相比没有变化。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class ParentWithOutputInput extends Bundle {
   val alignedCoerced = Output(UInt(32.W)) // 等同于 UInt(32.W)
@@ -181,7 +184,8 @@ class MyModule2 extends Module {
 
 下一个示例有一个嵌套bundle `GrandParent`，它实例化了一个 `Output` 类型的 `ParentWithOutputInput` 字段和一个 `Input` 类型的 `ParentWithOutputInput` 字段。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class GrandParentWithOutputInput extends Bundle {
   val alignedCoerced = Output(new ParentWithOutputInput)
@@ -219,7 +223,8 @@ class MyModule3 extends Module {
 对于所有成员相互对齐（非翻转）的简单连接，使用 `:=`：
 
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class FullyAlignedBundle extends Bundle {
   val a = Bool()
@@ -234,7 +239,8 @@ class Example0 extends RawModule {
 
 这会生成以下Verilog代码，其中 `incoming` 的每个成员都驱动 `outgoing` 的每个成员：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example0)
 ```
 
@@ -246,7 +252,8 @@ chisel3.docs.emitSystemVerilog(new Example0)
 
 聚合Chisel类型可以包含相对于彼此翻转的数据成员；在下面的示例中，`alignedChild` 和 `flippedChild` 相对于 `MixedAlignmentBundle` 是对齐/翻转的。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class MixedAlignmentBundle extends Bundle {
   val alignedChild = Bool()
@@ -263,7 +270,8 @@ class MixedAlignmentBundle extends Bundle {
 
 对于希望采用"类批量连接语义"的连接，其中对齐成员从生产者驱动到消费者，翻转成员从消费者驱动到生产者，使用 `:<>=`。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Example1 extends RawModule {
   val incoming = IO(Flipped(new MixedAlignmentBundle))
   val outgoing = IO(new MixedAlignmentBundle)
@@ -273,7 +281,8 @@ class Example1 extends RawModule {
 
 这会生成以下Verilog代码，其中对齐成员从 `incoming` 驱动到 `outgoing`，翻转成员从 `outgoing` 驱动到 `incoming`：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example1)
 ```
 
@@ -283,7 +292,8 @@ chisel3.docs.emitSystemVerilog(new Example1)
 
 在以下示例中，从 `incoming.alignedChild` 连接到 `outgoing.alignedChild`，`incoming.alignedChild` 是否与 `incoming` 对齐无关紧要，因为 `:<>=` 仅根据正在连接的对象计算对齐关系，而 `incoming.alignedChild` 与 `incoming.alignedChild` 是对齐的。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Example1a extends RawModule {
   val incoming = IO(Flipped(new MixedAlignmentBundle))
   val outgoing = IO(new MixedAlignmentBundle)
@@ -315,7 +325,8 @@ class Example1a extends RawModule {
 
 对于希望采用"类批量连接语义"的对齐半部分的连接，其中对齐成员从生产者驱动到消费者，而忽略翻转成员，使用 `:<=`（"对齐连接"）。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Example2 extends RawModule {
   val incoming = IO(Flipped(new MixedAlignmentBundle))
   val outgoing = IO(new MixedAlignmentBundle)
@@ -326,7 +337,8 @@ class Example2 extends RawModule {
 
 这会生成以下Verilog代码，其中对齐成员从 `incoming` 驱动到 `outgoing`，而忽略翻转成员：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example2)
 ```
 
@@ -334,7 +346,8 @@ chisel3.docs.emitSystemVerilog(new Example2)
 
 对于希望采用"类批量连接语义"的翻转半部分的连接，其中对齐成员被忽略而翻转成员从消费者连接到生产者，使用 `:>=`（"翻转连接"或"反压连接"）。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Example3 extends RawModule {
   val incoming = IO(Flipped(new MixedAlignmentBundle))
   val outgoing = IO(new MixedAlignmentBundle)
@@ -345,7 +358,8 @@ class Example3 extends RawModule {
 
 这会生成以下Verilog代码，其中对齐成员被忽略，翻转成员从 `outgoing` 驱动到 `incoming`：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example3)
 ```
 
@@ -356,7 +370,8 @@ chisel3.docs.emitSystemVerilog(new Example3)
 对于希望每个生产者成员始终驱动每个消费者成员的连接，无论对齐如何，使用 `:#=`（"强制连接"）。
 这个运算符对于初始化包含混合对齐成员的类型的wire很有用。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.experimental.BundleLiterals._
 class Example4 extends RawModule {
   val w = Wire(new MixedAlignmentBundle)
@@ -367,7 +382,8 @@ class Example4 extends RawModule {
 
 这会生成以下Verilog代码，其中所有成员都从字面值驱动到 `w`，无论对齐如何：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example4)
 ```
 
@@ -375,7 +391,8 @@ chisel3.docs.emitSystemVerilog(new Example4)
 
 `:#=` 的另一个用例是将混合方向的bundle连接到完全对齐的监视器。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.experimental.BundleLiterals._
 class Example4b extends RawModule {
   val monitor = IO(Output(new MixedAlignmentBundle))
@@ -388,7 +405,8 @@ class Example4b extends RawModule {
 
 这会生成以下Verilog代码，其中所有成员都从字面值驱动到 `w`，无论对齐如何：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example4b)
 ```
 ## Connectable
@@ -412,7 +430,8 @@ chisel3.docs.emitSystemVerilog(new Example4b)
 
 > 请注意，`.viewAsSuperType`、静态转换或自定义 `DataView` 都无法帮助解决这种情况，因为Scala类型仍然是 `Record`。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import scala.collection.immutable.SeqMap
 
 class Example9 extends RawModule {
@@ -431,7 +450,8 @@ class Example9 extends RawModule {
 
 这会生成以下Verilog代码，其中 `p.b` 从 `c.b` 驱动：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example9)
 ```
 
@@ -441,7 +461,8 @@ chisel3.docs.emitSystemVerilog(new Example9)
 为了实现这一点，使用其他运算符初始化所有 `Record` 成员，然后使用 `:<>=` 和 `.waive` 只连接匹配的成员。
 
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import scala.collection.immutable.SeqMap
 
 class Example10 extends RawModule {
@@ -463,7 +484,8 @@ class Example10 extends RawModule {
 
 这会生成以下Verilog代码，其中 `p.b` 从 `c.b` 驱动，而 `p.a`、`c.b` 和 `c.c` 被初始化为默认值：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example10)
 ```
 
@@ -471,7 +493,8 @@ chisel3.docs.emitSystemVerilog(new Example10)
 
 在以下示例中，我们可以使用 `:<>=` 和 `.waive` 连接两个 `MyDecoupledOpt`，其中只有一个有 `bits` 成员。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class MyDecoupledOpt(hasBits: Boolean) extends Bundle {
   val valid = Bool()
   val ready = Flipped(Bool())
@@ -486,7 +509,8 @@ class Example6 extends RawModule {
 
 这会生成以下Verilog代码，其中 `ready` 和 `valid` 被连接，而 `bits` 被忽略：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example6)
 ```
 
@@ -497,7 +521,8 @@ chisel3.docs.emitSystemVerilog(new Example6)
 
 要做到这一点，你可以使用 `.waiveAll` 和静态转换到 `Data`：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class OnlyA extends Bundle {
   val a = UInt(32.W)
 }
@@ -516,7 +541,8 @@ class Example11 extends RawModule {
 
 这会生成以下Verilog代码，其中没有任何连接：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example11)
 ```
 
@@ -527,7 +553,8 @@ chisel3.docs.emitSystemVerilog(new Example11)
 
 如果需要隐式截断行为，那么 `Connectable` 提供了一个 `squeeze` 机制，它将允许连接继续进行隐式截断。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import scala.collection.immutable.SeqMap
 
 class Example14 extends RawModule {
@@ -540,7 +567,8 @@ class Example14 extends RawModule {
 
 这会生成以下Verilog代码，其中 `p` 在驱动 `c` 之前被截断：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example14)
 ```
 
@@ -550,7 +578,8 @@ chisel3.docs.emitSystemVerilog(new Example14)
 
 请注意，如果字段在生产者和消费者中都匹配，但只有一个被排除，另一个未排除的字段仍会触发错误；要解决此问题，请使用 `.waive` 或 `.exclude`。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import scala.collection.immutable.SeqMap
 
 class BundleWithSpecialField extends Bundle {
@@ -569,7 +598,8 @@ class Example15 extends RawModule {
 
 This generates the following Verilog, where the `special` field is not connected:
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example15)
 ```
 
@@ -607,7 +637,8 @@ chisel3.docs.emitSystemVerilog(new Example15)
 第一个示例将使用 `.viewAsSupertype` 将它们作为 `MyReadyValid` 连接。
 因为它改变了Chisel类型以省略两个 `bits` 字段，所以 `bits` 字段未连接。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import experimental.dataview._
 class MyDecoupledOtherBits extends MyReadyValid {
   val bits = UInt(32.W)
@@ -624,7 +655,8 @@ class Example12 extends RawModule {
 
 注意 `bits` 字段未连接。
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example12)
 ```
 
@@ -635,7 +667,8 @@ chisel3.docs.emitSystemVerilog(new Example12)
 
 
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import experimental.dataview._
 class Example13 extends RawModule {
   val in  = IO(Flipped(new MyDecoupled))
@@ -650,7 +683,8 @@ class Example13 extends RawModule {
 注意，`bits` 字段确实被连接了，即使它们被豁免，因为 `.waive` 只是改变了当它们缺失时是否应该抛出错误，而不是在它们结构等价时不连接它们。
 要始终省略连接，请在一侧使用 `.exclude`，在另一侧使用 `.exclude` 或 `.waive`。
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example13)
 ```
 
@@ -660,7 +694,8 @@ chisel3.docs.emitSystemVerilog(new Example13)
 
 在以下示例中，我们可以使用 `:<>=` 通过豁免 `bits` 成员将 `MyReadyValid` 连接到 `MyDecoupled`。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class MyReadyValid extends Bundle {
   val valid = Bool()
   val ready = Flipped(Bool())
@@ -677,7 +712,8 @@ class Example5 extends RawModule {
 
 这会生成以下Verilog代码，其中 `ready` 和 `valid` 被连接，而 `bits` 被忽略：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example5)
 ```
 
@@ -689,7 +725,8 @@ chisel3.docs.emitSystemVerilog(new Example5)
 
 在以下示例中，我们可以使用 `:<>=` 和 `.waiveAs` 连接 `MyReadyValid` 的两个不同子类型。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class HasBits extends MyReadyValid {
   val bits = UInt(32.W)
 }
@@ -705,7 +742,8 @@ class Example7 extends RawModule {
 
 这会生成以下Verilog代码，其中 `ready` 和 `valid` 被连接，而 `bits` 和 `echo` 被忽略：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Example7)
 ```
 
@@ -715,7 +753,8 @@ chisel3.docs.emitSystemVerilog(new Example7)
 
 使用 `.unsafe`（豁免并允许挤压所有字段）。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ExampleUnsafe extends RawModule {
   val in  = IO(Flipped(new Bundle { val foo = Bool(); val bar = Bool() }))
   val out = IO(new Bundle { val baz = Bool(); val bar = Bool() })
@@ -727,7 +766,8 @@ class ExampleUnsafe extends RawModule {
 
 使用 `.as`（向上转换Scala类型）。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ExampleAs extends RawModule {
   val in  = IO(Flipped(new Bundle { val foo = Bool(); val bar = Bool() }))
   val out = IO(new Bundle { val foo = Bool(); val bar = Bool() })

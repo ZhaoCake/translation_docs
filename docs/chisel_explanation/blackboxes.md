@@ -20,7 +20,8 @@ Verilog参数可以作为参数传递给BlackBox构造函数。
 
 例如，考虑在Chisel设计中实例化一个Xilinx差分时钟缓冲器（IBUFDS）：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 import chisel3.util._
 import chisel3.experimental._ // 启用实验性功能
@@ -56,7 +57,8 @@ IBUFDS #(.DIFF_TERM("TRUE"), .IOSTANDARD("DEFAULT")) ibufds (
 
 Chisel提供以下方式来提供黑盒底层的代码。考虑以下将两个实数相加的黑盒。这些数字在chisel3中表示为64位无符号整数。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 class BlackBoxRealAdd extends BlackBox {
   val io = IO(new Bundle {
@@ -85,7 +87,8 @@ endmodule
 
 为了将上面的verilog片段提供给后端模拟器，chisel3基于chisel/firrtl的[注解系统](../explanations/annotations)提供了以下工具。将特性`HasBlackBoxResource`添加到声明中，然后在主体中调用函数来告诉系统在哪里可以找到verilog代码。模块现在看起来像这样：
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.HasBlackBoxResource
 
@@ -104,7 +107,8 @@ class BlackBoxRealAdd extends BlackBox with HasBlackBoxResource {
 ### 带有内联Verilog的黑盒
 也可以直接在scala源代码中放置这个verilog。不使用`HasBlackBoxResource`而使用`HasBlackBoxInline`，不使用`setResource`而使用`setInline`。代码看起来像这样：
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.HasBlackBoxInline
 class BlackBoxRealAdd extends BlackBox with HasBlackBoxInline {

@@ -5,7 +5,8 @@
 
 实例选择依赖于选项组来指定附加到每个选项的可用目标：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.choice.{Case, Group}
 
 object Platform extends Group {
@@ -18,7 +19,8 @@ object Platform extends Group {
 
 实例选择引用的模块必须都通过从`FixedIOBaseModule`派生来指定相同的IO接口。`ModuleChoice`运算符接受默认选项和案例-模块映射列表，并返回对模块IO的绑定。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 import chisel3.choice.ModuleChoice
 

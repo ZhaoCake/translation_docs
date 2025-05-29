@@ -9,7 +9,8 @@ Chisel 3 支持多时钟域，具体如下。
 
 注意，为了安全地跨时钟域，你需要适当的同步逻辑（比如异步 FIFO）。你可以使用 [AsyncQueue 库](https://github.com/ucb-bar/asyncqueue)来轻松实现这一点。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class MultiClockModule extends Module {
@@ -37,7 +38,8 @@ class MultiClockModule extends Module {
 
 你也可以在另一个时钟域中实例化模块：
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class ChildModule extends Module {
@@ -58,7 +60,8 @@ class MultiClockModule extends Module {
 
 如果你只想将你的时钟连接到新的时钟域并使用常规的隐式复位信号，你可以使用 `withClock(clock)` 替代 `withClockAndReset`。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class MultiClockModule extends Module {

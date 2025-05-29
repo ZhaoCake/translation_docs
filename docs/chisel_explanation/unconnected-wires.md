@@ -17,10 +17,12 @@ Chisel 现在支持一个 `DontCare` 元素，它可以连接到输出信号，�
 
 输出信号可以连接到 DontCare，在生成相应的 firrtl 时将生成 `is invalid`。
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 ```
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 
 class Out extends Bundle { 
   val debug = Bool()
@@ -29,7 +31,8 @@ class Out extends Bundle {
 val io = new Bundle { val out = new Out }
 ```
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 io.out.debug := true.B
 io.out.debugOption := DontCare
 ```
@@ -38,10 +41,12 @@ io.out.debugOption := DontCare
 
 这也可以应用于聚合类型和单个信号：
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 ```
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class ModWithVec extends Module {
   // ...

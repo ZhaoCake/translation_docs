@@ -10,7 +10,8 @@ section: "chisel3"
 
 Bundle将几个可能具有不同类型的命名字段组合成一个连贯的单元，很像C语言中的`struct`。用户通过定义一个作为`Bundle`子类的类来定义自己的bundle。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class MyFloat extends Bundle {
   val sign        = Bool()
@@ -30,7 +31,8 @@ Scala的惯例是使用UpperCamelCase命名类，我们建议你在Chisel代码�
 
 Vec创建一个可索引的元素向量，构造方式如下：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ModuleWithVec extends RawModule {
   // 5个23位有符号整数的向量。
   val myVec = Wire(Vec(5, SInt(23.W)))
@@ -46,7 +48,8 @@ class ModuleWithVec extends RawModule {
 
 Bundle和Vec可以任意嵌套以构建复杂的数据结构：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class BigBundle extends Bundle {
  // 5个23位有符号整数的向量。
  val myVec = Vec(5, SInt(23.W))
@@ -62,7 +65,8 @@ class BigBundle extends Bundle {
 
 `Flipped()`函数递归地翻转Bundle/Record中的所有元素。这对于构建相互连接的双向接口非常有用（例如`Decoupled`）。请看下面的例子。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ABBundle extends Bundle {
   val a = Input(Bool())
   val b = Output(Bool())
@@ -82,7 +86,8 @@ class MyFlippedModule extends RawModule {
 
 这会生成以下Verilog：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new MyFlippedModule())
 ```
 
@@ -92,7 +97,8 @@ chisel3.docs.emitSystemVerilog(new MyFlippedModule())
 
 `Vec`的所有元素必须具有相同的参数化。如果我们想创建一个Vec，其中元素具有相同的类型但不同的参数化，我们可以使用MixedVec：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.util.MixedVec
 class ModuleMixedVec extends Module {
   val io = IO(new Bundle {
@@ -107,7 +113,8 @@ class ModuleMixedVec extends Module {
 
 我们也可以以编程方式创建MixedVec中的类型：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ModuleProgrammaticMixedVec(x: Int, y: Int) extends Module {
   val io = IO(new Bundle {
     val vec = Input(MixedVec((x to y) map { i => UInt(i.W) }))
@@ -131,7 +138,8 @@ class ModuleProgrammaticMixedVec(x: Int, y: Int) extends Module {
 在绝大多数情况下，**这不是必需的**，
 因为Chisel可以自动弄清楚如何克隆大多数`Bundle`：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class MyCloneTypeBundle(val bitwidth: Int) extends Bundle {
    val field = UInt(bitwidth.W)
    // ...
@@ -157,7 +165,8 @@ class RegisterWriteIOExplicitCloneType[T <: Data](gen: T) extends Bundle {
 
 我们可以通过将`gen`设为private来使其推断cloneType，因为它是一个"类型参数"：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.util.{Decoupled, Irrevocable}
 class RegisterWriteIO[T <: Data](private val gen: T) extends Bundle {
   val request  = Flipped(Decoupled(gen))

@@ -10,7 +10,8 @@ section: "chisel3"
 
 ## 基本解码器
 `decoder`提供的最简单API本质上只是一个编码您所需输入和输出的`TruthTable`。
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 import chisel3.util.BitPat
 import chisel3.util.experimental.decode._
@@ -38,7 +39,8 @@ class SimpleDecoder extends Module {
 
 要生成解码真值表的输出端，要使用的特质是`DecodeField`。给定一个实现`DecodePattern`对象的实例，`genTable`方法应返回所需的输出。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.util.BitPat
 import chisel3.util.experimental.decode._
 
@@ -53,7 +55,8 @@ object NameContainsAdd extends BoolDecodeField[Pattern] {
 ```
 
 然后所有`DecodePattern`案例可以从外部源生成或读取。有了所有`DecodeField`对象，解码器可以轻松生成，输出可以由相应的`DecodeField`读取。
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 import chisel3.util.experimental.decode._
 

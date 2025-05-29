@@ -36,7 +36,8 @@ section: "chisel3"
 
 下面，声明了一个提取层和一个内联层：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.layer.{Layer, LayerConfig}
 
 object A extends Layer(LayerConfig.Extract())
@@ -48,7 +49,8 @@ object B extends Layer(LayerConfig.Inline)
 
 以下示例定义了一个包含两个嵌套层的提取层：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 object C extends Layer(LayerConfig.Extract()) {
   object D extends Layer(LayerConfig.Extract())
   object E extends Layer(LayerConfig.Inline) {
@@ -77,7 +79,8 @@ SystemVerilog禁止在另一个`bind`实例化下进行`bind`实例化。然而�
 
 以下示例在模块`Foo`内定义层块。每个层块包含一个捕获其可见词法范围中的值的线。（对于嵌套层块，此范围包括其父层块。）：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 import chisel3.layer.block
 
@@ -109,7 +112,8 @@ class Foo extends RawModule {
 
 如果可能，层块API会自动为您创建父层块。在以下示例中，直接在模块中创建`C.D`的层块是合法的：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Bar extends RawModule {
   block (C.D) {}
 }
@@ -121,7 +125,8 @@ class Bar extends RawModule {
 
 这个要求是一个_祖先_关系，而不是一个_严格祖先_关系。这意味着在同一层的层块下嵌套一个层块是合法的，如：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Baz extends RawModule {
   block(A) {
     block(A) {}
@@ -203,7 +208,8 @@ chisel3.layers.Verification
 
 以下示例将层`Debug`嵌套到`Verification`层：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 object UserDefined {
   // Define an implicit val `root` of type `Layer` to cause layers which can see
   // this to use `root` as their parent layer.  This allows us to nest the
@@ -235,7 +241,8 @@ object UserDefined {
 
 下面的示例显示了两个层着色探针端口和一个以合法方式驱动的层着色探针线：
 
-```scala mdoc:reset
+```scala
+// 原始代码块中的标记: mdoc:reset
 import chisel3._
 import chisel3.layer.{Layer, LayerConfig}
 import chisel3.probe.{Probe, ProbeValue, define}
@@ -294,7 +301,8 @@ class Bar extends RawModule {
 
 下面的示例实例化了前一节中的模块`Foo`。在启用层`A`和`B`后，模块可以从颜色为`A`和`B`的探针读取，并在单个操作中使用它们的结果：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.layer.enable
 import chisel3.probe.read
 
@@ -316,7 +324,8 @@ class Bar extends RawModule {
 
 下面的设计有一个单一的提取层，启用后，将添加一个检查溢出的断言。根据FIRRTL ABI，我们可以预期在编译时将生成一个名为`layers-Foo-A.sv`的文件。
 
-```scala mdoc:reset:silent
+```scala
+// 原始代码块中的标记: mdoc:reset:silent
 import chisel3._
 import chisel3.layer.{Layer, LayerConfig, block}
 import chisel3.ltl.AssertProperty
@@ -340,7 +349,8 @@ class Foo extends Module {
 
 编译后，我们得到以下SystemVerilog。包含`FILE`的注释表示新文件的开始：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
   new Foo,
   firtoolOpts = Array(
@@ -370,7 +380,8 @@ circt.stage.ChiselStage.emitSystemVerilog(
 
 下面的设计与前一个示例相同，但使用内联层。根据FIRRTL ABI，我们可以预期层块的主体将被`` `ifdef ``保护，对预处理器宏`layer_Foo$A`敏感。
 
-```scala mdoc:reset:silent
+```scala
+// 原始代码块中的标记: mdoc:reset:silent
 import chisel3._
 import chisel3.layer.{Layer, LayerConfig, block}
 import chisel3.ltl.AssertProperty
@@ -394,7 +405,8 @@ class Foo extends Module {
 
 编译后，我们得到以下SystemVerilog。
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
   new Foo,
   firtoolOpts = Array(
@@ -419,7 +431,8 @@ circt.stage.ChiselStage.emitSystemVerilog(
 
 在Scala中编写这个的一种方式如下：
 
-```scala mdoc:reset:silent
+```scala
+// 原始代码块中的标记: mdoc:reset:silent
 import chisel3._
 import chisel3.layer.{Layer, LayerConfig, block}
 import chisel3.layers.Verification
@@ -498,7 +511,8 @@ class Foo extends Module {
 
 此示例的完整Verilog输出如下所示：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 // Use ChiselStage instead of chisel3.docs.emitSystemVerilog because we want layers printed here (obviously)
 import circt.stage.ChiselStage
 ChiselStage.emitSystemVerilog(new Foo, firtoolOpts=Array("-strip-debug-info", "-disable-all-randomization"))

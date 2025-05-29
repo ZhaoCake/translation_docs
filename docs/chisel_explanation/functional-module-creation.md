@@ -15,7 +15,8 @@ Scala中的对象有一个预先存在的创建函数（方法）称为`apply`�
 如果我们将此应用于标准mux2示例，我们希望在表达式中使用mux2时返回mux2输出端口。
 实现这一点需要构建一个构造函数，该函数将多路复用器输入作为参数并返回多路复用器输出：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 
 class Mux2 extends Module {
@@ -43,7 +44,8 @@ object Mux2 {
 通过这种方式定义模块，以后实现这个常规模块的更大、更复杂的版本会更容易。
 例如，我们之前是这样实现Mux4的：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Mux4 extends Module {
   val io = IO(new Bundle {
     val in0 = Input(UInt(1.W))
@@ -74,7 +76,8 @@ class Mux4 extends Module {
 
 然而，通过使用我们为Mux2重新定义的创建函数，现在我们可以在编写Mux4输出表达式时将Mux2输出用作模块本身的值：
 
-```scala mdoc:invisible:reset
+```scala
+// 原始代码块中的标记: mdoc:invisible:reset
 // 我们需要重新执行此操作以允许我们`reset`
 // 然后重新定义Mux4
 import chisel3._
@@ -100,7 +103,8 @@ object Mux2 {
 }
 ```
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Mux4 extends Module {
   val io = IO(new Bundle {
     val in0 = Input(UInt(1.W))

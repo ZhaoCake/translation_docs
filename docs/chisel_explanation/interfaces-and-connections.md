@@ -16,12 +16,14 @@ section: "chisel3"
 
 如我们之前所见，用户可以通过定义继承Bundle的类来定义自己的接口。例如，用户可以定义一个用于数据握手的简单链接，如下所示：
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 import chisel3.docs.emitSystemVerilog
 ```
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class SimpleLink extends Bundle {
   val data = Output(UInt(16.W))
   val valid = Output(Bool())
@@ -29,7 +31,8 @@ class SimpleLink extends Bundle {
 ```
 
 然后我们可以通过使用bundle继承来添加奇偶校验位来扩展SimpleLink：
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class PLink extends SimpleLink {
   val parity = Output(UInt(5.W))
 }
@@ -37,7 +40,8 @@ class PLink extends SimpleLink {
 一般来说，用户可以使用继承将接口组织成层次结构。
 
 从那里我们可以通过将两个PLink嵌套到一个新的FilterIO bundle中来定义过滤器接口：
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class FilterIO extends Bundle {
   val x = Flipped(new PLink)
   val y = new PLink
@@ -46,7 +50,8 @@ class FilterIO extends Bundle {
 其中flip递归地改变bundle的方向，将输入变为输出，将输出变为输入。
 
 我们现在可以通过定义扩展Module的filter类来定义过滤器：
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Filter extends Module {
   val io = IO(new FilterIO)
   // ...
@@ -57,7 +62,8 @@ class Filter extends Module {
 ## Bundle向量
 
 除了单个元素外，元素向量形成了更丰富的层次结构接口。例如，为了创建一个具有输入向量的交叉开关，产生输出向量，并由UInt输入选择，我们使用Vec构造函数：
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.util.log2Ceil
 class CrossbarIo(n: Int) extends Bundle {
   val in = Vec(n, Flipped(new PLink))
@@ -97,7 +103,8 @@ Vec必须具有完全相同的大小。
 > 注意：我们强烈鼓励使用[`Connectable`运算符](https://www.chisel-lang.org/chisel3/docs/explanations/connectable.html)而不是`<>`运算符编写新代码。
 
 使用双连接`<>`运算符，我们现在可以将两个过滤器组合成一个过滤器块，如下所示：
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Block extends Module {
   val io = IO(new FilterIO)
   val f1 = Module(new Filter)
@@ -110,7 +117,8 @@ class Block extends Module {
 
 双向批量连接运算符`<>`将同名的叶端口相互连接。Bundle的Scala类型不需要匹配。如果任一侧缺少一个命名信号，Chisel将给出如下例所示的错误：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 
 class NotReallyAFilterIO extends Bundle {
   val x = Flipped(new PLink)
@@ -125,13 +133,15 @@ class Block2 extends Module {
 }
 ```
 下面我们可以看到这个例子的结果错误：
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 emitSystemVerilog(new Block2)
 ```
 双向连接应该只用于**有方向的元素**（如IO），例如，连接两个线不受支持，因为Chisel不一定能自动确定方向。
 例如，即使可以从端点知道方向，在此处放置两个临时线并连接它们也不会起作用：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 
 class BlockWithTemporaryWires extends Module {
   val io = IO(new FilterIO)
@@ -148,7 +158,8 @@ class BlockWithTemporaryWires extends Module {
 
 ```
 下面我们可以看到这个例子的结果错误：
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 emitSystemVerilog(new BlockWithTemporaryWires)
 ```
 有关更多详细信息，请参见[连接运算符深入探讨](connection-operators)
@@ -171,7 +182,8 @@ Chisel为就绪-有效接口提供了标准接口（例如在AXI中使用）。
 
 查看以下示例Chisel代码，以更好地理解确切生成的内容：
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.Decoupled
 

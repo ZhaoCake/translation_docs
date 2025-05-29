@@ -6,14 +6,16 @@ section: "chisel3"
 
 # 时序电路
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 val in = Bool()
 ```
 
 Chisel 支持的最简单的状态元素是一个正边沿触发的寄存器，可以这样实例化：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val reg = RegNext(in)
 ```
 
@@ -23,13 +25,15 @@ val reg = RegNext(in)
 
 使用寄存器，我们可以快速定义许多有用的电路结构。例如，上升沿检测器接收一个布尔信号并在当前值为真而前一个值为假时输出真：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 def risingedge(x: Bool) = x && !RegNext(x)
 ```
 
 计数器是一个重要的时序电路。要构造一个向上计数到最大值 max 然后绕回到零（即模 max+1）的上计数器，我们可以这样写：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 def counter(max: UInt) = {
   val x = RegInit(0.asUInt(max.getWidth.W))
   x := Mux(x === max, 0.U, x + 1.U)
@@ -41,14 +45,16 @@ def counter(max: UInt) = {
 
 计数器可以用来构建许多有用的时序电路。例如，我们可以通过在计数器达到零时输出真值来构建一个脉冲生成器：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // 每 n 个周期产生一个脉冲
 def pulse(n: UInt) = counter(n - 1.U) === 0.U
 ```
 
 然后可以用脉冲序列来触发一个方波生成器，在每个脉冲之间在真和假之间切换：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // 当输入为真时翻转内部状态
 def toggle(p: Bool) = {
   val x = RegInit(false.B)

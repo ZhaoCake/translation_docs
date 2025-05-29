@@ -35,7 +35,8 @@ Chisel *属性* 表示设计中非硬件的信息。这对于在同一生成器�
 
 可以通过以下导入语句使用 `Property` 功能：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 import chisel3.properties.Property
 ```
@@ -46,7 +47,8 @@ import chisel3.properties.Property
 
 合法的 `Property` 类型可以用在端口中。例如：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class PortsExample extends RawModule {
   // 一个 Int Property 类型的端口
   val myPort = IO(Input(Property[Int]()))
@@ -57,7 +59,8 @@ class PortsExample extends RawModule {
 
 合法的 `Property` 类型可以使用 `:=` 运算符进行连接。例如，一个输入 `Property` 类型的端口可以连接到一个输出 `Property` 类型的端口：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class ConnectExample extends RawModule {
   val inPort = IO(Input(Property[Int]()))
   val outPort = IO(Output(Property[Int]()))
@@ -71,7 +74,8 @@ class ConnectExample extends RawModule {
 
 合法的 `Property` 类型可以通过将 `Property` 对象应用于 `Property` 类型的值来构造。例如，一个 `Property` 值可以连接到一个输出 `Property` 类型的端口：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class LiteralExample extends RawModule {
   val outPort = IO(Output(Property[Int]()))
   outPort := Property(123)
@@ -82,7 +86,8 @@ class LiteralExample extends RawModule {
 
 与原始 `Property` 类型类似，`Properties` 的序列也可以用于创建端口和值，它们也可以被连接：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class SequenceExample extends RawModule {
   val inPort = IO(Input(Property[Int]()))
   val outPort1 = IO(Output(Property[Seq[Int]]()))
@@ -104,7 +109,8 @@ class SequenceExample extends RawModule {
 
 在下面的示例中，`Property[Int]` 类型的输出 `address` 端口通过将 `offset` `Property[Int]` 值相对于输入 `base` `Property[Int]` 值相加来计算。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class IntegerArithmeticExample extends RawModule {
   val base = IO(Input(Property[Int]()))
   val address = IO(Output(Property[Int]()))
@@ -128,7 +134,8 @@ class IntegerArithmeticExample extends RawModule {
 
 在下面的示例中，`Property[Seq[Int]]` 类型的输出 `c` 端口是通过连接 `Property[Seq[Int]]` 类型的 `a` 和 `b` 端口计算得出的。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class SequenceOperationExample extends RawModule {
   val a = IO(Input(Property[Seq[Int]]()))
   val b = IO(Input(Property[Seq[Int]]()))
@@ -157,7 +164,8 @@ class SequenceOperationExample extends RawModule {
 
 为了说明这些部分是如何结合在一起的，考虑以下示例：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.properties.Class
 import chisel3.experimental.hierarchy.{instantiable, public, Definition, Instance}
 
@@ -189,7 +197,8 @@ class CSRDescription extends Class {
 
 为了在每个 `Object` 实例化时捕获具体值，我们有相应的输入 `Property` 类型端口，直接连接到输出。这就是我们如何使用 `Class` 表示类似 Scala 的 `case class` 的方式。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // A hardware module representing a CSR and its description.
 class CSRModule(
   csrDescDef:     Definition[CSRDescription],
@@ -224,7 +233,8 @@ class CSRModule(
 
 `CSRModule` 是一个 `Module`，它表示 CSR 的（虚拟）硬件以及 `CSRDescription`。使用 `CSRDescription` 的 `Definition`，创建一个 `Object` 并从 `CSRModule` 构造函数参数提供输入。然后，将对 `Object` 的引用连接到 `CSRModule` 输出，以便引用将暴露给外部。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // The entrypoint module.
 class Top extends Module {
   // Create a Definition for the CSRDescription Class.

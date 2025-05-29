@@ -60,14 +60,16 @@ Chisel 通过命令行选项 `--warn-conf` 和 `--warn-conf-file` 支持对警�
 
 以下示例在正常编译时会发出警告
 
-```scala mdoc:invisible:reset
+```scala
+// 原始代码块中的标记: mdoc:invisible:reset
 // 帮助函数，抛弃返回值使其不在 mdoc 中显示
 def compile(gen: => chisel3.RawModule, args: Array[String] = Array()): Unit = {
   circt.stage.ChiselStage.emitCHIRRTL(gen, args = args)
 }
 ```
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import chisel3._
 class TooWideIndexModule extends RawModule {
   val in = IO(Input(Vec(4, UInt(8.W))))
@@ -80,20 +82,23 @@ compile(new TooWideIndexModule)
 
 如警告所示，这是警告 `W004`（可以按照[下文所述](#w004-动态索引太宽)修复），我们可以使用 `id` 过滤器来抑制它，这将抑制此编译运行中该警告的所有实例。
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 compile(new TooWideIndexModule, args = Array("--warn-conf", "id=4:s"))
 ```
 
 通常建议使警告抑制尽可能精确，因此我们可以将这个 `id` 过滤器与一个 `src` 通配符过滤器组合，只针对这个文件：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 compile(new TooWideIndexModule, args = Array("--warn-conf", "id=4&src=**warnings.md:s"))
 ```
 
 最后，我们鼓励用户尽可能将警告视为错误，
 所以他们应该始终在任何警告配置的末尾添加 `any:e` 以将所有未匹配的警告提升为错误：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 compile(new TooWideIndexModule, args = Array("--warn-conf", "id=4&src=**warnings.md:s,any:e"))
 // 或
 compile(new TooWideIndexModule, args = Array("--warn-conf", "id=4&src=**warnings.md:s", "--warn-conf", "any:e"))
@@ -159,7 +164,8 @@ Chisel 警告都有一个唯一的标识符号，这使它们更容易查找，�
 通过实例化一个线网来修复。
 
 例如，给定以下代码：
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 class MyBundle extends Bundle {
   val foo = UInt(8.W)
   val bar = UInt(8.W)
@@ -169,7 +175,8 @@ x.bar := 123.U
 ```
 
 可以通过插入一个线网来修复警告：
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 class MyBundle extends Bundle {
   val foo = UInt(8.W)
   val bar = UInt(8.W)

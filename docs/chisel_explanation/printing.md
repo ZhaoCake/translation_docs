@@ -19,11 +19,13 @@ Chisel 也支持类似于 [Scala 字符串插值](http://docs.scala-lang.org/ove
 
 注意，Scala 的 s-插值器在 Chisel 构造中不受支持，会抛出错误：
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 ```
 
-```scala mdoc:fail
+```scala
+// 原始代码块中的标记: mdoc:fail
 class MyModule extends Module {
   val in = IO(Input(UInt(8.W)))
   printf(s"in = $in\n")
@@ -32,14 +34,16 @@ class MyModule extends Module {
 
 相反，请使用 Chisel 的 `cf` 插值器，如下例所示：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val myUInt = 33.U
 printf(cf"myUInt = $myUInt") // myUInt = 33
 ```
 
 注意，当连接 `cf"..."` 字符串时，你需要以 `cf"..."` 字符串开头：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 // 不会对第二个字符串进行插值
 val myUInt = 33.U
 printf("my normal string" + cf"myUInt = $myUInt")
@@ -49,7 +53,8 @@ printf("my normal string" + cf"myUInt = $myUInt")
 
 其他格式可用如下：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val myUInt = 33.U
 // 十六进制
 printf(cf"myUInt = 0x$myUInt%x") // myUInt = 0x21
@@ -67,7 +72,8 @@ printf(cf"myUInt = $myUInt%c") // myUInt = !
 * `SimulationTime` (`%T`)：当前仿真时间（与 Verilog 的 `%t` 不同，它不接受参数）
 * `Percent` (`%%`)：字面上的 `%`
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 printf(cf"hierarchical path = $HierarchicalModuleName\n") // hierarchical path = <verilog.module.path>
 printf(cf"hierarchical path = %m\n") // 等同于上面的例子
 
@@ -89,7 +95,8 @@ Verilog 模拟器会将值填充到信号的宽度。
 * 非负字段宽度会覆盖默认的 Verilog 值大小。
 * 指定字段宽度为 `0` 将始终以最小宽度显示值（无零填充和空格填充）。
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val foo = WireInit(UInt(32.W), 33.U)
 printf(cf"foo = $foo%d!\n")  // foo =         33!
 printf(cf"foo = $foo%0d!\n") // foo = 33!
@@ -107,7 +114,8 @@ printf(cf"bar = $bar%4b!\n") // foo = 0101!
 
 Chisel 为 Vec 和 Bundle 提供了默认的自定义"美化打印"功能。Vec 的默认打印类似于打印 Scala 的 Seq 或 List，而打印 Bundle 类似于打印 Scala Map。
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val myVec = VecInit(5.U, 10.U, 13.U)
 printf(cf"myVec = $myVec") // myVec = Vec(5, 10, 13)
 
@@ -124,7 +132,8 @@ printf(cf"myBundle = $myBundle") // myBundle = Bundle(a -> 3, b -> 11)
 
 Chisel 还提供了为用户定义的 Bundle 指定自定义打印格式的功能。
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 class Message extends Bundle {
   val valid = Bool()
   val addr = UInt(32.W)
@@ -193,7 +202,8 @@ Chisel 提供 `printf`，其风格类似于 C 语言的 `printf`。它接受一�
 
 因此，`printf` 的使用方式与 C 语言中非常相似：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val myUInt = 32.U
 printf("myUInt = %d", myUInt) // myUInt = 32
 ```
@@ -210,7 +220,8 @@ Chisel 通过 `SimLog` API 支持日志记录。
 
 `SimLog` 最常见的用法是写入文件：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 class MyModule extends Module {
   val log = SimLog.file("logfile.log")
   val in = IO(Input(UInt(8.W)))
@@ -220,7 +231,8 @@ class MyModule extends Module {
 
 你也可以使用默认文件描述符写入标准错误：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 class MyModule extends Module {
   val log = SimLog.StdErr
   val in = IO(Input(UInt(8.W)))
@@ -234,7 +246,8 @@ class MyModule extends Module {
 
 SimLog 文件名本身可以是 `Printable` 值：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 class MyModule extends Module {
   val idx = IO(Input(UInt(8.W)))
   val log = SimLog.file(cf"logfile_$idx%0d.log")
@@ -253,7 +266,8 @@ class MyModule extends Module {
 
 `SimLog` 允许你编写可以与任何日志目标一起使用的代码。这在创建可重用组件时非常有用：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 class MyLogger(log: SimLog) extends Module {
   val in = IO(Input(UInt(8.W)))
   log.printf(cf"in = $in%d\n")
@@ -271,7 +285,8 @@ val withStderr = Module(new MyLogger(SimLog.StdErr))
 `SimLog` 对象可以被刷新，以确保所有缓冲的输出都被写入。
 这在使用被记录的输出作为协同仿真组件（如检查器或黄金模型）的输入时非常有用。
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 val log = SimLog.file("logfile.log")
 val in = IO(Input(UInt(8.W)))
 log.printf(cf"in = $in%d\n")
@@ -280,6 +295,7 @@ log.flush() // 立即刷新缓冲的输出。
 
 你也可以刷新标准错误：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 SimLog.StdErr.flush() // 这将刷新所有标准输出。
 ```

@@ -42,7 +42,8 @@ _探测器_ 是一种编码硬件 _引用_ 的方式，这个引用后续将通�
 
 下面的示例展示了使用之前介绍的所有 API 的电路。同时展示了 `define` 和标准 Chisel 连接操作符的使用。仔细使用 `dontTouch` 来防止跨探测器进行优化，以使输出不会变得过于简单。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 import chisel3.probe.{Probe, ProbeValue, define, read}
 
@@ -66,7 +67,8 @@ class Foo extends RawModule {
 
 上述电路的 SystemVerilog 如下所示：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
   new Foo,
   Array("--lower-memories")
@@ -95,7 +97,8 @@ circt.stage.ChiselStage.emitSystemVerilog(
 
 下面的示例展示了使用之前介绍的所有 API 的电路。同时展示了 `define` 和标准 Chisel 连接操作符的使用。仔细使用 `dontTouch` 来防止跨探测器进行优化，以使输出不会变得过于简单。
 
-```scala mdoc:reset:silent
+```scala
+// 原始代码块中的标记: mdoc:reset:silent
 import chisel3._
 import chisel3.probe.{RWProbe, RWProbeValue, force, forceInitial, read, release, releaseInitial}
 
@@ -133,7 +136,8 @@ class Foo extends Module {
 
 上述电路的 SystemVerilog 如下所示：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
   new Foo,
   Array("--throw-on-first-error"),
@@ -166,7 +170,8 @@ circt.stage.ChiselStage.emitSystemVerilog(
 
 考虑以下示例电路。在其中，内部寄存器的值通过只读探测器暴露。
 
-```scala mdoc:reset:silent
+```scala
+// 原始代码块中的标记: mdoc:reset:silent
 import chisel3._
 import chisel3.probe.{Probe, ProbeValue}
 
@@ -186,7 +191,8 @@ class Foo extends Module {
 
 上述电路的 SystemVerilog 如下所示：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
   new Foo,
   Array("--throw-on-first-error"),
@@ -217,7 +223,8 @@ Specification](https://github.com/chipsalliance/firrtl-spec/releases/latest/down
 
 探测器允许进行层彩色处理。即，这是声明探测器的存在取决于特定层是否启用的一种机制。要声明探测器为层彩色的，`Probe` 或 `RWProbe` 类型接受一个可选参数，指示层彩色是什么。以下示例声明了两个具有不同层颜色的探测器端口：
 
-```scala mdoc:reset:silent
+```scala
+// 原始代码块中的标记: mdoc:reset:silent
 import chisel3._
 import chisel3.layer.{Layer, LayerConfig}
 import chisel3.probe.{Probe, ProbeValue}
@@ -314,7 +321,8 @@ SystemVerilog 提供了一种解析 _向上_ 层次名称的算法（参见：Sy
 
 例如，考虑最初为只读探测器显示的原始示例。这可以使用 `BoringUtils` 重写得更简洁：
 
-```scala mdoc:reset:silent
+```scala
+// 原始代码块中的标记: mdoc:reset:silent
 import chisel3._
 import chisel3.util.experimental.BoringUtils
 
@@ -332,7 +340,8 @@ class Foo extends RawModule {
 
 上述电路的 SystemVerilog 如下所示：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 circt.stage.ChiselStage.emitSystemVerilog(
   new Foo,
   firtoolOpts = Array(

@@ -9,7 +9,8 @@ Chisel支持一种称为模块前缀的功能。
 
 我们可以使用`withModulePrefix`打开一个模块前缀块：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 
 class Top extends Module {
@@ -24,7 +25,8 @@ class Top extends Module {
 
 例如，假设我们编写以下内容：
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class Top extends Module {
@@ -45,7 +47,8 @@ class Sub extends Module {
 
 您可以通过将第二个参数传递为`false`来省略前缀分隔符（`_`）：
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class Top extends Module {
@@ -66,7 +69,8 @@ class Sub extends Module {
 我们还可以通过重写`localModulePrefix`方法来设置模块的前缀。
 如果您想为模块的所有实例设置前缀，这很有用。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class Top extends Module {
@@ -83,7 +87,8 @@ class Sub extends Module {
 
 您还可以将`localModulePrefixAppliesToSelf`重写为`false`，使前缀仅应用于子模块。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class Top extends Module {
@@ -101,7 +106,8 @@ class Sub extends Module {
 
 您还可以将`localModulePrefixUseSeparator`重写为`false`以省略分隔符。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class Top extends Module {
@@ -123,7 +129,8 @@ class Sub extends Module {
 每个都有自己的不同前缀。
 例如，考虑如果我们像这样创建`Sub`的两个实例：
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class Top extends Module {
@@ -148,7 +155,8 @@ class Sub extends Module {
 
 模块前缀也可以嵌套。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 
 class Top extends Module {
@@ -175,7 +183,8 @@ class Sub extends Module {
 
 `withModulePrefix`块也适用于`Instantiate` API。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.experimental.hierarchy.{instantiable, Instantiate}
 
@@ -208,7 +217,8 @@ class Top extends Module {
 如果您希望有一个对模块前缀敏感的模块，
 您可以像这样显式命名模块：
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.experimental.hierarchy.{instantiable, Instantiate}
 import chisel3.experimental.ExtModule

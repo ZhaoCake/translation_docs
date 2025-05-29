@@ -95,7 +95,8 @@ ChiselSim 提供了基本的"peek"、"poke"和"expect" API，用于向 Chisel �
 
 在测试中，模块 `Foo` 使用自定义激励进行测试。模块 `Bar` 使用可重用的 `RunUntilFinished` 激励进行测试。模块 `Baz` 使用可重用的 `RunUntilSuccess` 激励进行测试。所有测试在当前形式下均会通过。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.simulator.scalatest.ChiselSim
 import chisel3.simulator.stimulus.{RunUntilFinished, RunUntilSuccess}
@@ -247,7 +248,8 @@ Options:
 
 下面的示例展示了如何使用 `int` 选项设置测试时可配置的种子：
 
-```scala mdoc:reset:silent
+```scala
+// 原始代码块中的标记: mdoc:reset:silent
 import chisel3._
 import chisel3.simulator.scalatest.ChiselSim
 import chisel3.simulator.scalatest.HasCliOptions.CliOption
@@ -330,7 +332,8 @@ FileCheck 是 LLVM 生态系统中广泛用于编译器测试的工具。[CIRCT]
 
 下面的示例展示了一个 FileCheck 测试，检查一个模块具有特定名称，并且在其内部具有一些预期的内容。具体来说，此测试检查常量传播是否按预期发生。按当前方式编写的测试将会通过。
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.testing.scalatest.FileCheck
 import circt.stage.ChiselStage

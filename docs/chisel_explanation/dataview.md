@@ -8,7 +8,8 @@ section: "chisel3"
 
 _Chisel 3.5 中的新功能_
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 ```
 
@@ -41,7 +42,8 @@ module my_module(
 
 这将对应于以下 Chisel Bundle：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class VerilogAXIBundle(val addrWidth: Int) extends Bundle {
   val AWVALID = Output(Bool())
   val AWREADY = Input(Bool())
@@ -62,7 +64,8 @@ class my_module extends RawModule {
 然而，Chisel 开发人员通常更喜欢通过像 `Decoupled` 这样的实用工具使用组合，而不是像上面那样平面地处理 `ready` 和 `valid`。
 这个接口的更 "Chisel 化" 实现可能如下所示：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 // Note that both the AW and AR channels look similar and could use the same Bundle definition
 class AXIAddressChannel(val addrWidth: Int) extends Bundle {
   val id = UInt(4.W)
@@ -86,7 +89,8 @@ class MyModule extends RawModule {
 
 当然，这会导致看起来非常不同的 Verilog：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new MyModule {
   override def desiredName = "MyModule"
   axi := DontCare // Just to generate Verilog in this stub
@@ -96,7 +100,8 @@ chisel3.docs.emitSystemVerilog(new MyModule {
 那么，我们如何使用更结构化的类型同时保持预期的 Verilog 接口呢？
 认识一下 DataView：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import chisel3.experimental.dataview._
 
 // We recommend putting DataViews in a companion object of one of the involved types
@@ -121,7 +126,8 @@ object AXIBundle {
 这个 `DataView` 是从我们平坦的、Verilog 风格的 AXI Bundle 到更具组合性的 Chisel 风格的 AXI Bundle 的映射。
 它允许我们定义与预期的 Verilog 接口匹配的端口，同时操作它就像它是更结构化的类型：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class AXIStub extends RawModule {
   val AXI = IO(new VerilogAXIBundle(20))
   val view = AXI.viewAs[AXIBundle]
@@ -140,7 +146,8 @@ class AXIStub extends RawModule {
 
 这将生成与标准命名约定匹配的 Verilog：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new AXIStub)
 ```
 
@@ -148,14 +155,16 @@ chisel3.docs.emitSystemVerilog(new AXIStub)
 则 `DataView` 是 _可逆的_。
 这意味着我们可以轻松地从现有的 `DataView[VerilogAXIBundle, AXIBundle]` 创建一个 `DataView[AXIBundle, VerilogAXIBundle]`，我们只需要提供一个函数，从 `AXIBundle` 的实例构造一个 `VerilogAXIBundle`：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 // Note that typically you should define these together (eg. inside object AXIBundle)
 implicit val axiView2: DataView[AXIBundle, VerilogAXIBundle] = AXIBundle.axiView.invert(ab => new VerilogAXIBundle(ab.addrWidth))
 ```
 
 以下示例展示了这一点，并说明了 `DataView` 的另一个用例 — 连接不相关的类型：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class ConnectionExample extends RawModule {
   val in = IO(new AXIBundle(20))
   val out = IO(Flipped(new VerilogAXIBundle(20)))
@@ -165,7 +174,8 @@ class ConnectionExample extends RawModule {
 
 这导致相应的字段在生成的 Verilog 中连接：
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new ConnectionExample)
 ```
 
@@ -184,7 +194,8 @@ chisel3.docs.emitSystemVerilog(new ConnectionExample)
 
 <!-- Todo will need to ensure built-in code for Tuples is suppressed once added to stdlib -->
 
-```scala mdoc:fail
+```scala
+// 原始代码块中的标记: mdoc:fail
 class TupleExample extends RawModule {
   val a, b, c, d = IO(Input(UInt(8.W)))
   val cond = IO(Input(Bool()))
@@ -197,7 +208,8 @@ class TupleExample extends RawModule {
 而元组（作为 Scala 标准库的成员）不是 `Data` 的子类。
 `DataView` 提供了一种机制，可以 _查看_ `Tuple` 就像它是一个 `Data`：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 // We need a type to represent the Tuple
 class HWTuple2[A <: Data, B <: Data](val _1: A, val _2: B) extends Bundle
 
@@ -209,7 +221,8 @@ implicit def view[A <: Data, B <: Data]: DataView[(A, B), HWTuple2[A, B]] =
 
 现在，我们可以使用 `.viewAs` 将元组视为 `Data` 的子类型：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class TupleVerboseExample extends RawModule {
   val a, b, c, d = IO(Input(UInt(8.W)))
   val cond = IO(Input(Bool()))
@@ -221,7 +234,8 @@ class TupleVerboseExample extends RawModule {
 这比直接使用元组就像它们是 `Data` 一样的原始想法要冗长得多。
 我们可以通过提供一个隐式转换来改进它，该转换将 `Tuple` 视为 `HWTuple2`：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 import scala.language.implicitConversions
 implicit def tuple2hwtuple[A <: Data, B <: Data](tup: (A, B)): HWTuple2[A, B] =
   tup.viewAs[HWTuple2[A, B]]
@@ -229,7 +243,8 @@ implicit def tuple2hwtuple[A <: Data, B <: Data](tup: (A, B)): HWTuple2[A, B] =
 
 现在，原始代码就可以工作了！
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class TupleExample extends RawModule {
   val a, b, c, d = IO(Input(UInt(8.W)))
   val cond = IO(Input(Bool()))
@@ -238,7 +253,8 @@ class TupleExample extends RawModule {
 }
 ```
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 // Always emit Verilog to make sure it actually works
 chisel3.docs.emitSystemVerilog(new TupleExample)
 ```
@@ -246,13 +262,15 @@ chisel3.docs.emitSystemVerilog(new TupleExample)
 请注意，这个例子忽略了 `DataProduct`，它是另一个必需的部分（参见[下面关于它的文档](#dataproduct)）。
 
 所有这些通过单个导入即可供用户使用：
-```scala mdoc:reset
+```scala
+// 原始代码块中的标记: mdoc:reset
 import chisel3.experimental.conversions._
 ```
 
 ## 全面性和 PartialDataView
 
-```scala mdoc:reset:invisible
+```scala
+// 原始代码块中的标记: mdoc:reset:invisible
 import chisel3._
 import chisel3.experimental.dataview._
 ```
@@ -261,7 +279,8 @@ import chisel3.experimental.dataview._
 如果不小心遗漏了 `DataView` 中的字段，Chisel 将报错。
 例如：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class BundleA extends Bundle {
   val foo = UInt(8.W)
   val bar = UInt(8.W)
@@ -271,7 +290,8 @@ class BundleB extends Bundle {
 }
 ```
 
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 // We forgot BundleA.foo in the mapping!
 implicit val myView: DataView[BundleA, BundleB] = DataView(_ => new BundleB, _.bar -> _.fizz)
 class BadMapping extends Module {
@@ -285,7 +305,8 @@ getVerilogString(new BadMapping)
 
 正如该错误所暗示的，如果我们 *想要* 视图是非全面的，我们可以使用 `PartialDataView`：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 // A PartialDataView does not have to be total for the Target
 implicit val myView: DataView[BundleA, BundleB] = PartialDataView[BundleA, BundleB](_ => new BundleB, _.bar -> _.fizz)
 class PartialDataViewModule extends Module {
@@ -295,7 +316,8 @@ class PartialDataViewModule extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new PartialDataViewModule)
 ```
 
@@ -305,7 +327,8 @@ chisel3.docs.emitSystemVerilog(new PartialDataViewModule)
 
 例如：
 
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 implicit val myView2 = myView.invert(_ => new BundleA)
 class PartialDataViewModule2 extends Module {
    val in = IO(Input(new BundleA))
@@ -395,7 +418,8 @@ Scala 编译器首先会在当前作用域（定义的或导入的）中查找 `
 
 给定以下类型：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class Foo extends Bundle {
   val a = UInt(8.W)
   val b = UInt(8.W)
@@ -412,7 +436,8 @@ object Foo {
 
 这在 _隐式作用域_ 中提供了 `DataView` 的实现，作为 `Foo` 和 `Bar` 之间的 "默认" 映射（甚至不需要导入！）：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 class FooToBar extends Module {
   val foo = IO(Input(new Foo))
   val bar = IO(Output(new Bar))
@@ -420,14 +445,16 @@ class FooToBar extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new FooToBar)
 ```
 
 然而，`Foo` 和 `Bar` 的某些用户可能希望不同的行为，
 也许他们更喜欢 "交换" 行为而不是直接映射：
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 object Swizzle {
   implicit val swizzle: DataView[Foo, Bar] = DataView(_ => new Bar, _.a -> _.d, _.b -> _.c)
 }
@@ -440,7 +467,8 @@ class FooToBarSwizzled extends Module {
 }
 ```
 
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new FooToBarSwizzled)
 ```
 
@@ -450,7 +478,8 @@ chisel3.docs.emitSystemVerilog(new FooToBarSwizzled)
 为了使类型 "可视"（即 `DataView` 的 `目标` 类型），它必须有一个 `DataProduct` 的实现。
 
 例如，假设我们有一些非 Bundle 类型：
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 // Loosely based on chisel3.util.Counter
 class MyCounter(val width: Int) {
   /** Indicates if the Counter is incrementing this cycle */
@@ -468,7 +497,8 @@ class MyCounter(val width: Int) {
 
 假设我们想将 `MyCounter` 视为 `Valid[UInt]`：
 
-```scala mdoc:fail
+```scala
+// 原始代码块中的标记: mdoc:fail
 import chisel3.util.Valid
 implicit val counterView = DataView[MyCounter, Valid[UInt]](c => Valid(UInt(c.width.W)), _.value -> _.bits, _.active -> _.valid)
 ```
@@ -476,7 +506,8 @@ implicit val counterView = DataView[MyCounter, Valid[UInt]](c => Valid(UInt(c.wi
 如你所见，这在 Scala 编译时失败了。
 我们需要提供 `DataProduct[MyCounter]` 的实现，它为 Chisel 提供了一种方法来访问 `MyCounter` 内部类型为 `Data` 的对象：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.util.Valid
 implicit val counterProduct: DataProduct[MyCounter] = new DataProduct[MyCounter] {
   // The String part of the tuple is a String path to the object to help in debugging

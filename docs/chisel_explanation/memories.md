@@ -15,7 +15,8 @@ Chisel提供了创建只读和读写内存的功能。
 
 例如，用户可以创建一个初始化为1、2、4、8的小型ROM，并使用计数器作为地址生成器遍历所有值，如下所示：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 import chisel3._
 import chisel3.util.Counter
 val m = VecInit(1.U, 2.U, 4.U, 8.U)
@@ -26,7 +27,8 @@ val r = m(c.value)
 
 我们可以创建一个*n*值正弦查找表生成器，使用如下方式初始化ROM：
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 import chisel3._
 
 val Pi = math.Pi
@@ -57,7 +59,8 @@ Chisel有一个称为`SyncReadMem`的构造，用于顺序/同步读取、顺序
 
 通过应用`UInt`索引创建`SyncReadMem`的端口。具有一个写端口和一个读端口的1024条目SRAM可能表示如下：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class ReadWriteSmem extends Module {
   val width: Int = 32
@@ -84,7 +87,8 @@ class ReadWriteSmem extends Module {
 
 当读取和写入条件在同一个`when`链中互斥时，可以推断单端口SRAM：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class RWSmem extends Module {
   val width: Int = 32
@@ -114,7 +118,8 @@ class RWSmem extends Module {
 
 也可以通过使用`readWrite`调用来显式生成单端口SRAM，该调用会生成单个读/写访问器，如下所示：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class RDWR_Smem extends Module {
   val width: Int = 32
   val io = IO(new Bundle {
@@ -140,7 +145,8 @@ Chisel通过`Mem`构造支持随机访问内存。对`Mem`的写入是组合/异
 
 Chisel内存还支持用于子字写入的写掩码。如果内存的数据类型是向量，Chisel将推断掩码。要推断掩码，请指定创建写端口的`write`函数的`mask`参数。如果相应的掩码位被设置，则写入给定的掩码长度。例如，在下面的示例中，如果掩码的第0位为真，它将在相应地址写入数据的低位字节。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class MaskedReadWriteSmem extends Module {
   val width: Int = 8
@@ -163,7 +169,8 @@ class MaskedReadWriteSmem extends Module {
 
 这是一个带有读写端口的掩码示例：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class MaskedRWSmem extends Module {
   val width: Int = 32
@@ -204,7 +211,8 @@ Chisel提供了一个API来生成`SRAM`，这是`SyncReadMem`的另一种API。
 
 `SRAM`和`SyncReadMem` API之间的关键区别在于前者能够声明特定数量的读、写和读写内存端口，这些端口通过显式束进行交互。
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.util._
 
 class ModuleWithSRAM(numReadPorts: Int, numWritePorts: Int, numReadwritePorts: Int) extends Module {
@@ -219,7 +227,8 @@ class ModuleWithSRAM(numReadPorts: Int, numWritePorts: Int, numReadwritePorts: I
 
 要与所需的端口交互，请使用`readPorts`、`writePorts`和`readwritePorts`字段：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class TopModule extends Module {
   // Declare a 2 read, 2 write, 2 read-write ported SRAM with 8-bit UInt data members
   val mem = SRAM(1024, UInt(8.W), 2, 2, 2)

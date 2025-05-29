@@ -15,7 +15,8 @@ Chisel的*模块*在定义生成电路的层次结构方面与Verilog的*模块*
  - 在其构造函数中将子电路连接在一起。
 
 例如，考虑将你自己的两输入多路复用器定义为一个模块：
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3._
 class Mux2IO extends Bundle {
   val sel = Input(UInt(1.W))
@@ -38,7 +39,8 @@ class Mux2 extends Module {
 
 我们现在可以构建电路层次结构，其中我们使用较小的子模块构建较大的模块。例如，我们可以通过将三个2输入多路复用器连接在一起，以```Mux2```模块为基础构建一个4输入多路复用器模块：
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Mux4IO extends Bundle {
   val in0 = Input(UInt(1.W))
   val in1 = Input(UInt(1.W))
@@ -78,7 +80,8 @@ class Mux4 extends Module {
 `RawModule`是一个**不提供隐式时钟和复位**的模块。当Chisel模块与期望时钟或复位的特定命名约定的设计接口时，这可能很有用。
 
 然后我们可以用它代替*Module*的用法：
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 import chisel3.{RawModule, withClockAndReset}
 
 class Foo extends Module {

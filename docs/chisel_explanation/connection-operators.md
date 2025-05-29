@@ -16,7 +16,8 @@ Chisel 包含两个连接运算符，`:=` 和 `<>`。本文档深入解释了这
 
 ### 实验设置
 
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 // 以下示例使用的导入
 import chisel3._
 import chisel3.util.DecoupledIO
@@ -25,7 +26,8 @@ import chisel3.util.DecoupledIO
 该实验的图表可以在[此处](https://docs.google.com/document/d/14C918Hdahk2xOGSJJBT-ZVqAx99_hg3JQIq-vaaifQU/edit?usp=sharing)查看。
 ![实验图像](https://raw.githubusercontent.com/chipsalliance/chisel3/master/docs/src/images/connection-operators-experiment.svg?sanitize=true)
 
-```scala mdoc:silent
+```scala
+// 原始代码块中的标记: mdoc:silent
 class Wrapper extends Module{
   val io = IO(new Bundle {
   val in = Flipped(DecoupledIO(UInt(8.W)))
@@ -49,7 +51,8 @@ class PipelineStage extends Module{
 }
 ```
 下面我们可以看到这个示例的生成Verilog：
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Wrapper)
 ```
 ## 概念1：`<>` 是可交换的
@@ -62,7 +65,8 @@ chisel3.docs.emitSystemVerilog(new Wrapper)
 
 
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.DecoupledIO
 
@@ -89,7 +93,8 @@ class PipelineStage extends Module{
 }
 ```
 下面我们可以看到这个示例的生成Verilog：
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Wrapper)
 ```
 ### 结论：
@@ -103,7 +108,8 @@ Verilog保持不变，没有产生错误，表明 `<>` 运算符是可交换的�
 我们在上面的示例代码中将所有 `<>` 实例替换为 `:=`。
 (实验的Scastie链接：https://scastie.scala-lang.org/Shorla/o1ShdaY3RWKf0IIFwwQ1UQ/1)
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.DecoupledIO
 
@@ -130,7 +136,8 @@ class PipelineStage extends Module{
 }
 ```
 下面我们可以看到这个示例的错误消息：
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 circt.stage.ChiselStage.emitSystemVerilog(new Wrapper)
 ```
 ### 结论：
@@ -141,7 +148,8 @@ circt.stage.ChiselStage.emitSystemVerilog(new Wrapper)
 我们将使用下面的示例代码找出答案：
 （实验的Scastie链接：https://scastie.scala-lang.org/Shorla/ZIGsWcylRqKJhZCkKWlSIA/1）
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.DecoupledIO
 
@@ -172,7 +180,8 @@ class PipelineStage extends Module{
 }
 ```
 Below we can see the resulting Verilog for this example:
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Wrapper)
 ```
 ### 结论：
@@ -187,7 +196,8 @@ chisel3.docs.emitSystemVerilog(new Wrapper)
 我们将使用下面的示例代码找出答案：
 （实验的Scastie链接：https://scastie.scala-lang.org/Shorla/ZIGsWcylRqKJhZCkKWlSIA/1）
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.DecoupledIO
 
@@ -218,7 +228,8 @@ class PipelineStage extends Module{
 }
 ```
 下面我们可以看到这个示例的生成Verilog：
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Wrapper)
 ```
 ### 结论：
@@ -230,7 +241,8 @@ chisel3.docs.emitSystemVerilog(new Wrapper)
 如果至少有一个已知流向，`<>` 会做什么？这将通过下面的实验代码展示：
 （实验的Scastie链接：https://scastie.scala-lang.org/Shorla/gKx9ReLVTTqDTk9vmw5ozg）
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.DecoupledIO
 
@@ -262,7 +274,8 @@ class PipelineStage extends Module{
 }
 ```
 下面我们可以看到这个示例的生成Verilog：
-```scala mdoc
+```scala
+// 原始代码块中的标记: mdoc
 chisel3.docs.emitSystemVerilog(new Wrapper)
 ```
 ### 结论：
@@ -273,7 +286,8 @@ chisel3.docs.emitSystemVerilog(new Wrapper)
 这个实验创建了一个MockDecoupledIO，它与DecoupledIO具有相同名称的字段。Chisel允许我们连接它并生成相同的verilog，即使MockDecoupledIO和DecoupledIO是不同的类型。
 （实验的Scastie链接：https://scastie.scala-lang.org/Uf4tQquvQYigZAW705NFIQ）
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.DecoupledIO
 
@@ -305,13 +319,15 @@ class PipelineStage extends Module{
 }
 ```
 下面我们可以看到这个示例的生成Verilog：
-```scala mdoc:verilog
+```scala
+// 原始代码块中的标记: mdoc:verilog
 chisel3.docs.emitSystemVerilog(new Wrapper)
 ```
 这里是另一个实验，我们删除了MockDecoupledIO的一个字段：
 （实验的Scastie链接：https://scastie.scala-lang.org/ChtkhKCpS9CvJkjjqpdeIA）
 
-```scala mdoc:silent:reset
+```scala
+// 原始代码块中的标记: mdoc:silent:reset
 import chisel3._
 import chisel3.util.DecoupledIO
 
@@ -343,7 +359,8 @@ class PipelineStage extends Module{
 }
 ```
 下面我们可以看到这个示例的错误信息：
-```scala mdoc:crash
+```scala
+// 原始代码块中的标记: mdoc:crash
 circt.stage.ChiselStage.emitSystemVerilog(new Wrapper)
 ```
 这个失败是因为缺少了 `bits` 字段。

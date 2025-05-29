@@ -22,13 +22,15 @@ Chisel *内部函数（Intrinsics）*用于表达实现定义的功能。
 以下代码为名为"MyIntrinsic"的内部函数创建一个内部函数。
 它接受一个名为"STRING"的参数，并有几个输入。
 
-```scala mdoc:invisible
+```scala
+// 原始代码块中的标记: mdoc:invisible
 import chisel3._
 // Below is required for scala 3 migration
 import chisel3.experimental.fromStringToStringParam
 ```
 
-```scala mdoc:compile-only
+```scala
+// 原始代码块中的标记: mdoc:compile-only
 class Foo extends RawModule {
   val myresult = IntrinsicExpr("MyIntrinsic", UInt(32.W), "STRING" -> "test")(3.U, 5.U)
 }
