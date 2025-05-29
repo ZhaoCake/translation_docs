@@ -11,23 +11,25 @@
       
       
       
+        <link rel="prev" href="../sequential-circuits/">
       
-        <link rel="next" href="chisel_cookbooks/">
+      
+        <link rel="next" href="../connection-operators/">
       
       
-      <link rel="icon" href="assets/zhao.jpg">
+      <link rel="icon" href="../../assets/zhao.jpg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
     
     
       
-        <title>ZhaoCake's文档翻译</title>
+        <title>接口和连接 - ZhaoCake's文档翻译</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.342714a4.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
   
@@ -87,11 +89,11 @@
       
     
     
-      <link rel="stylesheet" href="stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -133,9 +135,9 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="页眉">
-    <a href="." title="ZhaoCake&#39;s文档翻译" class="md-header__button md-logo" aria-label="ZhaoCake's文档翻译" data-md-component="logo">
+    <a href="../.." title="ZhaoCake&#39;s文档翻译" class="md-header__button md-logo" aria-label="ZhaoCake's文档翻译" data-md-component="logo">
       
-  <img src="assets/zhao.png" alt="logo">
+  <img src="../../assets/zhao.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -152,7 +154,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              首页
+              接口和连接
             
           </span>
         </div>
@@ -272,11 +274,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -297,7 +297,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="chisel_cookbooks/" class="md-tabs__link">
+        <a href="../../chisel_cookbooks/" class="md-tabs__link">
           
   
   
@@ -313,6 +313,8 @@
   
   
   
+    
+  
   
     
     
@@ -320,11 +322,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="chisel_explanation/motivation/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../motivation/" class="md-tabs__link">
           
   
   
@@ -367,9 +371,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="ZhaoCake&#39;s文档翻译" class="md-nav__button md-logo" aria-label="ZhaoCake's文档翻译" data-md-component="logo">
+    <a href="../.." title="ZhaoCake&#39;s文档翻译" class="md-nav__button md-logo" aria-label="ZhaoCake's文档翻译" data-md-component="logo">
       
-  <img src="assets/zhao.png" alt="logo">
+  <img src="../../assets/zhao.png" alt="logo">
 
     </a>
     ZhaoCake's文档翻译
@@ -393,32 +397,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    首页
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -429,119 +411,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      关于本站
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      当前文档
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="当前文档">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chisel-cookbook" class="md-nav__link">
-    <span class="md-ellipsis">
-      Chisel Cookbook
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#chisel" class="md-nav__link">
-    <span class="md-ellipsis">
-      Chisel 解释文档
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Chisel 解释文档">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      基础概念
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      电路构建
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      高级特性
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      即将添加
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      贡献与反馈
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -598,7 +467,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_cookbooks/" class="md-nav__link">
+      <a href="../../chisel_cookbooks/" class="md-nav__link">
         
   
   
@@ -621,7 +490,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_cookbooks/cookbook/" class="md-nav__link">
+      <a href="../../chisel_cookbooks/cookbook/" class="md-nav__link">
         
   
   
@@ -644,7 +513,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_cookbooks/naming/" class="md-nav__link">
+      <a href="../../chisel_cookbooks/naming/" class="md-nav__link">
         
   
   
@@ -667,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_cookbooks/hierarchy/" class="md-nav__link">
+      <a href="../../chisel_cookbooks/hierarchy/" class="md-nav__link">
         
   
   
@@ -690,7 +559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_cookbooks/dataview/" class="md-nav__link">
+      <a href="../../chisel_cookbooks/dataview/" class="md-nav__link">
         
   
   
@@ -713,7 +582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_cookbooks/serialization/" class="md-nav__link">
+      <a href="../../chisel_cookbooks/serialization/" class="md-nav__link">
         
   
   
@@ -736,7 +605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_cookbooks/objectmodel/" class="md-nav__link">
+      <a href="../../chisel_cookbooks/objectmodel/" class="md-nav__link">
         
   
   
@@ -759,7 +628,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_cookbooks/testing/" class="md-nav__link">
+      <a href="../../chisel_cookbooks/testing/" class="md-nav__link">
         
   
   
@@ -782,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_cookbooks/troubleshooting/" class="md-nav__link">
+      <a href="../../chisel_cookbooks/troubleshooting/" class="md-nav__link">
         
   
   
@@ -809,28 +678,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -843,7 +715,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Chisel 解释文档
@@ -863,10 +735,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -875,7 +750,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_1" >
         
           
-          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="">
             
   
   
@@ -902,7 +777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/motivation/" class="md-nav__link">
+      <a href="../motivation/" class="md-nav__link">
         
   
   
@@ -925,7 +800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/supported-hardware/" class="md-nav__link">
+      <a href="../supported-hardware/" class="md-nav__link">
         
   
   
@@ -948,7 +823,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/data-types/" class="md-nav__link">
+      <a href="../data-types/" class="md-nav__link">
         
   
   
@@ -971,7 +846,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/chisel-type-vs-scala-type/" class="md-nav__link">
+      <a href="../chisel-type-vs-scala-type/" class="md-nav__link">
         
   
   
@@ -994,7 +869,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/ports/" class="md-nav__link">
+      <a href="../ports/" class="md-nav__link">
         
   
   
@@ -1017,7 +892,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/operators/" class="md-nav__link">
+      <a href="../operators/" class="md-nav__link">
         
   
   
@@ -1040,7 +915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/bundles-and-vecs/" class="md-nav__link">
+      <a href="../bundles-and-vecs/" class="md-nav__link">
         
   
   
@@ -1068,28 +943,31 @@
                 
   
   
+    
   
   
+  
     
     
     
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
         
           
+          
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
             
   
   
@@ -1102,7 +980,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_2">
             <span class="md-nav__icon md-icon"></span>
             电路构建
@@ -1116,7 +994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/modules/" class="md-nav__link">
+      <a href="../modules/" class="md-nav__link">
         
   
   
@@ -1139,7 +1017,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/combinational-circuits/" class="md-nav__link">
+      <a href="../combinational-circuits/" class="md-nav__link">
         
   
   
@@ -1162,7 +1040,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/sequential-circuits/" class="md-nav__link">
+      <a href="../sequential-circuits/" class="md-nav__link">
         
   
   
@@ -1182,10 +1060,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="chisel_explanation/interfaces-and-connections/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    接口与连接
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1196,6 +1096,86 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      端口：子类和嵌套
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bundle" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bundle向量
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      批量连接
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="批量连接">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#monoconnect" class="md-nav__link">
+    <span class="md-ellipsis">
+      MonoConnect算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#biconnect" class="md-nav__link">
+    <span class="md-ellipsis">
+      BiConnect算法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#-readyvalidio-decoupled" class="md-nav__link">
+    <span class="md-ellipsis">
+      标准就绪-有效接口（ReadyValidIO / Decoupled）
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1208,7 +1188,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/connection-operators/" class="md-nav__link">
+      <a href="../connection-operators/" class="md-nav__link">
         
   
   
@@ -1231,7 +1211,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/muxes-and-input-selection/" class="md-nav__link">
+      <a href="../muxes-and-input-selection/" class="md-nav__link">
         
   
   
@@ -1254,7 +1234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/memories/" class="md-nav__link">
+      <a href="../memories/" class="md-nav__link">
         
   
   
@@ -1277,7 +1257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/width-inference/" class="md-nav__link">
+      <a href="../width-inference/" class="md-nav__link">
         
   
   
@@ -1314,10 +1294,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -1326,7 +1309,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
             
   
   
@@ -1353,7 +1336,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/annotations/" class="md-nav__link">
+      <a href="../annotations/" class="md-nav__link">
         
   
   
@@ -1376,7 +1359,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/blackboxes/" class="md-nav__link">
+      <a href="../blackboxes/" class="md-nav__link">
         
   
   
@@ -1399,7 +1382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/chisel-enum/" class="md-nav__link">
+      <a href="../chisel-enum/" class="md-nav__link">
         
   
   
@@ -1422,7 +1405,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/connectable/" class="md-nav__link">
+      <a href="../connectable/" class="md-nav__link">
         
   
   
@@ -1445,7 +1428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/dataview/" class="md-nav__link">
+      <a href="../dataview/" class="md-nav__link">
         
   
   
@@ -1468,7 +1451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/decoder/" class="md-nav__link">
+      <a href="../decoder/" class="md-nav__link">
         
   
   
@@ -1491,7 +1474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/functional-abstraction/" class="md-nav__link">
+      <a href="../functional-abstraction/" class="md-nav__link">
         
   
   
@@ -1514,7 +1497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/functional-module-creation/" class="md-nav__link">
+      <a href="../functional-module-creation/" class="md-nav__link">
         
   
   
@@ -1537,7 +1520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/instchoice/" class="md-nav__link">
+      <a href="../instchoice/" class="md-nav__link">
         
   
   
@@ -1560,7 +1543,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/intrinsics/" class="md-nav__link">
+      <a href="../intrinsics/" class="md-nav__link">
         
   
   
@@ -1583,7 +1566,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/layers/" class="md-nav__link">
+      <a href="../layers/" class="md-nav__link">
         
   
   
@@ -1606,7 +1589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/moduleprefix/" class="md-nav__link">
+      <a href="../moduleprefix/" class="md-nav__link">
         
   
   
@@ -1629,7 +1612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/naming/" class="md-nav__link">
+      <a href="../naming/" class="md-nav__link">
         
   
   
@@ -1652,7 +1635,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/multi-clock/" class="md-nav__link">
+      <a href="../multi-clock/" class="md-nav__link">
         
   
   
@@ -1675,7 +1658,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/polymorphism-and-parameterization/" class="md-nav__link">
+      <a href="../polymorphism-and-parameterization/" class="md-nav__link">
         
   
   
@@ -1698,7 +1681,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/printing/" class="md-nav__link">
+      <a href="../printing/" class="md-nav__link">
         
   
   
@@ -1721,7 +1704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/probes/" class="md-nav__link">
+      <a href="../probes/" class="md-nav__link">
         
   
   
@@ -1744,7 +1727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/properties/" class="md-nav__link">
+      <a href="../properties/" class="md-nav__link">
         
   
   
@@ -1767,7 +1750,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/reset/" class="md-nav__link">
+      <a href="../reset/" class="md-nav__link">
         
   
   
@@ -1790,7 +1773,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/source-locators/" class="md-nav__link">
+      <a href="../source-locators/" class="md-nav__link">
         
   
   
@@ -1813,7 +1796,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/testing/" class="md-nav__link">
+      <a href="../testing/" class="md-nav__link">
         
   
   
@@ -1836,7 +1819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/unconnected-wires/" class="md-nav__link">
+      <a href="../unconnected-wires/" class="md-nav__link">
         
   
   
@@ -1859,7 +1842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="chisel_explanation/warnings/" class="md-nav__link">
+      <a href="../warnings/" class="md-nav__link">
         
   
   
@@ -1919,7 +1902,16 @@
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
-      关于本站
+      端口：子类和嵌套
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bundle" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bundle向量
     </span>
   </a>
   
@@ -1928,54 +1920,26 @@
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      当前文档
+      批量连接
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="当前文档">
+    <nav class="md-nav" aria-label="批量连接">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#chisel-cookbook" class="md-nav__link">
+  <a href="#monoconnect" class="md-nav__link">
     <span class="md-ellipsis">
-      Chisel Cookbook
+      MonoConnect算法
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#chisel" class="md-nav__link">
+  <a href="#biconnect" class="md-nav__link">
     <span class="md-ellipsis">
-      Chisel 解释文档
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Chisel 解释文档">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      基础概念
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      电路构建
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      高级特性
+      BiConnect算法
     </span>
   </a>
   
@@ -1985,25 +1949,11 @@
     </nav>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#-readyvalidio-decoupled" class="md-nav__link">
     <span class="md-ellipsis">
-      即将添加
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      贡献与反馈
+      标准就绪-有效接口（ReadyValidIO / Decoupled）
     </span>
   </a>
   
@@ -2028,70 +1978,196 @@
   
 
 
-<h1 id="_1">文档翻译集合<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>欢迎访问我的文档翻译集合！这个网站收集了我在学习和工作过程中翻译的各种技术文档，主要用于个人学习和参考。</p>
-<h2 id="_2">关于本站<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>这个网站是我个人维护的技术文档翻译集合。我将持续更新和添加新的文档翻译，以便在学习和使用各种技术时有中文参考资料。</p>
-<p>翻译的内容尽量保持与原文一致，同时结合中文语境进行适当调整，使文档更易于理解。</p>
-<h2 id="_3">当前文档<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>当前本站包含以下文档的中文翻译</p>
-<h3 id="chisel-cookbook"><a href="chisel_cookbooks/">Chisel Cookbook</a><a class="headerlink" href="#chisel-cookbook" title="Permanent link">&para;</a></h3>
-<p>源文档：<a href="https://www.chisel-lang.org/docs/cookbooks">https://www.chisel-lang.org/docs/cookbooks</a></p>
-<p>Chisel是一种用Scala编写的开源硬件描述语言(HDL)，通过提供更高级的抽象和类型安全功能，使硬件设计更加高效和可靠。</p>
-<p>Chisel Cookbook包含了各种常见问题的解决方案和最佳实践，涵盖了以下主题：</p>
+<h1 id="_1">接口和连接<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>对于更复杂的模块，在定义模块的IO时定义和实例化接口类通常很有用。首先，接口类促进了重用，允许用户一次性捕获常见接口并以有用的形式表示。</p>
+<p>其次，接口允许用户通过支持生产者和消费者模块之间的批量连接来大幅减少布线工作。最后，用户可以在一个地方对大型接口进行更改，减少添加或删除接口部分时所需的更新次数。</p>
+<p>请注意，Chisel有一些内置的标准接口，应尽可能使用它们以实现互操作性（例如Decoupled）。</p>
+<h2 id="_2">端口：子类和嵌套<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>如我们之前所见，用户可以通过定义继承Bundle的类来定义自己的接口。例如，用户可以定义一个用于数据握手的简单链接，如下所示：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// 原始代码块中的标记: mdoc:invisible</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">import</span><span class="w"> </span><span class="nn">chisel3</span><span class="p">.</span><span class="n">_</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">import</span><span class="w"> </span><span class="nn">chisel3</span><span class="p">.</span><span class="nn">docs</span><span class="p">.</span><span class="n">emitSystemVerilog</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// 原始代码块中的标记: mdoc:silent</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">SimpleLink</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Bundle</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Output</span><span class="p">(</span><span class="nc">UInt</span><span class="p">(</span><span class="mi">16</span><span class="p">.</span><span class="nc">W</span><span class="p">))</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">valid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Output</span><span class="p">(</span><span class="nc">Bool</span><span class="p">())</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+</code></pre></div>
+<p>然后我们可以通过使用bundle继承来添加奇偶校验位来扩展SimpleLink：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// 原始代码块中的标记: mdoc:silent</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">PLink</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">SimpleLink</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">parity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Output</span><span class="p">(</span><span class="nc">UInt</span><span class="p">(</span><span class="mi">5</span><span class="p">.</span><span class="nc">W</span><span class="p">))</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span>
+</code></pre></div>
+一般来说，用户可以使用继承将接口组织成层次结构。</p>
+<p>从那里我们可以通过将两个PLink嵌套到一个新的FilterIO bundle中来定义过滤器接口：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// 原始代码块中的标记: mdoc:silent</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">FilterIO</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Bundle</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Flipped</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">PLink</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nc">PLink</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
+</code></pre></div>
+其中flip递归地改变bundle的方向，将输入变为输出，将输出变为输入。</p>
+<p>我们现在可以通过定义扩展Module的filter类来定义过滤器：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// 原始代码块中的标记: mdoc:silent</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Filter</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Module</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">io</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">IO</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">FilterIO</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="c1">// ...</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">}</span>
+</code></pre></div>
+其中io字段包含FilterIO。</p>
+<h2 id="bundle">Bundle向量<a class="headerlink" href="#bundle" title="Permanent link">&para;</a></h2>
+<p>除了单个元素外，元素向量形成了更丰富的层次结构接口。例如，为了创建一个具有输入向量的交叉开关，产生输出向量，并由UInt输入选择，我们使用Vec构造函数：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// 原始代码块中的标记: mdoc:silent</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">import</span><span class="w"> </span><span class="nn">chisel3</span><span class="p">.</span><span class="nn">util</span><span class="p">.</span><span class="n">log2Ceil</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">CrossbarIo</span><span class="p">(</span><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="nc">Int</span><span class="p">)</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Bundle</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Vec</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="nc">Flipped</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">PLink</span><span class="p">))</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">sel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Input</span><span class="p">(</span><span class="nc">UInt</span><span class="p">(</span><span class="n">log2Ceil</span><span class="p">(</span><span class="n">n</span><span class="p">).</span><span class="nc">W</span><span class="p">))</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Vec</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nc">PLink</span><span class="p">)</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
+</code></pre></div>
+其中Vec将大小作为第一个参数，将返回端口的块作为第二个参数。</p>
+<h2 id="_3">批量连接<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>一旦我们定义了接口，我们可以通过<a href="https://www.chisel-lang.org/api/latest/chisel3/Data.html#:="><code>MonoConnect</code></a>运算符（<code>:=</code>）或<a href="https://www.chisel-lang.org/api/latest/chisel3/Data.html#%3C%3E"><code>BiConnect</code></a>运算符（<code>&lt;&gt;</code>）连接到它。</p>
+<h3 id="monoconnect"><code>MonoConnect</code>算法<a class="headerlink" href="#monoconnect" title="Permanent link">&para;</a></h3>
+<p><code>MonoConnect.connect</code>，或<code>:=</code>，按元素执行单向连接。</p>
+<p>请注意，这不是可交换的。在调用此函数之前已经确定了明确的源和接收器。</p>
+<p>连接操作将递归地遍历左侧Data（与右侧Data一起）。
+如果在左侧的移动无法在右侧匹配，将抛出异常。右侧允许有额外的字段。
+Vec必须具有完全相同的大小。</p>
+<p>请注意，LHS元素必须是可写的，因此必须满足以下条件之一：
+- 是内部可写节点（<code>Reg</code>或<code>Wire</code>）
+- 是当前模块的输出
+- 是当前模块的子模块的输入</p>
+<p>请注意，RHS元素必须是可读的，因此必须满足以下条件之一：
+- 是内部可读节点（<code>Reg</code>、<code>Wire</code>、<code>Op</code>）
+- 是字面值
+- 是当前模块或当前模块的子模块的端口</p>
+<h3 id="biconnect"><code>BiConnect</code>算法<a class="headerlink" href="#biconnect" title="Permanent link">&para;</a></h3>
+<p><code>BiConnect.connect</code>，或<code>&lt;&gt;</code>，按元素执行双向连接。请注意，参数是左右（而不是源和接收器），因此该操作的意图是可交换的。连接操作将递归地遍历左侧<code>Data</code>（与右侧<code>Data</code>一起）。如果在左侧的移动无法在右侧匹配，或者右侧有额外的字段，将抛出异常。</p>
+<blockquote>
+<p>注意：我们强烈鼓励使用<a href="https://www.chisel-lang.org/chisel3/docs/explanations/connectable.html"><code>Connectable</code>运算符</a>而不是<code>&lt;&gt;</code>运算符编写新代码。</p>
+</blockquote>
+<p>使用双连接<code>&lt;&gt;</code>运算符，我们现在可以将两个过滤器组合成一个过滤器块，如下所示：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// 原始代码块中的标记: mdoc:silent</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Block</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Module</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">io</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">IO</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">FilterIO</span><span class="p">)</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">f1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Module</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">Filter</span><span class="p">)</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Module</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">Filter</span><span class="p">)</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="n">f1</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="n">x</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="n">f1</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">f2</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">x</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="n">f2</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="n">y</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">}</span>
+</code></pre></div></p>
+<p>双向批量连接运算符<code>&lt;&gt;</code>将同名的叶端口相互连接。Bundle的Scala类型不需要匹配。如果任一侧缺少一个命名信号，Chisel将给出如下例所示的错误：</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// 原始代码块中的标记: mdoc:silent</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">NotReallyAFilterIO</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Bundle</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Flipped</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">PLink</span><span class="p">)</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nc">PLink</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Output</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">Bool</span><span class="p">())</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">}</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">Block2</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Module</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">io1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">IO</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">FilterIO</span><span class="p">)</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">io2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">IO</span><span class="p">(</span><span class="nc">Flipped</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">NotReallyAFilterIO</span><span class="p">))</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="n">io1</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">io2</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="p">}</span>
+</code></pre></div>
+下面我们可以看到这个例子的结果错误：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// 原始代码块中的标记: mdoc:crash</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">emitSystemVerilog</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">Block2</span><span class="p">)</span>
+</code></pre></div>
+双向连接应该只用于<strong>有方向的元素</strong>（如IO），例如，连接两个线不受支持，因为Chisel不一定能自动确定方向。
+例如，即使可以从端点知道方向，在此处放置两个临时线并连接它们也不会起作用：</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// 原始代码块中的标记: mdoc:silent</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">BlockWithTemporaryWires</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Module</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">io</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">IO</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">FilterIO</span><span class="p">)</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">f1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Module</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">Filter</span><span class="p">)</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Module</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">Filter</span><span class="p">)</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="n">f1</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="n">x</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="n">tmp1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Wire</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">FilterIO</span><span class="p">)</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="n">tmp2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Wire</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">FilterIO</span><span class="p">)</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">  </span><span class="n">f1</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">tmp1</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">  </span><span class="n">tmp1</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">tmp2</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span><span class="n">tmp2</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">f2</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">x</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">  </span><span class="n">f2</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">io</span><span class="p">.</span><span class="n">y</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="p">}</span>
+</code></pre></div>
+下面我们可以看到这个例子的结果错误：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// 原始代码块中的标记: mdoc:crash</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">emitSystemVerilog</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">BlockWithTemporaryWires</span><span class="p">)</span>
+</code></pre></div>
+有关更多详细信息，请参见<a href="connection-operators">连接运算符深入探讨</a></p>
+<p>注意：当使用<code>Chisel._</code>（兼容模式）而不是<code>chisel3._</code>时，<code>:=</code>运算符以类似于<code>&lt;&gt;</code>的双向方式工作，但不完全相同。</p>
+<h2 id="-readyvalidio-decoupled">标准就绪-有效接口（ReadyValidIO / Decoupled）<a class="headerlink" href="#-readyvalidio-decoupled" title="Permanent link">&para;</a></h2>
+<p>Chisel为就绪-有效接口提供了标准接口（例如在AXI中使用）。
+就绪-有效接口由<code>ready</code>信号、<code>valid</code>信号和存储在<code>bits</code>中的一些数据组成。
+<code>ready</code>位表示消费者<em>准备好</em>消费数据。
+<code>valid</code>位表示生产者在<code>bits</code>上有<em>有效</em>数据。
+当<code>ready</code>和<code>valid</code>都被断言时，数据从生产者传输到消费者。
+提供了一个便利方法<code>fire</code>，如果<code>ready</code>和<code>valid</code>都被断言，则该方法被断言。</p>
+<p>通常，我们使用实用函数<a href="https://chisel.eecs.berkeley.edu/api/latest/chisel3/util/Decoupled$.html"><code>Decoupled()</code></a>将任何类型转换为就绪-有效接口，而不是直接使用<a href="http://chisel.eecs.berkeley.edu/api/latest/chisel3/util/ReadyValidIO.html">ReadyValidIO</a>。</p>
 <ul>
-<li><a href="chisel_cookbooks/cookbook/">通用技巧</a> - 基本操作和常见模式</li>
-<li><a href="chisel_cookbooks/naming/">命名</a> - 如何处理信号命名问题</li>
-<li><a href="chisel_cookbooks/hierarchy/">层次结构</a> - 模块实例化和层次化设计</li>
-<li><a href="chisel_cookbooks/dataview/">DataView</a> - 数据视图和类型转换</li>
-<li><a href="chisel_cookbooks/serialization/">序列化</a> - 模块序列化技术</li>
-<li><a href="chisel_cookbooks/objectmodel/">对象模型</a> - Chisel对象模型的使用</li>
-<li><a href="chisel_cookbooks/testing/">测试</a> - 硬件测试方法</li>
-<li><a href="chisel_cookbooks/troubleshooting/">故障排除</a> - 常见问题解决方案</li>
+<li><code>Decoupled(...)</code>创建一个生产者/输出就绪-有效接口（即bits是输出）。</li>
+<li><code>Flipped(Decoupled(...))</code>创建一个消费者/输入就绪-有效接口（即bits是输入）。</li>
 </ul>
-<h3 id="chisel"><a href="chisel_explanation/motivation/">Chisel 解释文档</a><a class="headerlink" href="#chisel" title="Permanent link">&para;</a></h3>
-<p>源文档：<a href="https://www.chisel-lang.org/docs/explanations">https://www.chisel-lang.org/docs/explanations</a></p>
-<p>这是Chisel的详细解释文档，深入介绍了Chisel的各个方面。文档分为三个主要部分：</p>
-<h4 id="_4">基础概念<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<ul>
-<li><a href="chisel_explanation/motivation/">动机</a> - 为什么选择Chisel</li>
-<li><a href="chisel_explanation/data-types/">数据类型</a> - Chisel的基本数据类型</li>
-<li><a href="chisel_explanation/ports/">端口</a> - 模块接口定义</li>
-<li><a href="chisel_explanation/operators/">运算符</a> - 支持的运算操作</li>
-<li><a href="chisel_explanation/bundles-and-vecs/">Bundle和Vec</a> - 复合数据类型</li>
-</ul>
-<h4 id="_5">电路构建<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
-<ul>
-<li><a href="chisel_explanation/modules/">模块</a> - 模块的定义和使用</li>
-<li><a href="chisel_explanation/combinational-circuits/">组合电路</a> - 组合逻辑设计</li>
-<li><a href="chisel_explanation/sequential-circuits/">时序电路</a> - 时序逻辑设计</li>
-<li><a href="chisel_explanation/memories/">存储器</a> - 内存和寄存器</li>
-<li><a href="chisel_explanation/width-inference/">宽度推断</a> - 自动位宽推断</li>
-</ul>
-<h4 id="_6">高级特性<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
-<ul>
-<li><a href="chisel_explanation/polymorphism-and-parameterization/">多态与参数化</a> - 可重用硬件设计</li>
-<li><a href="chisel_explanation/multi-clock/">多时钟域</a> - 多时钟设计</li>
-<li><a href="chisel_explanation/blackboxes/">黑盒</a> - 外部模块集成</li>
-<li><a href="chisel_explanation/annotations/">注解</a> - 元数据和转换</li>
-<li><a href="chisel_explanation/testing/">测试</a> - 硬件验证方法</li>
-</ul>
-<h2 id="_7">即将添加<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>我计划在未来添加更多技术文档的翻译，包括但不限于：</p>
-<ul>
-<li>其他硬件设计相关文档</li>
-<li>编程语言参考手册</li>
-<li>框架和库的使用指南</li>
-<li>开发工具的使用教程</li>
-</ul>
-<h2 id="_8">贡献与反馈<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p>如果你发现任何翻译错误或有改进建议，欢迎通过<a href="https://github.com/ZhaoCake/translation_docs">GitHub仓库</a>提交issue或pull request。</p>
+<p>查看以下示例Chisel代码，以更好地理解确切生成的内容：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">// 原始代码块中的标记: mdoc:silent:reset</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">import</span><span class="w"> </span><span class="nn">chisel3</span><span class="p">.</span><span class="n">_</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">import</span><span class="w"> </span><span class="nn">chisel3</span><span class="p">.</span><span class="nn">util</span><span class="p">.</span><span class="nc">Decoupled</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="cm">/**</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="cm">  * 使用Decoupled(...)创建一个生产者接口。</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="cm">  * 即，它有bits作为输出。</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="cm">  * 这会产生以下端口：</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="cm">  *   input         io_readyValid_ready,</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="cm">  *   output        io_readyValid_valid,</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="cm">  *   output [31:0] io_readyValid_bits</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="cm">  */</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="k">class</span><span class="w"> </span><span class="nc">ProducingData</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Module</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">io</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">IO</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">Bundle</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="n">readyValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Decoupled</span><span class="p">(</span><span class="nc">UInt</span><span class="p">(</span><span class="mi">32</span><span class="p">.</span><span class="nc">W</span><span class="p">))</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="w">  </span><span class="p">})</span>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="w">  </span><span class="c1">// 对io.readyValid.ready做些什么</span>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="w">  </span><span class="n">io</span><span class="p">.</span><span class="n">readyValid</span><span class="p">.</span><span class="n">valid</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kc">true</span><span class="p">.</span><span class="nc">B</span>
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="w">  </span><span class="n">io</span><span class="p">.</span><span class="n">readyValid</span><span class="p">.</span><span class="n">bits</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">5</span><span class="p">.</span><span class="nc">U</span>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="p">}</span>
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="cm">/**</span>
+<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a><span class="cm">  * 使用Flipped(Decoupled(...))创建一个消费者接口。</span>
+<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="cm">  * 即，它有bits作为输入。</span>
+<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a><span class="cm">  * 这会产生以下端口：</span>
+<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a><span class="cm">  *   output        io_readyValid_ready,</span>
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="cm">  *   input         io_readyValid_valid,</span>
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="cm">  *   input  [31:0] io_readyValid_bits</span>
+<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a><span class="cm">  */</span>
+<a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a><span class="k">class</span><span class="w"> </span><span class="nc">ConsumingData</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Module</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">io</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">IO</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="nc">Bundle</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-32" name="__codelineno-11-32" href="#__codelineno-11-32"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="n">readyValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Flipped</span><span class="p">(</span><span class="nc">Decoupled</span><span class="p">(</span><span class="nc">UInt</span><span class="p">(</span><span class="mi">32</span><span class="p">.</span><span class="nc">W</span><span class="p">)))</span>
+<a id="__codelineno-11-33" name="__codelineno-11-33" href="#__codelineno-11-33"></a><span class="w">  </span><span class="p">})</span>
+<a id="__codelineno-11-34" name="__codelineno-11-34" href="#__codelineno-11-34"></a><span class="w">  </span><span class="n">io</span><span class="p">.</span><span class="n">readyValid</span><span class="p">.</span><span class="n">ready</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kc">false</span><span class="p">.</span><span class="nc">B</span>
+<a id="__codelineno-11-35" name="__codelineno-11-35" href="#__codelineno-11-35"></a><span class="w">  </span><span class="c1">// 对io.readyValid.valid做些什么</span>
+<a id="__codelineno-11-36" name="__codelineno-11-36" href="#__codelineno-11-36"></a><span class="w">  </span><span class="c1">// 对io.readyValid.bits做些什么</span>
+<a id="__codelineno-11-37" name="__codelineno-11-37" href="#__codelineno-11-37"></a><span class="p">}</span>
+</code></pre></div>
+<p><code>DecoupledIO</code>是一个就绪-有效接口，其<em>约定</em>是不对取消断言<code>ready</code>或<code>valid</code>或<code>bits</code>的稳定性做任何保证。
+这意味着<code>ready</code>和<code>valid</code>也可以在没有数据传输的情况下取消断言。</p>
+<p><code>IrrevocableIO</code>是一个就绪-有效接口，其<em>约定</em>是在<code>valid</code>被断言且<code>ready</code>被取消断言时，<code>bits</code>的值不会改变。
+此外，消费者在<code>ready</code>为高而<code>valid</code>为低的周期后应保持<code>ready</code>被断言。
+请注意，<em>不可撤销</em>约束<em>仅是一个约定</em>，无法通过接口强制执行。
+Chisel不会自动生成检查器或断言来强制执行<em>不可撤销</em>约定。</p>
 
 
 
 
 
 
+
+  
+  
 
 
 
@@ -2120,15 +2196,31 @@
       
       <nav class="md-footer__inner md-grid" aria-label="页脚" >
         
+          
+          <a href="../sequential-circuits/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 时序电路">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                时序电路
+              </div>
+            </div>
+          </a>
+        
         
           
-          <a href="chisel_cookbooks/" class="md-footer__link md-footer__link--next" aria-label="下一页: 手册概述">
+          <a href="../connection-operators/" class="md-footer__link md-footer__link--next" aria-label="下一页: 连接运算符">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 下一页
               </span>
               <div class="md-ellipsis">
-                手册概述
+                连接运算符
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2212,12 +2304,12 @@
     
     
       
-      <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.tabs.sticky", "navigation.path", "toc.follow", "navigation.top", "navigation.footer", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.select"], "search": "assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.tabs.sticky", "navigation.path", "toc.follow", "navigation.top", "navigation.footer", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.select"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
-        <script src="javascripts/mathjax.js"></script>
+        <script src="../../javascripts/mathjax.js"></script>
       
         <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
