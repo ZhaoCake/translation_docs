@@ -139,6 +139,9 @@ nav:
       - 测试: chisel_explanation/testing.md
       - 未连接线: chisel_explanation/unconnected-wires.md
       - 警告: chisel_explanation/warnings.md
+  - Hotpot / Fennel:
+    - Hotpot README 翻译: hotpot/hotpot_nvim_readme.md
+    - Hotpot 帮助文档翻译: hotpot/hotpot_nvim_docs_hotpot_txt.md
 
 extra:
   social:
